@@ -1,0 +1,16 @@
+# Mac
+.DS_Store
+
+# IntelliJ
+.idea
+
+# Vim
+Session.vim
+*.swp
+
+# elm
+elm-stuff
+repl-temp-*
+
+# elm-review
+review
