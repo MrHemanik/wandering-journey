@@ -46,13 +46,42 @@ type alias Resources =
     { hunger : Int, thirst : Int, physicalHealth : Int, mentalHealth : Int, money : Int }
 
 
+type Location
+    = Desert
+    | Forest
+    | City
+
+
+type Interaction
+    = Conversation
+    | Action
+
+
+type alias Card =
+    { id : Int
+    , possibleLocation : List Location
+    , interaction : Interaction
+    , mainText : String
+    , decisionText1 : String
+    , decisionText2 : String
+    , followUpText1 : String
+    , followUpText2 : String
+    , resourceChange1 : Resources
+    , resourceChange2 : Resources
+    , newCards1 : List Int
+    , newCards2 : List Int
+    , removeCards1 : List Int
+    , removeCards2 : List Int
+    }
+
+
 type Msg
     = Key Key
     | NewCard Int
 
 
 type alias Game =
-    { resources : Resources, card : Maybe Int }
+    { resources : Resources, allCards : List Card, possibleCardIndexes : List Int, currentDeck : List Card, location : Location, card : Maybe Card }
 
 
 keyDecoder : Decoder Key
@@ -100,7 +129,7 @@ update command model =
 
 init : String -> ( Model, Cmd Msg )
 init playerName =
-    ( Name "banana", Cmd.none )
+    ( Running, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg

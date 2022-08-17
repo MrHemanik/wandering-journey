@@ -1,0 +1,34 @@
+{
+  "startingCards" :[0,1],
+  "cards" : [{
+    "id":0,
+    "possibleLocation": ["City"],
+    "interaction":"conversation",
+    "mainText":"There is a merchant offering you food, do you buy it?",
+    "decisionText1":"Buy some food",
+    "decisionText2":"Walk away",
+    "followUpText1":"You bought some food from the merchant",
+    "followUpText2":"",
+    "resourceChange1": [1, 0, 0, 0, -1],
+    "resourceChange2": [0, 0, 0, 0, 0],
+    "newCards1":"",
+    "newCards2":"",
+    "removeCards1":"",
+    "removeCards2":""
+  }, {
+    "id":1,
+    "possibleLocation": ["City"],
+    "interaction":"conversation",
+    "mainText":"A robber is ambushing you",
+    "decisionText1":"Give him your money",
+    "decisionText2":"Fight back",
+    "followUpText1":"You bought some food from the merchant",
+    "followUpText2":"",
+    "resourceChange1": [0, 0, 0, 0, -3],
+    "resourceChange2": [0, 0, 0, 0, 0],
+    "newCards1":"",
+    "newCards2":"",
+    "removeCards1":"",
+    "removeCards2":""
+  }]
+}
