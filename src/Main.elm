@@ -1,19 +1,82 @@
 module Main exposing (main)
 
 import Browser
+import Browser.Events
 import Html exposing (Html, div)
+import Json.Decode as Decode exposing (Decoder)
+
+
+
+-- Maybe unnecessary because it's portrayed in Game (Resource is 0 on deathreason)
+
+
+type DeathCause
+    = Hunger
+    | Thirst
+    | PhysicalHealth
+    | MentalHealth
+    | Money
+
+
+type Choice
+    = Left
+    | Right
+
+
+type Key
+    = ChoiceKey Choice
+    | R
+    | UnknownKey
+
+
+type alias Highscore =
+    Int
 
 
 type Model
-    = Name String
+    = GameOver DeathCause Game Highscore
+    | Running Choice Game Highscore
+
+
+
+-- Resources you need to manage.
+
+
+type alias Resources =
+    { hunger : Int, thirst : Int, physicalHealth : Int, mentalHealth : Int, money : Int }
 
 
 type Msg
-    = Tick
-    | ChangeName String
+    = Key Key
+    | NewCard Int
+
+
+type alias Game =
+    { resources : Resources, card : Maybe Int }
+
+
+keyDecoder : Decoder Key
+keyDecoder =
+    let
+        toKey string =
+            case string of
+                "ArrowLeft" ->
+                    ChoiceKey Left
+
+                "ArrowRight" ->
+                    ChoiceKey Right
+
+                "r" ->
+                    R
+
+                _ ->
+                    UnknownKey
+    in
+    Decode.map toKey (Decode.field "key" Decode.string)
 
 
 
+-- TODO Everything below
 ---- Visuals ----
 
 
@@ -42,7 +105,7 @@ init playerName =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Sub.map Key (Browser.Events.onKeyDown keyDecoder)
 
 
 main : Program () Model Msg
