@@ -2,8 +2,11 @@ module Main exposing (main)
 
 import Browser
 import Browser.Events
+import Card exposing (Card)
 import Html exposing (Html, div)
 import Json.Decode as Decode exposing (Decoder)
+import Location exposing (Location)
+import Resources exposing (Resources)
 
 
 
@@ -40,39 +43,6 @@ type Model
 
 
 -- Resources you need to manage.
-
-
-type alias Resources =
-    { hunger : Int, thirst : Int, physicalHealth : Int, mentalHealth : Int, money : Int }
-
-
-type Location
-    = Desert
-    | Forest
-    | City
-
-
-type Interaction
-    = Conversation
-    | Action
-
-
-type alias Card =
-    { id : Int
-    , possibleLocation : List Location
-    , interaction : Interaction
-    , mainText : String
-    , decisionText1 : String
-    , decisionText2 : String
-    , followUpText1 : String
-    , followUpText2 : String
-    , resourceChange1 : Resources
-    , resourceChange2 : Resources
-    , newCards1 : List Int
-    , newCards2 : List Int
-    , removeCards1 : List Int
-    , removeCards2 : List Int
-    }
 
 
 type Msg
