@@ -99,7 +99,10 @@ dataDecoder =
 
 view : Model -> Html Msg
 view model =
-    img [ src "Img1.png", width 300, height 300 ] []
+    div []
+        [ img [ src "Img1.png", width 300, height 300 ] []
+        , div [] []
+        ]
 
 
 
@@ -115,8 +118,8 @@ update command model =
 ---- Default functions ----
 
 
-init : String -> ( Model, Cmd Msg )
-init playerName =
+init : Maybe String -> ( Model, Cmd Msg )
+init flags =
     ( Running Left Nothing 0, Cmd.none )
 
 
@@ -125,10 +128,10 @@ subscriptions model =
     Sub.map Key (Browser.Events.onKeyDown keyDecoder)
 
 
-main : Program () Model Msg
+main : Program (Maybe String) Model Msg
 main =
     Browser.element
-        { init = \_ -> init ""
+        { init = \_ -> init Nothing
         , subscriptions = subscriptions
         , view = view
         , update = update

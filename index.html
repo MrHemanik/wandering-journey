@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<div id="elm-app-is-loaded-here"></div>
+
+<script src="elm.js"></script>
+<script>
+    const jsonData = $.getJSON('cards.json')
+    console.log(jsonData);
+    var app = Elm.Main.init({flags: jsonData, node: document.getElementById('elm-app-is-loaded-here')});
+</script>
+</body>
+</html>
