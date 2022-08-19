@@ -3,7 +3,9 @@ module Main exposing (main)
 import Browser
 import Browser.Events
 import Card exposing (Card)
-import Html exposing (Html, div)
+import DecodeHelper
+import Html exposing (Html, div, img)
+import Html.Attributes exposing (height, src, width)
 import Json.Decode as Decode exposing (Decoder)
 import Location exposing (Location)
 import Resources exposing (Resources)
@@ -37,8 +39,8 @@ type alias Highscore =
 
 
 type Model
-    = GameOver DeathCause Game Highscore
-    | Running Choice Game Highscore
+    = GameOver DeathCause (Maybe Game) Highscore
+    | Running Choice (Maybe Game) Highscore
 
 
 
@@ -52,6 +54,14 @@ type Msg
 
 type alias Game =
     { resources : Resources, allCards : List Card, possibleCardIndexes : List Int, currentDeck : List Card, location : Location, card : Maybe Card }
+
+
+type alias Data =
+    { allCards : List Card, startingCardIndexes : List Int }
+
+
+startingResources =
+    { hunger = 100, thirst = 100, physicalHealth = 100, mentalHealth = 100, money = 100 }
 
 
 keyDecoder : Decoder Key
@@ -74,14 +84,22 @@ keyDecoder =
     Decode.map toKey (Decode.field "key" Decode.string)
 
 
+dataDecoder : Decoder Data
+dataDecoder =
+    Decode.succeed Data
+        |> DecodeHelper.apply (Decode.field "cards" (Decode.list Card.decoder))
+        |> DecodeHelper.apply (Decode.field "startingCards" (Decode.list Decode.int))
+
+
 
 -- TODO Everything below
+-- TODO: read json into elm https://gist.github.com/benkoshy/d0dcd2b09f8fcc65a90b56a33dcf1465
 ---- Visuals ----
 
 
 view : Model -> Html Msg
 view model =
-    div [] []
+    img [ src "Img1.png", width 300, height 300 ] []
 
 
 
@@ -99,7 +117,7 @@ update command model =
 
 init : String -> ( Model, Cmd Msg )
 init playerName =
-    ( Running, Cmd.none )
+    ( Running Left Nothing 0, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg

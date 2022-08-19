@@ -1,5 +1,6 @@
-module Card exposing (Card)
+module Card exposing (Card, decoder)
 
+import DecodeHelper
 import Interaction exposing (Interaction)
 import Json.Decode as Decode exposing (Decoder)
 import Location exposing (Location)
@@ -24,28 +25,23 @@ type alias Card =
     }
 
 
-apply : Decoder a -> Decoder (a -> b) -> Decoder b
-apply =
-    Decode.map2 (|>)
-
-
 decoder : Decoder Card
 decoder =
     Decode.succeed Card
-        |> apply (Decode.field "id" Decode.int)
-        |> apply (Decode.field "possibleLocation" (Decode.list Location.decoder))
-        |> apply (Decode.field "interaction" Interaction.decoder)
-        |> apply (Decode.field "mainText" Decode.string)
-        |> apply (Decode.field "decisionText1" Decode.string)
-        |> apply (Decode.field "decisionText2" Decode.string)
-        |> apply (Decode.field "followUpText1" Decode.string)
-        |> apply (Decode.field "followUpText2" Decode.string)
-        |> apply (Decode.field "resourceChange1" Resources.decoder)
-        |> apply (Decode.field "resourceChange2" Resources.decoder)
-        |> apply (Decode.field "newCards1" (Decode.list Decode.int))
-        |> apply (Decode.field "newCards2" (Decode.list Decode.int))
-        |> apply (Decode.field "removeCards1" (Decode.list Decode.int))
-        |> apply (Decode.field "removeCards2" (Decode.list Decode.int))
+        |> DecodeHelper.apply (Decode.field "id" Decode.int)
+        |> DecodeHelper.apply (Decode.field "possibleLocation" (Decode.list Location.decoder))
+        |> DecodeHelper.apply (Decode.field "interaction" Interaction.decoder)
+        |> DecodeHelper.apply (Decode.field "mainText" Decode.string)
+        |> DecodeHelper.apply (Decode.field "decisionText1" Decode.string)
+        |> DecodeHelper.apply (Decode.field "decisionText2" Decode.string)
+        |> DecodeHelper.apply (Decode.field "followUpText1" Decode.string)
+        |> DecodeHelper.apply (Decode.field "followUpText2" Decode.string)
+        |> DecodeHelper.apply (Decode.field "resourceChange1" Resources.decoder)
+        |> DecodeHelper.apply (Decode.field "resourceChange2" Resources.decoder)
+        |> DecodeHelper.apply (Decode.field "newCards1" (Decode.list Decode.int))
+        |> DecodeHelper.apply (Decode.field "newCards2" (Decode.list Decode.int))
+        |> DecodeHelper.apply (Decode.field "removeCards1" (Decode.list Decode.int))
+        |> DecodeHelper.apply (Decode.field "removeCards2" (Decode.list Decode.int))
 
 
 getCardByIndex : List Card -> Int -> Maybe Card
