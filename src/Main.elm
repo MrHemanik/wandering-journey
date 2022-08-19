@@ -120,15 +120,6 @@ view model =
         ]
 
 
-newPossibleCardIndex : Game -> Cmd Msg
-newPossibleCardIndex game =
-    let
-        generator listSize =
-            Random.int 0 (listSize - 1)
-    in
-    Random.generate NewCard (generator (List.length game.possibleCardIndexes))
-
-
 viewResources : Resources -> String
 viewResources resources =
     "Hunger: "
@@ -184,6 +175,15 @@ update msg model =
 
                 GenerateNewCard ->
                     ( model, newPossibleCardIndex game )
+
+
+newPossibleCardIndex : Game -> Cmd Msg
+newPossibleCardIndex game =
+    let
+        generator listSize =
+            Random.int 0 (listSize - 1)
+    in
+    Random.generate NewCard (generator (List.length game.possibleCardIndexes))
 
 
 
