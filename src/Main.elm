@@ -5,23 +5,10 @@ import Browser.Events
 import Card exposing (Card)
 import Data
 import DecodeHelper
-import Html exposing (Html, div, img, text)
-import Html.Attributes exposing (height, src, width)
+import Html exposing (Html, div, text)
 import Json.Decode as Decode exposing (Decoder)
 import Location exposing (Location)
 import Resources exposing (Resources)
-
-
-
--- Maybe unnecessary because it's portrayed in Game (Resource is 0 on deathreason)
-
-
-type DeathCause
-    = Hunger
-    | Thirst
-    | PhysicalHealth
-    | MentalHealth
-    | Money
 
 
 type Choice
@@ -40,7 +27,7 @@ type alias Highscore =
 
 
 type Model
-    = GameOver DeathCause Game Highscore
+    = GameOver Game Highscore
     | Running Choice Game Highscore
 
 
@@ -101,30 +88,73 @@ dataDecoder =
 view : Model -> Html Msg
 view model =
     div []
-        [ img [ src "src/Img1.png", width 300, height 300 ] []
-        , div []
+        [ div []
             [ case model of
-                Running _ game num ->
-                    div []
-                        [ text num
-                        , div []
-                            [ let
-                                a =
-                                    Card.getCardByIndex game.allCards 0
-                              in
-                              case a of
-                                Just c ->
-                                    text c.mainText
+                GameOver game _ ->
+                    text (viewDeathMessage game.resources)
 
-                                _ ->
-                                    text ""
-                            ]
-                        ]
-
-                GameOver _ _ _ ->
-                    text ""
+                Running _ game _ ->
+                    text (viewResources game.resources)
             ]
+
+        {- , img [ src "src/Img1.png", width 300, height 300 ] []
+           -- , div []
+           --     [ case model of
+           --        Running _ game num ->
+           --           div []
+           --              [ text num
+           --              , div []
+           --                  [ let
+           --                     a =
+           --                        Card.getCardByIndex game.allCards 0
+           --                  in
+           --                  case a of
+           --                    Just c ->
+           --                       text c.mainText
+           --                  _ ->
+           --                     text ""
+           --             ]
+           --         ]
+           --  GameOver _ _ ->
+           --       text ""
+           ]
+        -}
         ]
+
+
+viewResources : Resources -> String
+viewResources resources =
+    "Hunger: "
+        ++ String.fromInt resources.hunger
+        ++ " Thirst: "
+        ++ String.fromInt resources.thirst
+        ++ " Physical Health: "
+        ++ String.fromInt resources.physicalHealth
+        ++ " Mental Health: "
+        ++ String.fromInt resources.mentalHealth
+        ++ " Money: "
+        ++ String.fromInt resources.money
+
+
+viewDeathMessage : Resources -> String
+viewDeathMessage resources =
+    if resources.hunger <= 0 then
+        "Died of starvation"
+
+    else if resources.thirst <= 0 then
+        "Died of thirst"
+
+    else if resources.physicalHealth <= 0 then
+        "Died due to injuries"
+
+    else if resources.mentalHealth <= 0 then
+        "Died due to mental health"
+
+    else if resources.money <= 0 then
+        "No money left"
+
+    else
+        "Died of an unknown cause"
 
 
 
