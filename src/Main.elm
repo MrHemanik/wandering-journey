@@ -186,7 +186,7 @@ update msg model =
                     ( model, Cmd.none )
 
                 GenerateNewCard ->
-                    ( model, generateCardIndex game.unlockedCardIndexes )
+                    ( model, generateCard game.currentCards )
 
 
 
@@ -194,17 +194,18 @@ update msg model =
 {- Generate an index of a card -}
 
 
-generateCardIndex : List Int -> Cmd Msg
-generateCardIndex currentCardIndexes =
+generateCard : List Card -> Cmd Msg
+generateCard currentCards =
     let
         generator listSize =
             Random.int 0 (listSize - 1)
     in
-    Random.generate NewCard (generator (List.length currentCardIndexes))
+    Random.generate NewCard (generator (List.length currentCards))
 
 
 
 ---- Normal functions ----
+{- Creates a new List of Cards containing every card that is unlocked and from the current location -}
 
 
 getCurrentlyPossibleCards : List Card -> List Int -> Location -> List Card
@@ -240,16 +241,20 @@ init flags =
     in
     case data of
         Data.Success value ->
+            let
+                currentCards =
+                    getCurrentlyPossibleCards value.allCards value.startingCardIndexes startingLocation
+            in
             ( Running Left
                 { resources = startingResources
                 , allCards = value.allCards
                 , unlockedCardIndexes = value.startingCardIndexes
-                , currentCards = getCurrentlyPossibleCards value.allCards value.startingCardIndexes startingLocation
+                , currentCards = currentCards
                 , location = startingLocation
                 , card = Nothing
                 }
                 0
-            , generateCardIndex value.startingCardIndexes
+            , generateCard currentCards
             )
 
         _ ->
