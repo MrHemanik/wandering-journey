@@ -8,6 +8,7 @@ import DecodeHelper
 import Html exposing (Html, div, text)
 import Json.Decode as Decode exposing (Decoder)
 import Location exposing (Location)
+import Random
 import Resources exposing (Resources)
 
 
@@ -96,30 +97,37 @@ view model =
                 Running _ game _ ->
                     text (viewResources game.resources)
             ]
+        , div []
+            [ case model of
+                Running _ game _ ->
+                    div []
+                        [ div []
+                            [ let
+                                a =
+                                    Card.getCardByIndex game.allCards 0
+                              in
+                              case a of
+                                Just c ->
+                                    text c.mainText
 
-        {- , img [ src "src/Img1.png", width 300, height 300 ] []
-           -- , div []
-           --     [ case model of
-           --        Running _ game num ->
-           --           div []
-           --              [ text num
-           --              , div []
-           --                  [ let
-           --                     a =
-           --                        Card.getCardByIndex game.allCards 0
-           --                  in
-           --                  case a of
-           --                    Just c ->
-           --                       text c.mainText
-           --                  _ ->
-           --                     text ""
-           --             ]
-           --         ]
-           --  GameOver _ _ ->
-           --       text ""
-           ]
-        -}
+                                _ ->
+                                    text ""
+                            ]
+                        ]
+
+                GameOver _ _ ->
+                    text ""
+            ]
         ]
+
+
+newPossibleCardIndex : Game -> Cmd Msg
+newPossibleCardIndex game =
+    let
+        generator listSize =
+            Random.int 0 (listSize - 1)
+    in
+    Random.generate NewCard (generator (List.length game.possibleCardIndexes))
 
 
 viewResources : Resources -> String
@@ -162,8 +170,18 @@ viewDeathMessage resources =
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update command model =
-    ( model, Cmd.none )
+update msg model =
+    case model of
+        GameOver game highscore ->
+            ( model, Cmd.none )
+
+        Running choice game highscore ->
+            case msg of
+                NewCard int ->
+                    ( Running choice { game | card = Card.getCardByIndex game.allCards int } highscore, newPossibleCardIndex game )
+
+                Key key ->
+                    ( model, Cmd.none )
 
 
 
