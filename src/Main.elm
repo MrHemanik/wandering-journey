@@ -44,15 +44,27 @@ type Msg
 
 
 type alias Game =
-    { resources : Resources, allCards : List Card, unlockedCardIndexes : List Int, currentCards : Maybe (List Card), location : Location, card : Maybe Card }
+    { resources : Resources, allCards : List Card, unlockedCardIndexes : List Int, currentCards : List Card, location : Location, card : Maybe Card }
 
 
 type alias JsonData =
     { allCards : List Card, startingCardIndexes : List Int }
 
 
+
+---- Preset Variables ----
+
+
 startingResources =
     { hunger = 100, thirst = 100, physicalHealth = 100, mentalHealth = 100, money = 100 }
+
+
+startingLocation =
+    Location.City
+
+
+
+---- Decoder ----
 
 
 keyDecoder : Decoder Key
@@ -167,8 +179,8 @@ update msg model =
 
         Running choice game highscore ->
             case msg of
-                NewCard int ->
-                    ( Running choice { game | card = Card.getCardByIndex game.allCards int } highscore, Cmd.none )
+                NewCard newCardIndex ->
+                    ( Running choice { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
 
                 Key key ->
                     ( model, Cmd.none )
@@ -178,16 +190,39 @@ update msg model =
 
 
 
+---- Generator ----
 {- Generate an index of a card -}
 
 
 generateCardIndex : List Int -> Cmd Msg
-generateCardIndex unlockedCardIndexes =
+generateCardIndex currentCardIndexes =
     let
         generator listSize =
             Random.int 0 (listSize - 1)
     in
-    Random.generate NewCard (generator (List.length unlockedCardIndexes))
+    Random.generate NewCard (generator (List.length currentCardIndexes))
+
+
+
+---- Normal functions ----
+
+
+getCurrentlyPossibleCards : List Card -> List Int -> Location -> List Card
+getCurrentlyPossibleCards allCards unlockedCardsIndexes currentLocation =
+    case allCards of
+        x :: xs ->
+            let
+                remainingList =
+                    getCurrentlyPossibleCards xs unlockedCardsIndexes currentLocation
+            in
+            if List.member x.id unlockedCardsIndexes && List.member currentLocation x.possibleLocation then
+                x :: remainingList
+
+            else
+                remainingList
+
+        [] ->
+            []
 
 
 
@@ -205,10 +240,20 @@ init flags =
     in
     case data of
         Data.Success value ->
-            ( Running Left { resources = startingResources, allCards = value.allCards, unlockedCardIndexes = value.startingCardIndexes, currentDeck = Nothing, location = Location.City, card = Nothing } 0, generateCardIndex value.startingCardIndexes )
+            ( Running Left
+                { resources = startingResources
+                , allCards = value.allCards
+                , unlockedCardIndexes = value.startingCardIndexes
+                , currentCards = getCurrentlyPossibleCards value.allCards value.startingCardIndexes startingLocation
+                , location = startingLocation
+                , card = Nothing
+                }
+                0
+            , generateCardIndex value.startingCardIndexes
+            )
 
         _ ->
-            ( Running Left { resources = startingResources, allCards = [], unlockedCardIndexes = [], currentDeck = Nothing, location = Location.City, card = Nothing } 0, Cmd.none )
+            ( Running Left { resources = startingResources, allCards = [], unlockedCardIndexes = [], currentCards = [], location = startingLocation, card = Nothing } 0, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
