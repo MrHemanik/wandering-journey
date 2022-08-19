@@ -44,7 +44,7 @@ type Msg
 
 
 type alias Game =
-    { resources : Resources, allCards : List Card, possibleCardIndexes : List Int, currentDeck : Maybe (List Card), location : Location, card : Maybe Card }
+    { resources : Resources, allCards : List Card, unlockedCardIndexes : List Int, currentCards : Maybe (List Card), location : Location, card : Maybe Card }
 
 
 type alias JsonData =
@@ -174,16 +174,20 @@ update msg model =
                     ( model, Cmd.none )
 
                 GenerateNewCard ->
-                    ( model, newPossibleCardIndex game.possibleCardIndexes )
+                    ( model, generateCardIndex game.unlockedCardIndexes )
 
 
-newPossibleCardIndex : List Int -> Cmd Msg
-newPossibleCardIndex possibleCardIndexes =
+
+{- Generate an index of a card -}
+
+
+generateCardIndex : List Int -> Cmd Msg
+generateCardIndex unlockedCardIndexes =
     let
         generator listSize =
             Random.int 0 (listSize - 1)
     in
-    Random.generate NewCard (generator (List.length possibleCardIndexes))
+    Random.generate NewCard (generator (List.length unlockedCardIndexes))
 
 
 
@@ -201,10 +205,10 @@ init flags =
     in
     case data of
         Data.Success value ->
-            ( Running Left { resources = startingResources, allCards = value.allCards, possibleCardIndexes = value.startingCardIndexes, currentDeck = Nothing, location = Location.City, card = Nothing } 0, newPossibleCardIndex value.startingCardIndexes )
+            ( Running Left { resources = startingResources, allCards = value.allCards, unlockedCardIndexes = value.startingCardIndexes, currentDeck = Nothing, location = Location.City, card = Nothing } 0, generateCardIndex value.startingCardIndexes )
 
         _ ->
-            ( Running Left { resources = startingResources, allCards = [], possibleCardIndexes = [], currentDeck = Nothing, location = Location.City, card = Nothing } 0, Cmd.none )
+            ( Running Left { resources = startingResources, allCards = [], unlockedCardIndexes = [], currentDeck = Nothing, location = Location.City, card = Nothing } 0, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
