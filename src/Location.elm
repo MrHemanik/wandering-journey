@@ -7,6 +7,7 @@ type Location
     = Desert
     | Forest
     | City
+    | Unknown
 
 
 
@@ -29,5 +30,5 @@ decoder =
                         Decode.succeed City
 
                     _ ->
-                        Decode.fail "Invalid Location"
+                        Decode.succeed Unknown
             )
