@@ -25,7 +25,7 @@ type Key
 
 
 type alias Highscore =
-    String
+    Int
 
 
 type Model
@@ -174,16 +174,16 @@ update msg model =
                     ( model, Cmd.none )
 
                 GenerateNewCard ->
-                    ( model, newPossibleCardIndex game )
+                    ( model, newPossibleCardIndex game.possibleCardIndexes )
 
 
-newPossibleCardIndex : Game -> Cmd Msg
-newPossibleCardIndex game =
+newPossibleCardIndex : List Int -> Cmd Msg
+newPossibleCardIndex possibleCardIndexes =
     let
         generator listSize =
             Random.int 0 (listSize - 1)
     in
-    Random.generate NewCard (generator (List.length game.possibleCardIndexes))
+    Random.generate NewCard (generator (List.length possibleCardIndexes))
 
 
 
@@ -201,13 +201,10 @@ init flags =
     in
     case data of
         Data.Success value ->
-            ( Running Left { resources = startingResources, allCards = value.allCards, possibleCardIndexes = value.startingCardIndexes, currentDeck = Nothing, location = Location.City, card = Nothing } flags, Cmd.none )
+            ( Running Left { resources = startingResources, allCards = value.allCards, possibleCardIndexes = value.startingCardIndexes, currentDeck = Nothing, location = Location.City, card = Nothing } 0, newPossibleCardIndex value.startingCardIndexes )
 
-        Data.Loading ->
-            ( Running Left { resources = startingResources, allCards = [], possibleCardIndexes = [], currentDeck = Nothing, location = Location.City, card = Nothing } "Loading", Cmd.none )
-
-        Data.Failure e ->
-            ( Running Left { resources = startingResources, allCards = [], possibleCardIndexes = [], currentDeck = Nothing, location = Location.City, card = Nothing } (flags ++ Decode.errorToString e), Cmd.none )
+        _ ->
+            ( Running Left { resources = startingResources, allCards = [], possibleCardIndexes = [], currentDeck = Nothing, location = Location.City, card = Nothing } 0, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
