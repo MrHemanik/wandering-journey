@@ -13,7 +13,7 @@
     $.getJSON('cards.json').done(function(json){
         console.log(json);
         var app = Elm.Main.init({
-            flags: Date.now(), <!-- guide.elm-lang.org/interop/flags.html-->
+            flags: JSON.stringify(json), <!-- guide.elm-lang.org/interop/flags.html-->
             node: document.getElementById('elm-app-is-loaded-here')
         });
     })

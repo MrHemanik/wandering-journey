@@ -5171,7 +5171,7 @@ var $author$project$Main$init = function (flags) {
 		A3($author$project$Main$Running, $author$project$Main$Left, $elm$core$Maybe$Nothing, flags),
 		$elm$core$Platform$Cmd$none);
 };
-var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$Main$Key = function (a) {
 	return {$: 'Key', a: a};
 };
@@ -5182,7 +5182,6 @@ var $author$project$Main$R = {$: 'R'};
 var $author$project$Main$Right = {$: 'Right'};
 var $author$project$Main$UnknownKey = {$: 'UnknownKey'};
 var $elm$json$Json$Decode$field = _Json_decodeField;
-var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$Main$keyDecoder = function () {
 	var toKey = function (string) {
 		switch (string) {
@@ -5666,8 +5665,7 @@ var $author$project$Main$view = function (model) {
 						function () {
 						if (model.$ === 'Running') {
 							var num = model.c;
-							return $elm$html$Html$text(
-								$elm$core$String$fromInt(num));
+							return $elm$html$Html$text(num);
 						} else {
 							return $elm$html$Html$text('');
 						}
@@ -5677,4 +5675,4 @@ var $author$project$Main$view = function (model) {
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
-_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$int)(0)}});}(this));
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$string)(0)}});}(this));

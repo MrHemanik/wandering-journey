@@ -35,7 +35,7 @@ type Key
 
 
 type alias Highscore =
-    Int
+    String
 
 
 type Model
@@ -104,7 +104,7 @@ view model =
         , div []
             [ case model of
                 Running _ _ num ->
-                    text (String.fromInt num)
+                    text num
 
                 GameOver _ _ _ ->
                     text ""
@@ -125,7 +125,7 @@ update command model =
 ---- Default functions ----
 
 
-init : Int -> ( Model, Cmd Msg )
+init : String -> ( Model, Cmd Msg )
 init flags =
     ( Running Left Nothing flags, Cmd.none )
 
@@ -135,7 +135,7 @@ subscriptions model =
     Sub.map Key (Browser.Events.onKeyDown keyDecoder)
 
 
-main : Program Int Model Msg
+main : Program String Model Msg
 main =
     Browser.element
         { init = init
