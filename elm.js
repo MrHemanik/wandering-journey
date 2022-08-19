@@ -5159,19 +5159,221 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
+var $author$project$Location$City = {$: 'City'};
 var $author$project$Main$Left = {$: 'Left'};
 var $author$project$Main$Running = F3(
 	function (a, b, c) {
 		return {$: 'Running', a: a, b: b, c: c};
 	});
+var $author$project$Main$JsonData = F2(
+	function (allCards, startingCardIndexes) {
+		return {allCards: allCards, startingCardIndexes: startingCardIndexes};
+	});
+var $author$project$DecodeHelper$apply = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
+var $author$project$Card$Card = function (id) {
+	return function (possibleLocation) {
+		return function (interaction) {
+			return function (mainText) {
+				return function (decisionText1) {
+					return function (decisionText2) {
+						return function (followUpText1) {
+							return function (followUpText2) {
+								return function (resourceChange1) {
+									return function (resourceChange2) {
+										return function (newCards1) {
+											return function (newCards2) {
+												return function (removeCards1) {
+													return function (removeCards2) {
+														return {decisionText1: decisionText1, decisionText2: decisionText2, followUpText1: followUpText1, followUpText2: followUpText2, id: id, interaction: interaction, mainText: mainText, newCards1: newCards1, newCards2: newCards2, possibleLocation: possibleLocation, removeCards1: removeCards1, removeCards2: removeCards2, resourceChange1: resourceChange1, resourceChange2: resourceChange2};
+													};
+												};
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var $author$project$Interaction$Action = {$: 'Action'};
+var $author$project$Interaction$Conversation = {$: 'Conversation'};
+var $elm$json$Json$Decode$andThen = _Json_andThen;
+var $elm$json$Json$Decode$fail = _Json_fail;
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $author$project$Interaction$decoder = A2(
+	$elm$json$Json$Decode$andThen,
+	function (interaction) {
+		switch (interaction) {
+			case 'Conversation':
+				return $elm$json$Json$Decode$succeed($author$project$Interaction$Conversation);
+			case 'Action':
+				return $elm$json$Json$Decode$succeed($author$project$Interaction$Action);
+			default:
+				return $elm$json$Json$Decode$fail('Invalid Interaction');
+		}
+	},
+	$elm$json$Json$Decode$string);
+var $author$project$Location$Desert = {$: 'Desert'};
+var $author$project$Location$Forest = {$: 'Forest'};
+var $author$project$Location$decoder = A2(
+	$elm$json$Json$Decode$andThen,
+	function (loc) {
+		switch (loc) {
+			case 'Desert':
+				return $elm$json$Json$Decode$succeed($author$project$Location$Desert);
+			case 'Forest':
+				return $elm$json$Json$Decode$succeed($author$project$Location$Forest);
+			case 'City':
+				return $elm$json$Json$Decode$succeed($author$project$Location$City);
+			default:
+				return $elm$json$Json$Decode$fail('Invalid Location');
+		}
+	},
+	$elm$json$Json$Decode$string);
+var $author$project$Resources$Resources = F5(
+	function (hunger, thirst, physicalHealth, mentalHealth, money) {
+		return {hunger: hunger, mentalHealth: mentalHealth, money: money, physicalHealth: physicalHealth, thirst: thirst};
+	});
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $elm$json$Json$Decode$map5 = _Json_map5;
+var $author$project$Resources$decoder = A6(
+	$elm$json$Json$Decode$map5,
+	$author$project$Resources$Resources,
+	A2($elm$json$Json$Decode$field, 'hunger', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'thirst', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'physicalHealth', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'mentalHealth', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'money', $elm$json$Json$Decode$int));
+var $elm$json$Json$Decode$list = _Json_decodeList;
+var $author$project$Card$decoder = A2(
+	$author$project$DecodeHelper$apply,
+	A2(
+		$elm$json$Json$Decode$field,
+		'removeCards2',
+		$elm$json$Json$Decode$list($elm$json$Json$Decode$int)),
+	A2(
+		$author$project$DecodeHelper$apply,
+		A2(
+			$elm$json$Json$Decode$field,
+			'removeCards1',
+			$elm$json$Json$Decode$list($elm$json$Json$Decode$int)),
+		A2(
+			$author$project$DecodeHelper$apply,
+			A2(
+				$elm$json$Json$Decode$field,
+				'newCards2',
+				$elm$json$Json$Decode$list($elm$json$Json$Decode$int)),
+			A2(
+				$author$project$DecodeHelper$apply,
+				A2(
+					$elm$json$Json$Decode$field,
+					'newCards1',
+					$elm$json$Json$Decode$list($elm$json$Json$Decode$int)),
+				A2(
+					$author$project$DecodeHelper$apply,
+					A2($elm$json$Json$Decode$field, 'resourceChange2', $author$project$Resources$decoder),
+					A2(
+						$author$project$DecodeHelper$apply,
+						A2($elm$json$Json$Decode$field, 'resourceChange1', $author$project$Resources$decoder),
+						A2(
+							$author$project$DecodeHelper$apply,
+							A2($elm$json$Json$Decode$field, 'followUpText2', $elm$json$Json$Decode$string),
+							A2(
+								$author$project$DecodeHelper$apply,
+								A2($elm$json$Json$Decode$field, 'followUpText1', $elm$json$Json$Decode$string),
+								A2(
+									$author$project$DecodeHelper$apply,
+									A2($elm$json$Json$Decode$field, 'decisionText2', $elm$json$Json$Decode$string),
+									A2(
+										$author$project$DecodeHelper$apply,
+										A2($elm$json$Json$Decode$field, 'decisionText1', $elm$json$Json$Decode$string),
+										A2(
+											$author$project$DecodeHelper$apply,
+											A2($elm$json$Json$Decode$field, 'mainText', $elm$json$Json$Decode$string),
+											A2(
+												$author$project$DecodeHelper$apply,
+												A2($elm$json$Json$Decode$field, 'interaction', $author$project$Interaction$decoder),
+												A2(
+													$author$project$DecodeHelper$apply,
+													A2(
+														$elm$json$Json$Decode$field,
+														'possibleLocation',
+														$elm$json$Json$Decode$list($author$project$Location$decoder)),
+													A2(
+														$author$project$DecodeHelper$apply,
+														A2($elm$json$Json$Decode$field, 'id', $elm$json$Json$Decode$int),
+														$elm$json$Json$Decode$succeed($author$project$Card$Card)))))))))))))));
+var $author$project$Main$dataDecoder = A2(
+	$author$project$DecodeHelper$apply,
+	A2(
+		$elm$json$Json$Decode$field,
+		'startingCards',
+		$elm$json$Json$Decode$list($elm$json$Json$Decode$int)),
+	A2(
+		$author$project$DecodeHelper$apply,
+		A2(
+			$elm$json$Json$Decode$field,
+			'cards',
+			$elm$json$Json$Decode$list($author$project$Card$decoder)),
+		$elm$json$Json$Decode$succeed($author$project$Main$JsonData)));
+var $elm$json$Json$Decode$decodeString = _Json_runOnString;
+var $author$project$Data$Failure = function (a) {
+	return {$: 'Failure', a: a};
+};
+var $author$project$Data$Success = function (a) {
+	return {$: 'Success', a: a};
+};
+var $author$project$Data$fromResult = function (result) {
+	if (result.$ === 'Ok') {
+		var value = result.a;
+		return $author$project$Data$Success(value);
+	} else {
+		var e = result.a;
+		return $author$project$Data$Failure(e);
+	}
+};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$Main$startingResources = {hunger: 100, mentalHealth: 100, money: 100, physicalHealth: 100, thirst: 100};
 var $author$project$Main$init = function (flags) {
-	return _Utils_Tuple2(
-		A3($author$project$Main$Running, $author$project$Main$Left, $elm$core$Maybe$Nothing, flags),
-		$elm$core$Platform$Cmd$none);
+	var dataResponse = A2($elm$json$Json$Decode$decodeString, $author$project$Main$dataDecoder, flags);
+	var data = $author$project$Data$fromResult(dataResponse);
+	switch (data.$) {
+		case 'Success':
+			var value = data.a;
+			return _Utils_Tuple2(
+				A3(
+					$author$project$Main$Running,
+					$author$project$Main$Left,
+					{allCards: value.allCards, card: $elm$core$Maybe$Nothing, currentDeck: $elm$core$Maybe$Nothing, location: $author$project$Location$City, possibleCardIndexes: value.startingCardIndexes, resources: $author$project$Main$startingResources},
+					flags),
+				$elm$core$Platform$Cmd$none);
+		case 'Loading':
+			return _Utils_Tuple2(
+				A3(
+					$author$project$Main$Running,
+					$author$project$Main$Left,
+					{allCards: _List_Nil, card: $elm$core$Maybe$Nothing, currentDeck: $elm$core$Maybe$Nothing, location: $author$project$Location$City, possibleCardIndexes: _List_Nil, resources: $author$project$Main$startingResources},
+					'Loading'),
+				$elm$core$Platform$Cmd$none);
+		default:
+			var e = data.a;
+			return _Utils_Tuple2(
+				A3(
+					$author$project$Main$Running,
+					$author$project$Main$Left,
+					{allCards: _List_Nil, card: $elm$core$Maybe$Nothing, currentDeck: $elm$core$Maybe$Nothing, location: $author$project$Location$City, possibleCardIndexes: _List_Nil, resources: $author$project$Main$startingResources},
+					_Utils_ap(
+						flags,
+						$elm$json$Json$Decode$errorToString(e))),
+				$elm$core$Platform$Cmd$none);
+	}
 };
-var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$Main$Key = function (a) {
 	return {$: 'Key', a: a};
 };
@@ -5181,7 +5383,6 @@ var $author$project$Main$ChoiceKey = function (a) {
 var $author$project$Main$R = {$: 'R'};
 var $author$project$Main$Right = {$: 'Right'};
 var $author$project$Main$UnknownKey = {$: 'UnknownKey'};
-var $elm$json$Json$Decode$field = _Json_decodeField;
 var $author$project$Main$keyDecoder = function () {
 	var toKey = function (string) {
 		switch (string) {
@@ -5613,6 +5814,27 @@ var $author$project$Main$update = F2(
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $author$project$Card$getCardByIndex = F2(
+	function (list, id) {
+		getCardByIndex:
+		while (true) {
+			if (!list.b) {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (_Utils_eq(x.id, id)) {
+					return $elm$core$Maybe$Just(x);
+				} else {
+					var $temp$list = xs,
+						$temp$id = id;
+					list = $temp$list;
+					id = $temp$id;
+					continue getCardByIndex;
+				}
+			}
+		}
+	});
 var $elm$html$Html$Attributes$height = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -5664,8 +5886,30 @@ var $author$project$Main$view = function (model) {
 					[
 						function () {
 						if (model.$ === 'Running') {
+							var game = model.b;
 							var num = model.c;
-							return $elm$html$Html$text(num);
+							return A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(num),
+										A2(
+										$elm$html$Html$div,
+										_List_Nil,
+										_List_fromArray(
+											[
+												function () {
+												var a = A2($author$project$Card$getCardByIndex, game.allCards, 0);
+												if (a.$ === 'Just') {
+													var c = a.a;
+													return $elm$html$Html$text(c.mainText);
+												} else {
+													return $elm$html$Html$text('');
+												}
+											}()
+											]))
+									]));
 						} else {
 							return $elm$html$Html$text('');
 						}

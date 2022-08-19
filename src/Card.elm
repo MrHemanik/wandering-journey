@@ -1,4 +1,4 @@
-module Card exposing (Card, decoder)
+module Card exposing (Card, decoder, getCardByIndex)
 
 import DecodeHelper
 import Interaction exposing (Interaction)

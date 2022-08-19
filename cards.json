@@ -3,32 +3,32 @@
   "cards" : [{
     "id":0,
     "possibleLocation": ["City"],
-    "interaction":"conversation",
+    "interaction":"Conversation",
     "mainText":"There is a merchant offering you food, do you buy it?",
     "decisionText1":"Buy some food",
     "decisionText2":"Walk away",
     "followUpText1":"You bought some food from the merchant",
     "followUpText2":"",
-    "resourceChange1": [1, 0, 0, 0, -1],
-    "resourceChange2": [0, 0, 0, 0, 0],
-    "newCards1":"",
-    "newCards2":"",
-    "removeCards1":"",
-    "removeCards2":""
+    "resourceChange1": {"hunger":1, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":-1},
+    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
+    "newCards1":[],
+    "newCards2":[],
+    "removeCards1":[],
+    "removeCards2":[]
   }, {
     "id":1,
     "possibleLocation": ["City"],
-    "interaction":"conversation",
+    "interaction":"Conversation",
     "mainText":"A thief is ambushing you",
     "decisionText1":"Give him your money",
     "decisionText2":"Fight back",
     "followUpText1":"You gave the thief money",
     "followUpText2":"",
-    "resourceChange1": [0, 0, 0, 0, -3],
-    "resourceChange2": [0, 0, 0, 0, 0],
-    "newCards1":"",
-    "newCards2":"",
-    "removeCards1":"",
-    "removeCards2":""
+    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":-3},
+    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
+    "newCards1":[],
+    "newCards2":[],
+    "removeCards1":[],
+    "removeCards2":[]
   }]
 }

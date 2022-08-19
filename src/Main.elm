@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser
 import Browser.Events
 import Card exposing (Card)
+import Data
 import DecodeHelper
 import Html exposing (Html, div, img, text)
 import Html.Attributes exposing (height, src, width)
@@ -39,8 +40,8 @@ type alias Highscore =
 
 
 type Model
-    = GameOver DeathCause (Maybe Game) Highscore
-    | Running Choice (Maybe Game) Highscore
+    = GameOver DeathCause Game Highscore
+    | Running Choice Game Highscore
 
 
 
@@ -53,10 +54,10 @@ type Msg
 
 
 type alias Game =
-    { resources : Resources, allCards : List Card, possibleCardIndexes : List Int, currentDeck : List Card, location : Location, card : Maybe Card }
+    { resources : Resources, allCards : List Card, possibleCardIndexes : List Int, currentDeck : Maybe (List Card), location : Location, card : Maybe Card }
 
 
-type alias Data =
+type alias JsonData =
     { allCards : List Card, startingCardIndexes : List Int }
 
 
@@ -84,9 +85,9 @@ keyDecoder =
     Decode.map toKey (Decode.field "key" Decode.string)
 
 
-dataDecoder : Decoder Data
+dataDecoder : Decoder JsonData
 dataDecoder =
-    Decode.succeed Data
+    Decode.succeed JsonData
         |> DecodeHelper.apply (Decode.field "cards" (Decode.list Card.decoder))
         |> DecodeHelper.apply (Decode.field "startingCards" (Decode.list Decode.int))
 
@@ -103,8 +104,22 @@ view model =
         [ img [ src "src/Img1.png", width 300, height 300 ] []
         , div []
             [ case model of
-                Running _ _ num ->
-                    text num
+                Running _ game num ->
+                    div []
+                        [ text num
+                        , div []
+                            [ let
+                                a =
+                                    Card.getCardByIndex game.allCards 0
+                              in
+                              case a of
+                                Just c ->
+                                    text c.mainText
+
+                                _ ->
+                                    text ""
+                            ]
+                        ]
 
                 GameOver _ _ _ ->
                     text ""
@@ -127,7 +142,22 @@ update command model =
 
 init : String -> ( Model, Cmd Msg )
 init flags =
-    ( Running Left Nothing flags, Cmd.none )
+    let
+        dataResponse =
+            Decode.decodeString dataDecoder flags
+
+        data =
+            Data.fromResult dataResponse
+    in
+    case data of
+        Data.Success value ->
+            ( Running Left { resources = startingResources, allCards = value.allCards, possibleCardIndexes = value.startingCardIndexes, currentDeck = Nothing, location = Location.City, card = Nothing } flags, Cmd.none )
+
+        Data.Loading ->
+            ( Running Left { resources = startingResources, allCards = [], possibleCardIndexes = [], currentDeck = Nothing, location = Location.City, card = Nothing } "Loading", Cmd.none )
+
+        Data.Failure e ->
+            ( Running Left { resources = startingResources, allCards = [], possibleCardIndexes = [], currentDeck = Nothing, location = Location.City, card = Nothing } (flags ++ Decode.errorToString e), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
