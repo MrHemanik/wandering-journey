@@ -5,7 +5,8 @@ import Browser.Events
 import Card exposing (Card)
 import Data
 import DecodeHelper
-import Html exposing (Html, div, text)
+import Html exposing (Html, button, div, text)
+import Html.Events exposing (onClick)
 import Json.Decode as Decode exposing (Decoder)
 import Location exposing (Location)
 import Random
@@ -39,6 +40,7 @@ type Model
 type Msg
     = Key Key
     | NewCard Int
+    | GenerateNewCard
 
 
 type alias Game =
@@ -102,11 +104,7 @@ view model =
                 Running _ game _ ->
                     div []
                         [ div []
-                            [ let
-                                a =
-                                    Card.getCardByIndex game.allCards 0
-                              in
-                              case a of
+                            [ case game.card of
                                 Just c ->
                                     text c.mainText
 
@@ -118,6 +116,7 @@ view model =
                 GameOver _ _ ->
                     text ""
             ]
+        , button [ onClick GenerateNewCard ] [ text "New Card" ]
         ]
 
 
@@ -178,10 +177,13 @@ update msg model =
         Running choice game highscore ->
             case msg of
                 NewCard int ->
-                    ( Running choice { game | card = Card.getCardByIndex game.allCards int } highscore, newPossibleCardIndex game )
+                    ( Running choice { game | card = Card.getCardByIndex game.allCards int } highscore, Cmd.none )
 
                 Key key ->
                     ( model, Cmd.none )
+
+                GenerateNewCard ->
+                    ( model, newPossibleCardIndex game )
 
 
 
