@@ -4,7 +4,7 @@ import Browser
 import Browser.Events
 import Card exposing (Card)
 import DecodeHelper
-import Html exposing (Html, div, img)
+import Html exposing (Html, div, img, text)
 import Html.Attributes exposing (height, src, width)
 import Json.Decode as Decode exposing (Decoder)
 import Location exposing (Location)
@@ -100,8 +100,15 @@ dataDecoder =
 view : Model -> Html Msg
 view model =
     div []
-        [ img [ src "Img1.png", width 300, height 300 ] []
-        , div [] []
+        [ img [ src "src/Img1.png", width 300, height 300 ] []
+        , div []
+            [ case model of
+                Running _ _ num ->
+                    text (String.fromInt num)
+
+                GameOver _ _ _ ->
+                    text ""
+            ]
         ]
 
 
@@ -118,9 +125,9 @@ update command model =
 ---- Default functions ----
 
 
-init : Maybe String -> ( Model, Cmd Msg )
+init : Int -> ( Model, Cmd Msg )
 init flags =
-    ( Running Left Nothing 0, Cmd.none )
+    ( Running Left Nothing flags, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -128,10 +135,10 @@ subscriptions model =
     Sub.map Key (Browser.Events.onKeyDown keyDecoder)
 
 
-main : Program (Maybe String) Model Msg
+main : Program Int Model Msg
 main =
     Browser.element
-        { init = \_ -> init Nothing
+        { init = init
         , subscriptions = subscriptions
         , view = view
         , update = update

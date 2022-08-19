@@ -5166,11 +5166,12 @@ var $author$project$Main$Running = F3(
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Main$init = function (playerName) {
+var $author$project$Main$init = function (flags) {
 	return _Utils_Tuple2(
-		A3($author$project$Main$Running, $author$project$Main$Left, $elm$core$Maybe$Nothing, 0),
+		A3($author$project$Main$Running, $author$project$Main$Left, $elm$core$Maybe$Nothing, flags),
 		$elm$core$Platform$Cmd$none);
 };
+var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $author$project$Main$Key = function (a) {
 	return {$: 'Key', a: a};
 };
@@ -5634,6 +5635,8 @@ var $elm$html$Html$Attributes$src = function (url) {
 		'src',
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$html$Html$Attributes$width = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -5650,22 +5653,28 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$img,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$src('Img1.png'),
+						$elm$html$Html$Attributes$src('src/Img1.png'),
 						$elm$html$Html$Attributes$width(300),
 						$elm$html$Html$Attributes$height(300)
 					]),
 				_List_Nil),
-				A2($elm$html$Html$div, _List_Nil, _List_Nil)
+				A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						function () {
+						if (model.$ === 'Running') {
+							var num = model.c;
+							return $elm$html$Html$text(
+								$elm$core$String$fromInt(num));
+						} else {
+							return $elm$html$Html$text('');
+						}
+					}()
+					]))
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
-	{
-		init: function (_v0) {
-			return $author$project$Main$init('');
-		},
-		subscriptions: $author$project$Main$subscriptions,
-		update: $author$project$Main$update,
-		view: $author$project$Main$view
-	});
-_Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
+	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$int)(0)}});}(this));
