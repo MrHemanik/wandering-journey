@@ -1,4 +1,4 @@
-module Location exposing (Location(..), decoder)
+module Location exposing (Location(..), decoder, toText)
 
 import Json.Decode as Decode exposing (Decoder)
 
@@ -32,3 +32,19 @@ decoder =
                     _ ->
                         Decode.succeed Unknown
             )
+
+
+toText : Location -> String
+toText location =
+    case location of
+        Desert ->
+            "Desert"
+
+        Forest ->
+            "Forest"
+
+        City ->
+            "City"
+
+        _ ->
+            "Unknown"

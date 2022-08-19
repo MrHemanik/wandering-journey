@@ -109,26 +109,26 @@ view model =
                     text (viewDeathMessage game.resources)
 
                 Running _ game _ ->
-                    text (viewResources game.resources)
-            ]
-        , div []
-            [ case model of
-                Running _ game _ ->
                     div []
-                        [ div []
+                        [ div [] [ text (viewResources game.resources) ]
+                        , div [] [ text ("You currently are in: " ++ Location.toText game.location) ]
+                        , div []
                             [ case game.card of
                                 Just c ->
-                                    text c.mainText
+                                    div []
+                                        [ text c.mainText
+                                        , div []
+                                            [ button [ onClick (Key (ChoiceKey Left)) ] [ text c.decisionText1 ]
+                                            , button [ onClick (Key (ChoiceKey Right)) ] [ text c.decisionText2 ]
+                                            ]
+                                        ]
 
                                 _ ->
                                     text ""
                             ]
                         ]
-
-                GameOver _ _ ->
-                    text ""
             ]
-        , button [ onClick GenerateNewCard ] [ text "New Card" ]
+        , button [ onClick GenerateNewCard ] [ text "Temporary: New Card" ]
         ]
 
 
@@ -174,7 +174,7 @@ viewDeathMessage resources =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case model of
-        GameOver game highscore ->
+        GameOver _ highscore ->
             ( model, Cmd.none )
 
         Running choice game highscore ->
