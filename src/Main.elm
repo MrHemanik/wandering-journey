@@ -5,7 +5,7 @@ import Browser.Events
 import Card exposing (Card)
 import Data
 import DecodeHelper
-import Element exposing (Element, alpha, centerX, centerY, clip, el, fill, height, image, inFront, layout, none, padding, px, width)
+import Element exposing (Element, alpha, centerX, centerY, clip, el, fill, height, image, inFront, layout, none, padding, px, spaceEvenly, spacing, width)
 import Element.Background as Background
 import Element.Input
 import Html exposing (Html)
@@ -120,46 +120,24 @@ view model =
                     Element.text (viewDeathMessage game.resources)
 
                 Running _ _ _ ->
-                    Element.column [ width fill, height fill ]
+                    Element.column [ width (px 800), height fill, padding 20, spacing 10 ]
                         [ Element.text (viewResources game.resources)
                         , Element.text ("You're currently in " ++ Location.toText game.location)
                         , case game.card of
                             Just c ->
-                                Element.paragraph []
+                                Element.column [ width fill ]
                                     [ Element.text c.mainText
-                                    , Element.paragraph []
-                                        [ Element.Input.button [] { onPress = Just (Key (ChoiceKey Left)), label = Element.text c.decisionText1 }
-                                        , Element.Input.button [] { onPress = Just (Key (ChoiceKey Right)), label = Element.text c.decisionText2 }
+                                    , Element.wrappedRow [ width fill ]
+                                        [ Element.el [] Element.none
+                                        , Element.Input.button [ Element.alignLeft ] { onPress = Just (Key (ChoiceKey Left)), label = Element.text c.decisionText1 } -- TODO: Make alignment work https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/Element
+                                        , Element.Input.button [ Element.alignRight ] { onPress = Just (Key (ChoiceKey Right)), label = Element.text c.decisionText2 }
                                         ]
                                     ]
 
                             Nothing ->
-                                none
+                                Element.none
                         , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Temporary: New Card" }
                         ]
-
-
-
-{-
-   , div []
-       [ div [] [ text (viewResources game.resources) ]
-       , div []
-           [ case game.card of
-               Just c ->
-                   div []
-                       [ text c.mainText
-                       , div []
-                           [ button [ onClick (Key (ChoiceKey Left)) ] [ text c.decisionText1 ]
-                           , button [ onClick (Key (ChoiceKey Right)) ] [ text c.decisionText2 ]
-                           ]
-                       ]
-
-               _ ->
-                   text ""
-           ]
-       ]
-   , button [ onClick GenerateNewCard ] [ text "Temporary: New Card" ]
--}
 
 
 viewBackground : Location -> Element Msg -> Html Msg
@@ -171,18 +149,9 @@ viewBackground location content =
             , height fill
             , clip
             , padding 20
-            , inFront <|
-                image [ alpha 0, width fill ]
-                    { description = "Vertical image"
-                    , src = Location.toImageUrl location
-                    }
             ]
         <|
             content
-
-
-
---(image [] { src = Location.toImageUrl location, description = "" })
 
 
 viewResources : Resources -> String
