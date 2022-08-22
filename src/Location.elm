@@ -52,8 +52,4 @@ toText location =
 
 toImageUrl : Location -> String
 toImageUrl location =
-    "src/img/forest.png"
-
-
-
---TODO
+    "src/img/" ++ toText location ++ ".png"

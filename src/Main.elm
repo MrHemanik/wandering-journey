@@ -5,8 +5,8 @@ import Browser.Events
 import Card exposing (Card)
 import Data
 import DecodeHelper
-import Element exposing (Element, alpha, centerX, centerY, clip, el, fill, height, image, inFront, layout, none, padding, px, spaceEvenly, spacing, width)
-import Element.Background as Background
+import Element exposing (Element, alpha, centerX, centerY, clip, el, fill, height, image, inFront, layout, none, padding, px, rgb255, spaceEvenly, spacing, width)
+import Element.Background as Background exposing (color)
 import Element.Input
 import Html exposing (Html)
 import Json.Decode as Decode exposing (Decoder)
@@ -114,7 +114,7 @@ view model =
                     gameState
     in
     viewBackground game.location <|
-        el [ centerX, centerY ] <|
+        el [ centerX, centerY, Background.color (rgb255 0xFF 0xFF 0xFF) ] <|
             case model of
                 GameOver _ _ ->
                     Element.text (viewDeathMessage game.resources)
