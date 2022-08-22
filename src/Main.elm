@@ -121,16 +121,15 @@ view model =
 
                 Running _ _ _ ->
                     Element.column [ width (px 800), height fill, padding 20, spacing 10 ]
-                        [ Element.text (viewResources game.resources)
-                        , Element.text ("You're currently in " ++ Location.toText game.location)
+                        [ wrapText (viewResources game.resources)
+                        , wrapText ("You're currently in " ++ Location.toText game.location)
                         , case game.card of
                             Just c ->
                                 Element.column [ width fill ]
-                                    [ Element.text c.mainText
-                                    , Element.wrappedRow [ width fill ]
-                                        [ Element.el [] Element.none
-                                        , Element.Input.button [ Element.alignLeft ] { onPress = Just (Key (ChoiceKey Left)), label = Element.text c.decisionText1 } -- TODO: Make alignment work https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/Element
-                                        , Element.Input.button [ Element.alignRight ] { onPress = Just (Key (ChoiceKey Right)), label = Element.text c.decisionText2 }
+                                    [ wrapText c.mainText
+                                    , Element.wrappedRow [ width fill, spaceEvenly ]
+                                        [ Element.Input.button [ Element.alignLeft, Element.width (Element.minimum 100 fill) ] { onPress = Just (Key (ChoiceKey Left)), label = wrapText c.decisionText1 }
+                                        , Element.Input.button [ Element.alignRight ] { onPress = Just (Key (ChoiceKey Right)), label = wrapText c.decisionText2 }
                                         ]
                                     ]
 
@@ -246,6 +245,15 @@ getCurrentlyPossibleCards allCards unlockedCardsIndexes currentLocation =
 
         [] ->
             []
+
+
+
+---- Helper Function ----
+
+
+wrapText : String -> Element Msg
+wrapText text =
+    Element.paragraph [] [ Element.text text ]
 
 
 
