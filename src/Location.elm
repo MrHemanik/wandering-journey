@@ -1,4 +1,4 @@
-module Location exposing (Location(..), decoder, toText)
+module Location exposing (Location(..), decoder, toImageUrl, toText)
 
 import Json.Decode as Decode exposing (Decoder)
 
@@ -48,3 +48,12 @@ toText location =
 
         _ ->
             "Unknown"
+
+
+toImageUrl : Location -> String
+toImageUrl location =
+    "src/img/forest.png"
+
+
+
+--TODO

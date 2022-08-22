@@ -5,7 +5,10 @@ import Browser.Events
 import Card exposing (Card)
 import Data
 import DecodeHelper
+import Element exposing (Element, centerX, centerY, el, fill, height, image, layout, padding, px, width)
+import Element.Background as Background
 import Html exposing (Html, button, div, text)
+import Html.Attributes exposing (src)
 import Html.Events exposing (onClick)
 import Json.Decode as Decode exposing (Decoder)
 import Location exposing (Location)
@@ -102,34 +105,62 @@ dataDecoder =
 
 view : Model -> Html Msg
 view model =
+    let
+        game =
+            case model of
+                GameOver gameState _ ->
+                    gameState
+
+                Running _ gameState _ ->
+                    gameState
+    in
     div []
-        [ div []
+        [ viewBackground game.location
+        , div []
             [ case model of
-                GameOver game _ ->
+                GameOver _ _ ->
                     text (viewDeathMessage game.resources)
 
-                Running _ game _ ->
-                    div []
-                        [ div [] [ text (viewResources game.resources) ]
-                        , div [] [ text ("You currently are in: " ++ Location.toText game.location) ]
-                        , div []
-                            [ case game.card of
-                                Just c ->
-                                    div []
-                                        [ text c.mainText
-                                        , div []
-                                            [ button [ onClick (Key (ChoiceKey Left)) ] [ text c.decisionText1 ]
-                                            , button [ onClick (Key (ChoiceKey Right)) ] [ text c.decisionText2 ]
-                                            ]
-                                        ]
-
-                                _ ->
-                                    text ""
+                _ ->
+                    text ""
+            ]
+        , div []
+            [ div [] [ text (viewResources game.resources) ]
+            , div []
+                [ case game.card of
+                    Just c ->
+                        div []
+                            [ text c.mainText
+                            , div []
+                                [ button [ onClick (Key (ChoiceKey Left)) ] [ text c.decisionText1 ]
+                                , button [ onClick (Key (ChoiceKey Right)) ] [ text c.decisionText2 ]
+                                ]
                             ]
-                        ]
+
+                    _ ->
+                        text ""
+                ]
             ]
         , button [ onClick GenerateNewCard ] [ text "Temporary: New Card" ]
         ]
+
+
+viewBackground : Location -> Html Msg
+viewBackground location =
+    layout [ width fill, height fill ] <|
+        el
+            [ Background.tiled (Location.toImageUrl location)
+            , width fill
+            , height fill
+            , padding 20
+            ]
+        <|
+            el [ centerX, centerY ] <|
+                Element.text ("You're currently in " ++ Location.toText location)
+
+
+
+--(image [] { src = Location.toImageUrl location, description = "" })
 
 
 viewResources : Resources -> String
