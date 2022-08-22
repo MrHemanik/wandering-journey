@@ -7,9 +7,8 @@ import Data
 import DecodeHelper
 import Element exposing (Element, alpha, centerX, centerY, clip, el, fill, height, image, inFront, layout, none, padding, px, width)
 import Element.Background as Background
-import Html exposing (Html, button, div, text)
-import Html.Attributes exposing (src)
-import Html.Events exposing (onClick)
+import Element.Input
+import Html exposing (Html)
 import Json.Decode as Decode exposing (Decoder)
 import Location exposing (Location)
 import Random
@@ -116,18 +115,32 @@ view model =
     in
     viewBackground game.location <|
         el [ centerX, centerY ] <|
-            Element.text ("You're currently in " ++ Location.toText game.location)
+            case model of
+                GameOver _ _ ->
+                    Element.text (viewDeathMessage game.resources)
+
+                Running _ _ _ ->
+                    Element.column [ width fill, height fill ]
+                        [ Element.text (viewResources game.resources)
+                        , Element.text ("You're currently in " ++ Location.toText game.location)
+                        , case game.card of
+                            Just c ->
+                                Element.paragraph []
+                                    [ Element.text c.mainText
+                                    , Element.paragraph []
+                                        [ Element.Input.button [] { onPress = Just (Key (ChoiceKey Left)), label = Element.text c.decisionText1 }
+                                        , Element.Input.button [] { onPress = Just (Key (ChoiceKey Right)), label = Element.text c.decisionText2 }
+                                        ]
+                                    ]
+
+                            Nothing ->
+                                none
+                        , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Temporary: New Card" }
+                        ]
 
 
 
-{- , div []
-       [ case model of
-           GameOver _ _ ->
-               text (viewDeathMessage game.resources)
-
-           _ ->
-               text ""
-       ]
+{-
    , div []
        [ div [] [ text (viewResources game.resources) ]
        , div []
