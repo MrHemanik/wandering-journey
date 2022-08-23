@@ -1,5 +1,6 @@
 module Card exposing (Card, decoder, getCardByIndex)
 
+import Array
 import DecodeHelper
 import Interaction exposing (Interaction)
 import Json.Decode as Decode exposing (Decoder)
@@ -45,14 +46,5 @@ decoder =
 
 
 getCardByIndex : List Card -> Int -> Maybe Card
-getCardByIndex list id =
-    case list of
-        [] ->
-            Nothing
-
-        x :: xs ->
-            if x.id == id then
-                Just x
-
-            else
-                getCardByIndex xs id
+getCardByIndex list index =
+    Array.get index (Array.fromList list)
