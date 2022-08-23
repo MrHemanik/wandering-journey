@@ -18,6 +18,7 @@ import Resources exposing (Resources)
 type Choice
     = Left
     | Right
+    | None
 
 
 type Key
@@ -59,6 +60,10 @@ type alias JsonData =
 
 startingResources =
     { hunger = 100, thirst = 100, physicalHealth = 100, mentalHealth = 100, money = 100 }
+
+
+emptyResources =
+    { hunger = 0, thirst = 0, physicalHealth = 0, mentalHealth = 0, money = 0 }
 
 
 startingLocation =
@@ -201,7 +206,7 @@ update msg model =
         Running choice game highscore ->
             case msg of
                 NewCard newCardIndex ->
-                    ( Running choice { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
+                    ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
 
                 Key key ->
                     ( processKey key model, Cmd.none )
@@ -219,13 +224,73 @@ processKey key model =
                     model
 
                 Running _ game highscore ->
-                    Running choice game highscore
+                    Running choice
+                        { game
+                            | resources = calculateResourcesOnChoice game.resources choice game.location game.card
+                            , unlockedCardIndexes = calculateUnlockedCardIndexes game.unlockedCardIndexes choice game.card
+                        }
+                        (highscore + 100)
 
         R ->
             model
 
         UnknownKey ->
             model
+
+
+calculateResourcesOnChoice : Resources -> Choice -> Location -> Maybe Card -> Resources
+calculateResourcesOnChoice resources choice location maybeCard =
+    case maybeCard of
+        Nothing ->
+            resources
+
+        Just card ->
+            let
+                calcResources =
+                    case choice of
+                        Left ->
+                            card.resourceChange1
+
+                        Right ->
+                            card.resourceChange2
+
+                        None ->
+                            emptyResources
+            in
+            Resources.combine resources calcResources |> Resources.combine (Location.toResourceDrain location)
+
+
+calculateUnlockedCardIndexes : List Int -> Choice -> Maybe Card -> List Int
+calculateUnlockedCardIndexes uci choice maybeCard =
+    case maybeCard of
+        Nothing ->
+            uci
+
+        Just card ->
+            let
+                newIndexes =
+                    case choice of
+                        Left ->
+                            card.newCards1
+
+                        Right ->
+                            card.newCards2
+
+                        None ->
+                            []
+
+                removeIndexes =
+                    case choice of
+                        Left ->
+                            card.removeCards1
+
+                        Right ->
+                            card.removeCards2
+
+                        None ->
+                            []
+            in
+            List.filter (\a -> not (List.member a removeIndexes)) uci ++ newIndexes
 
 
 

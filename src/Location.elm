@@ -1,4 +1,4 @@
-module Location exposing (Location(..), decoder, toImageUrl, toText)
+module Location exposing (Location(..), decoder, toImageUrl, toResourceDrain, toText)
 
 import Json.Decode as Decode exposing (Decoder)
 import Resources exposing (Resources)
