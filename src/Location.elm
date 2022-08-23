@@ -1,6 +1,7 @@
 module Location exposing (Location(..), decoder, toImageUrl, toText)
 
 import Json.Decode as Decode exposing (Decoder)
+import Resources exposing (Resources)
 
 
 type Location
@@ -53,3 +54,21 @@ toText location =
 toImageUrl : Location -> String
 toImageUrl location =
     "src/img/" ++ toText location ++ ".png"
+
+
+toResourceDrain :
+    Location
+    -> Resources -- Resources that get removed after a card from that location is played
+toResourceDrain location =
+    case location of
+        Desert ->
+            { hunger = -2, thirst = -2, physicalHealth = 0, mentalHealth = -1, money = 0 }
+
+        Forest ->
+            { hunger = -1, thirst = -2, physicalHealth = 0, mentalHealth = -1, money = 0 }
+
+        City ->
+            { hunger = -1, thirst = -1, physicalHealth = 0, mentalHealth = 1, money = 0 }
+
+        _ ->
+            { hunger = 0, thirst = 0, physicalHealth = 0, mentalHealth = 0, money = 0 }
