@@ -195,7 +195,7 @@ viewDeathMessage resources =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case model of
-        GameOver _ highscore ->
+        GameOver _ _ ->
             ( model, Cmd.none )
 
         Running choice game highscore ->
@@ -204,10 +204,28 @@ update msg model =
                     ( Running choice { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
 
                 Key key ->
-                    ( model, Cmd.none )
+                    ( processKey key model, Cmd.none )
 
                 GenerateNewCard ->
-                    ( model, generateCard game.currentCards )
+                    ( model, generateCard <| List.length game.currentCards )
+
+
+processKey : Key -> Model -> Model
+processKey key model =
+    case key of
+        ChoiceKey choice ->
+            case model of
+                GameOver _ _ ->
+                    model
+
+                Running _ game highscore ->
+                    Running choice game highscore
+
+        R ->
+            model
+
+        UnknownKey ->
+            model
 
 
 
@@ -215,13 +233,13 @@ update msg model =
 {- Generate an index of a card -}
 
 
-generateCard : List Card -> Cmd Msg
-generateCard currentCards =
+generateCard : Int -> Cmd Msg
+generateCard length =
     let
-        generator listSize =
-            Random.int 0 (listSize - 1)
+        generator =
+            Random.int 0 (length - 1)
     in
-    Random.generate NewCard (generator (List.length currentCards))
+    Random.generate NewCard generator
 
 
 
@@ -284,7 +302,7 @@ init flags =
                 , card = Nothing
                 }
                 0
-            , generateCard currentCards
+            , generateCard <| List.length currentCards
             )
 
         _ ->
