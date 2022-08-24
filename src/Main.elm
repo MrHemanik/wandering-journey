@@ -124,19 +124,35 @@ view model =
                 GameOver _ _ ->
                     Element.text (viewDeathMessage game.resources)
 
-                Running _ _ _ ->
+                Running choice _ _ ->
                     Element.column [ width (px 800), height fill, padding 20, spacing 10 ]
                         [ wrapText (viewResources game.resources)
                         , wrapText ("You're currently in " ++ Location.toText game.location)
                         , case game.card of
                             Just c ->
-                                Element.column [ width fill ]
-                                    [ wrapText c.mainText
-                                    , Element.wrappedRow [ width fill, spaceEvenly ]
-                                        [ Element.Input.button [ Element.alignLeft, Element.width (Element.minimum 100 fill) ] { onPress = Just (Key (ChoiceKey Left)), label = wrapText c.decisionText1 }
-                                        , Element.Input.button [ Element.alignRight ] { onPress = Just (Key (ChoiceKey Right)), label = wrapText c.decisionText2 }
-                                        ]
-                                    ]
+                                case choice of
+                                    None ->
+                                        Element.column [ width fill ]
+                                            [ wrapText c.mainText
+                                            , Element.wrappedRow [ width fill, spaceEvenly ]
+                                                [ Element.Input.button [ Element.alignLeft, Element.width (Element.minimum 100 fill) ] { onPress = Just (Key (ChoiceKey Left)), label = wrapText c.decisionText1 }
+                                                , Element.Input.button [ Element.alignRight ] { onPress = Just (Key (ChoiceKey Right)), label = wrapText c.decisionText2 }
+                                                ]
+                                            ]
+
+                                    Left ->
+                                        Element.column [ width fill ]
+                                            [ wrapText c.mainText
+                                            , wrapText c.followUpText1
+                                            , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
+                                            ]
+
+                                    Right ->
+                                        Element.column [ width fill ]
+                                            [ wrapText c.mainText
+                                            , wrapText c.followUpText2
+                                            , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
+                                            ]
 
                             Nothing ->
                                 Element.none
@@ -206,7 +222,7 @@ update msg model =
         Running choice game highscore ->
             case msg of
                 NewCard newCardIndex ->
-                    ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
+                    Debug.log (String.fromInt newCardIndex) ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
 
                 Key key ->
                     ( processKey key model, Cmd.none )
@@ -224,10 +240,15 @@ processKey key model =
                     model
 
                 Running _ game highscore ->
+                    let
+                        newUnlockedCardIndexes =
+                            calculateUnlockedCardIndexes game.unlockedCardIndexes choice game.card
+                    in
                     Running choice
                         { game
                             | resources = calculateResourcesOnChoice game.resources choice game.location game.card
-                            , unlockedCardIndexes = calculateUnlockedCardIndexes game.unlockedCardIndexes choice game.card
+                            , unlockedCardIndexes = newUnlockedCardIndexes
+                            , currentCards = getCurrentlyPossibleCards game.allCards newUnlockedCardIndexes game.location
                         }
                         (highscore + 100)
 

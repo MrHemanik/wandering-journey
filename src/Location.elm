@@ -8,7 +8,7 @@ type Location
     = Desert
     | Forest
     | City
-    | Unknown
+    | None
 
 
 
@@ -31,7 +31,7 @@ decoder =
                         Decode.succeed City
 
                     _ ->
-                        Decode.succeed Unknown
+                        Decode.succeed None
             )
 
 

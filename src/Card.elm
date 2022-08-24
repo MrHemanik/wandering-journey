@@ -23,6 +23,8 @@ type alias Card =
     , newCards2 : List Int
     , removeCards1 : List Int
     , removeCards2 : List Int
+    , locationChange1 : Location
+    , locationChange2 : Location
     }
 
 
@@ -43,6 +45,8 @@ decoder =
         |> DecodeHelper.apply (Decode.field "newCards2" (Decode.list Decode.int))
         |> DecodeHelper.apply (Decode.field "removeCards1" (Decode.list Decode.int))
         |> DecodeHelper.apply (Decode.field "removeCards2" (Decode.list Decode.int))
+        |> DecodeHelper.apply (Decode.field "locationChange1" Location.decoder)
+        |> DecodeHelper.apply (Decode.field "locationChange2" Location.decoder)
 
 
 getCardByIndex : List Card -> Int -> Maybe Card
