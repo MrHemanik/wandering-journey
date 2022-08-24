@@ -1,4 +1,4 @@
-module Resources exposing (Resources, combine, decoder)
+module Resources exposing (Resources, capResources, combine, decoder)
 
 import Json.Decode as Decode exposing (Decoder)
 
@@ -24,4 +24,14 @@ combine resources1 resources2 =
     , physicalHealth = resources1.physicalHealth + resources2.physicalHealth
     , mentalHealth = resources1.mentalHealth + resources2.mentalHealth
     , money = resources1.money + resources2.money
+    }
+
+
+capResources : Resources -> Resources
+capResources rs =
+    { hunger = max 0 rs.hunger |> min 100
+    , thirst = max 0 rs.thirst |> min 100
+    , physicalHealth = max 0 rs.physicalHealth |> min 100
+    , mentalHealth = max 0 rs.mentalHealth |> min 100
+    , money = max 0 rs.money |> min 100
     }

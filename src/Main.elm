@@ -278,7 +278,9 @@ calculateResourcesOnChoice resources choice location maybeCard =
                         None ->
                             emptyResources
             in
-            Resources.combine resources calcResources |> Resources.combine (Location.toResourceDrain location)
+            Resources.combine resources calcResources
+                |> Resources.combine (Location.toResourceDrain location)
+                |> Resources.capResources
 
 
 calculateUnlockedCardIndexes : List Int -> Choice -> Maybe Card -> List Int

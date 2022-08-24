@@ -1,5 +1,5 @@
 {
-  "startingCards" :[0,1],
+  "startingCards" :[0,1,2,3,4,5,6,10,11,12],
   "cards" : [{
     "id":0,
     "possibleLocation": ["City"],
@@ -133,7 +133,7 @@
     "newCards1":[],
     "newCards2":[8],
     "removeCards1":[7],
-    "removeCards2":[],
+    "removeCards2":[7],
     "locationChange1": "",
     "locationChange2": ""
   }, {
@@ -197,6 +197,23 @@
     "followUpText1":"You went inside the clinic and let got a checkup. You feel better",
     "followUpText2":"You did not go inside the clinic",
     "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":0, "money": -3},
+    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+    "newCards1":[],
+    "newCards2":[],
+    "removeCards1":[],
+    "removeCards2":[],
+    "locationChange1": "",
+    "locationChange2": ""
+  }, {
+    "id":12,
+    "possibleLocation": ["City"],
+    "interaction":"Action",
+    "mainText":"In the middle of the market you see a man looking for people willing to do day labor",
+    "decisionText1":"Work for him",
+    "decisionText2":"Ignore him",
+    "followUpText1":"You did some manual labor to earn yourself some money",
+    "followUpText2":"You ignored your opportunity for some quick cash",
+    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":-10, "mentalHealth":0, "money": 10},
     "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
     "newCards1":[],
     "newCards2":[],
