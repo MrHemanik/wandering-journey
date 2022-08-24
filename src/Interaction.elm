@@ -6,6 +6,7 @@ import Json.Decode as Decode exposing (Decoder)
 type Interaction
     = Conversation
     | Action
+    | Mysterious
 
 
 decoder : Decoder Interaction
@@ -21,5 +22,5 @@ decoder =
                         Decode.succeed Action
 
                     _ ->
-                        Decode.fail "Invalid Interaction"
+                        Decode.succeed Mysterious
             )
