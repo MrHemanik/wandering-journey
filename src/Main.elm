@@ -5,7 +5,7 @@ import Browser.Events
 import Card exposing (Card)
 import Data
 import DecodeHelper
-import Element exposing (Element, alpha, centerX, centerY, clip, column, el, fill, height, image, inFront, layout, maximum, none, padding, paragraph, px, rgb255, row, spaceEvenly, spacing, text, width)
+import Element exposing (Element, alpha, centerX, centerY, clip, column, el, fill, height, image, inFront, layout, maximum, none, padding, paragraph, px, rgb255, rgba, row, spaceEvenly, spacing, text, width)
 import Element.Background as Background exposing (color)
 import Element.Border
 import Element.Font as Font
@@ -135,14 +135,17 @@ view model =
     in
     viewBackground game.location <|
         column [ width fill, height fill ]
-            [ el [ centerX, width (px 800) ] <| viewResources game.resources
-            , el [ centerX, centerY, Background.color (rgb255 0xFF 0xFF 0xFF) ] <|
+            [ el [ centerX, width (px 800), padding 20 ] <| viewResources game.resources
+            , el [ centerX, width (px 800) ] <|
+                column [ padding 5, width (px 400), height fill, centerX, Background.color (rgba 0xFF 0xFF 0xFF 0.6) ]
+                    [ wrapText ("You are currently in a " ++ Location.toText game.location) ]
+            , el [ centerX, centerY ] <|
                 case model of
                     GameOver _ _ ->
                         Element.text (viewDeathMessage game.resources)
 
                     Running choice _ _ ->
-                        Element.column [ width (px 800), height fill, padding 20, spacing 10 ]
+                        Element.column [ Background.color (rgb255 0xFF 0xFF 0xFF), width (px 800), height fill, padding 20 ]
                             [ case game.card of
                                 Just c ->
                                     case choice of
