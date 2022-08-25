@@ -74,7 +74,7 @@ defaultFontSize =
 
 
 startingResources =
-    { hunger = 100, thirst = 100, physicalHealth = 100, mentalHealth = 100, money = 100 }
+    { hunger = 100, thirst = 100, physicalHealth = 100, mentalHealth = 100, money = 0 }
 
 
 emptyResources =
@@ -182,7 +182,10 @@ view model =
                                                                 }
 
                                                           else
-                                                            Element.Input.button [ Element.width (Element.minimum 100 fill) ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText1) }
+                                                            column []
+                                                                [ Element.paragraph [ Font.center, defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
+                                                                , wrapText c.decisionText1
+                                                                ]
                                                         ]
                                                     , column [ width fill, spaceEvenly, centerX, centerY ]
                                                         [ if isOptionAllowed game c.resourceChange2 then
@@ -199,7 +202,10 @@ view model =
                                                                 }
 
                                                           else
-                                                            Element.Input.button [ Element.width (Element.minimum 100 fill) ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText2) }
+                                                            column []
+                                                                [ Element.paragraph [ Font.center, defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
+                                                                , wrapText c.decisionText2
+                                                                ]
                                                         ]
                                                     ]
                                                 ]
