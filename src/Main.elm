@@ -168,7 +168,7 @@ view model =
                                                     ]
                                                 , row [ width fill, Element.alignBottom ]
                                                     [ column [ width fill, spaceEvenly, centerX, centerY ]
-                                                        [ if isOptionAllowed game c.resourceChange1 then
+                                                        [ if isOptionAllowed game c.decisionLeft.resourceChange then
                                                             Element.Input.button [ Element.width (Element.minimum 100 fill) ]
                                                                 { onPress = Just (Key (ChoiceKey Left))
                                                                 , label =
@@ -177,23 +177,23 @@ view model =
                                                                             { src = "src/img/arrowLeft.svg"
                                                                             , description = ""
                                                                             }
-                                                                        , wrapText c.decisionText1
+                                                                        , wrapText c.decisionLeft.choiceText
                                                                         ]
                                                                 }
 
                                                           else
                                                             column [ Element.alignLeft ]
                                                                 [ Element.paragraph [ Element.width (Element.minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
-                                                                , wrapText c.decisionText1
+                                                                , wrapText c.decisionLeft.choiceText
                                                                 ]
                                                         ]
                                                     , column [ width fill, spaceEvenly, centerX, centerY ]
-                                                        [ if isOptionAllowed game c.resourceChange2 then
+                                                        [ if isOptionAllowed game c.decisionRight.resourceChange then
                                                             Element.Input.button [ Element.width (Element.minimum 100 fill) ]
                                                                 { onPress = Just (Key (ChoiceKey Right))
                                                                 , label =
                                                                     Element.wrappedRow [ Element.alignRight ]
-                                                                        [ wrapText c.decisionText2
+                                                                        [ wrapText c.decisionRight.choiceText
                                                                         , image [ centerX, centerY ]
                                                                             { src = "src/img/arrowRight.svg"
                                                                             , description = ""
@@ -204,7 +204,7 @@ view model =
                                                           else
                                                             column [ Element.alignRight ]
                                                                 [ Element.paragraph [ Element.width (Element.minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
-                                                                , wrapText c.decisionText2
+                                                                , wrapText c.decisionRight.choiceText
                                                                 ]
                                                         ]
                                                     ]
@@ -216,7 +216,7 @@ view model =
                                                     [ wrapText c.mainText
                                                     ]
                                                 , column [ width fill, padding 20 ]
-                                                    [ wrapText c.followUpText1
+                                                    [ wrapText c.decisionLeft.pickedText
                                                     ]
                                                 , column [ width fill, Element.alignBottom ]
                                                     [ Element.Input.button [ defaultFontSize, defaultFont, Font.center, width fill ] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
@@ -229,7 +229,7 @@ view model =
                                                     [ wrapText c.mainText
                                                     ]
                                                 , column [ width fill, padding 20 ]
-                                                    [ wrapText c.followUpText2
+                                                    [ wrapText c.decisionRight.pickedText
                                                     ]
                                                 , column [ width fill, Element.alignBottom ]
                                                     [ Element.Input.button [ defaultFontSize, defaultFont, Font.center, width fill ] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
@@ -376,10 +376,10 @@ processKey key model =
                             resource =
                                 case ( choice, game.card ) of
                                     ( Left, Just c ) ->
-                                        c.resourceChange1
+                                        c.decisionLeft.resourceChange
 
                                     ( Right, Just c ) ->
-                                        c.resourceChange2
+                                        c.decisionRight.resourceChange
 
                                     ( _, _ ) ->
                                         { hunger = -100, thirst = -100, physicalHealth = -100, mentalHealth = -100, money = -100 }
@@ -439,10 +439,10 @@ calculateResourcesOnChoice resources choice location maybeCard =
                 calcResources =
                     case choice of
                         Left ->
-                            card.resourceChange1
+                            card.decisionLeft.resourceChange
 
                         Right ->
-                            card.resourceChange2
+                            card.decisionRight.resourceChange
 
                         None ->
                             emptyResources
@@ -463,10 +463,10 @@ calculateUnlockedCardIndexes uci choice maybeCard =
                 newIndexes =
                     case choice of
                         Left ->
-                            card.newCards1
+                            card.decisionLeft.newCards
 
                         Right ->
-                            card.newCards2
+                            card.decisionRight.newCards
 
                         None ->
                             []
@@ -474,10 +474,10 @@ calculateUnlockedCardIndexes uci choice maybeCard =
                 removeIndexes =
                     case choice of
                         Left ->
-                            card.removeCards1
+                            card.decisionLeft.removeCards
 
                         Right ->
-                            card.removeCards2
+                            card.decisionRight.removeCards
 
                         None ->
                             []
@@ -565,7 +565,7 @@ init flags =
             )
 
         _ ->
-            ( Running None { resources = startingResources, allCards = [], unlockedCardIndexes = [], currentCards = [], location = startingLocation, card = Nothing, defaultCardIndexes = [] } 0, Cmd.none )
+            Debug.log "FailedToGetCards" ( Running None { resources = startingResources, allCards = [], unlockedCardIndexes = [], currentCards = [], location = startingLocation, card = Nothing, defaultCardIndexes = [] } 0, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg

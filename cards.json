@@ -5,442 +5,546 @@
     "possibleLocation": ["City"],
     "interaction":"Conversation",
     "mainText":"There is a merchant offering you food for a price",
-    "decisionText1":"Buy some food",
-    "decisionText2":"Walk away",
-    "followUpText1":"You bought some food from the merchant",
-    "followUpText2":"You decided you do not need food right now",
-    "resourceChange1": {"hunger":15, "thirst":5, "physicalHealth":0, "mentalHealth":0, "money":-5},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Buy some food",
+      "pickedText":"You bought some food from the merchant",
+      "resourceChange": {"hunger":15, "thirst":5, "physicalHealth":0, "mentalHealth":0, "money":-5},
+      "newCards": [],
+      "removeCards": [],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Walk away",
+      "pickedText":"You decided you do not need food right now",
+      "resourceChange": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
+      "newCards": [],
+      "removeCards": [],
+      "flags":[]
+    }
   }, {
     "id":1,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
     "mainText":"A thief is ambushing you, wanting 15 coins",
-    "decisionText1":"Give him your money",
-    "decisionText2":"Fight back",
-    "followUpText1":"You gave the thief money",
-    "followUpText2":"You tried to fight back but failed",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-5, "money":-15},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":-15, "mentalHealth":5, "money":0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Give him your money",
+      "pickedText":"You gave the thief money",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-5, "money":-15},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Fight back",
+      "pickedText":"You tried to fight back but failed",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-15, "mentalHealth":5, "money":0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":2,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
     "mainText":"On the streets you see an old lady trying to carry several bags of apples",
-    "decisionText1":"Help her carry the bags",
-    "decisionText2":"Ignore her",
-    "followUpText1":"You helped the old lady carrying the apples home. As a thanks she gave you a bag to keep",
-    "followUpText2":"You ignored the struggles of the old lady and strode onwards",
-    "resourceChange1": {"hunger":30, "thirst":20, "physicalHealth":-5, "mentalHealth":5, "money":0},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-10, "money":0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Help her carry the bags",
+      "pickedText":"You helped the old lady carrying the apples home. As a thanks she gave you a bag to keep",
+      "resourceChange":  {"hunger":30, "thirst":20, "physicalHealth":-5, "mentalHealth":5, "money":0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Ignore her",
+      "pickedText":"You ignored the struggles of the old lady and strode onwards",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-10, "money":0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":3,
     "possibleLocation": ["City"],
     "interaction":"Action",
     "mainText":"There is an inn in the distance",
-    "decisionText1":"Rest for a bit",
-    "decisionText2":"Move on",
-    "followUpText1":"You bought yourself a room and got some rest",
-    "followUpText2":"You walked onwards, dismissing a safe place to rest",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":15, "money":-5},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Rest for a bit",
+      "pickedText":"You bought yourself a room and got some rest",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":15, "money":-5},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Move on",
+      "pickedText":"You walked onwards, dismissing a safe place to rest",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":4,
     "possibleLocation": ["City"],
     "interaction":"Mysterious",
     "mainText":"A shady figure approaches you.\"I have what you seek, a quest to lead you to your destiny! But only if you are willing to pay\"",
-    "decisionText1":"Give him money",
-    "decisionText2":"Try to get away",
-    "followUpText1":"You gave him some money and in return he gave you a red crystal",
-    "followUpText2":"\"A mistake! Without guidance you will wander until you die!\"",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":-30},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[4],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Give him money",
+      "pickedText":"You gave him some money and in return he gave you a red crystal",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":-30},
+      "newCards":[],
+      "removeCards":[4],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Try to get away",
+      "pickedText":"\"A mistake! Without guidance you will wander until you die!\"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":5,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
     "mainText":"Three Children are playing with each other. As they notice you one of them runs towards you. \"Hey! Do a trick!\"",
-    "decisionText1":"Do a trick",
-    "decisionText2":"Ignore them",
-    "followUpText1":"They give you some apples to juggle with and you try your best. They walk away unimpressed.",
-    "followUpText2":"You walk away, disappointing them",
-    "resourceChange1": {"hunger":10, "thirst":5, "physicalHealth":0, "mentalHealth":-10, "money":0},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-5, "money":0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Do a trick",
+      "pickedText":"They give you some apples to juggle with and you try your best. They walk away unimpressed.",
+      "resourceChange":  {"hunger":10, "thirst":5, "physicalHealth":0, "mentalHealth":-10, "money":0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Ignore them",
+      "pickedText":"You walk away, disappointing them",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-5, "money":0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":6,
     "possibleLocation": ["City"],
     "interaction":"Action",
     "mainText":"You see a water fountain",
-    "decisionText1":"Drink from it",
-    "decisionText2":"Throw in a coin",
-    "followUpText1":"You drank from the fountain and felt your stomach hurting shortly after",
-    "followUpText2":"You threw a coin in the fountain for good luck",
-    "resourceChange1": {"hunger":0, "thirst":15, "physicalHealth":-5, "mentalHealth":0, "money":0},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":-1},
-    "newCards1":[],
-    "newCards2":[7],
-    "removeCards1":[],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Drink from it",
+      "pickedText":"You drank from the fountain and felt your stomach hurting shortly after",
+      "resourceChange":  {"hunger":0, "thirst":15, "physicalHealth":-5, "mentalHealth":0, "money":0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Throw in a coin",
+      "pickedText":"You threw a coin in the fountain for good luck",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":-1},
+      "newCards":[7],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":7,
     "possibleLocation": ["City","Forest","Desert"],
     "interaction":"Action",
     "mainText":"In front of you lies a bag with a name tag",
-    "decisionText1":"Take the contents of the bag for yourself",
-    "decisionText2":"Take the bag with you for the owner",
-    "followUpText1":"You opened the bag and found food, water, bandages and some money",
-    "followUpText2":"You took the bag with you in hopes of finding the rightful owner",
-    "resourceChange1": {"hunger":30, "thirst":30, "physicalHealth":30, "mentalHealth":0, "money": 20},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":0},
-    "newCards1":[],
-    "newCards2":[8],
-    "removeCards1":[7],
-    "removeCards2":[7],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Take the contents of the bag for yourself",
+      "pickedText":"You opened the bag and found food, water, bandages and some money",
+      "resourceChange":  {"hunger":30, "thirst":30, "physicalHealth":30, "mentalHealth":0, "money": 20},
+      "newCards":[],
+      "removeCards":[7],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Take the bag with you for the owner",
+      "pickedText":"You took the bag with you in hopes of finding the rightful owner",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":0},
+      "newCards":[8],
+      "removeCards":[7],
+      "flags":[]
+    }
   }, {
     "id":8,
     "possibleLocation": ["City","Forest","Desert"],
     "interaction":"Conversation",
     "mainText":"You walk past a man down on his luck, claiming he lost all his stuff",
-    "decisionText1":"Give him the bag you have found",
-    "decisionText2":"Walk past him",
-    "followUpText1":"\"You found my stuff? I cannot thank you enough! Here, take some of it for yourself\"",
-    "followUpText2":"You walk past the man who is probably the owner of the bag you found earlier. Thinking that you may never find the owner you decided to take the contents for yourself",
-    "resourceChange1": {"hunger":10, "thirst":20, "physicalHealth":15, "mentalHealth":30, "money": 10},
-    "resourceChange2": {"hunger":20, "thirst":20, "physicalHealth":20, "mentalHealth":-10, "money":20},
-    "newCards1":[9],
-    "newCards2":[],
-    "removeCards1":[8],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Give him the bag you have found",
+      "pickedText":"\"You found my stuff? I cannot thank you enough! Here, take some of it for yourself\"",
+      "resourceChange":  {"hunger":10, "thirst":20, "physicalHealth":15, "mentalHealth":30, "money": 10},
+      "newCards":[9],
+      "removeCards":[8],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Walk past him",
+      "pickedText":"You walk past the man who is probably the owner of the bag you found earlier. Thinking that you may never find the owner you decided to take the contents for yourself",
+      "resourceChange":  {"hunger":20, "thirst":20, "physicalHealth":20, "mentalHealth":-10, "money":20},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":9,
     "possibleLocation": ["City","Forest","Desert"],
     "interaction":"Action",
     "mainText":"You see a house with a familiar name",
-    "decisionText1":"Knock on the door",
-    "decisionText2":"Walk past the house",
-    "followUpText1":"A familiar face opens the door. The man whose bag you found invites you out of gratitude in to stay the night. You feel well rested",
-    "followUpText2":"As soon as you walk past the house a familiar face slams open the door. The man whose bag you found invites you out of gratitude in to stay the night. You feel well rested",
-    "resourceChange1": {"hunger":30, "thirst":30, "physicalHealth":40, "mentalHealth":40, "money": 0},
-    "resourceChange2": {"hunger":30, "thirst":30, "physicalHealth":40, "mentalHealth":40, "money": 0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[9],
-    "removeCards2":[9],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Knock on the door",
+      "pickedText":"A familiar face opens the door. The man whose bag you found invites you out of gratitude in to stay the night. You feel well rested",
+      "resourceChange":  {"hunger":30, "thirst":30, "physicalHealth":40, "mentalHealth":40, "money": 0},
+      "newCards":[],
+      "removeCards":[9],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Walk past the house",
+      "pickedText":"As soon as you walk past the house a familiar face slams open the door. The man whose bag you found invites you out of gratitude in to stay the night. You feel well rested",
+      "resourceChange":  {"hunger":30, "thirst":30, "physicalHealth":40, "mentalHealth":40, "money": 0},
+      "newCards":[],
+      "removeCards":[9],
+      "flags":[]
+    }
   }, {
     "id":10,
     "possibleLocation": ["City, Forest"],
     "interaction":"Action",
     "mainText":"You see a tree with apples on it",
-    "decisionText1":"Pick up the apples from the ground",
-    "decisionText2":"Kick the tree",
-    "followUpText1":"You took the apples from the ground, you feel a slight pain in your stomach",
-    "followUpText2":"You kicked the tree and took the fresh apples from the ground",
-    "resourceChange1": {"hunger":5, "thirst":5, "physicalHealth":-5, "mentalHealth":0, "money": 0},
-    "resourceChange2": {"hunger":10, "thirst":5, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[9],
-    "removeCards2":[9],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Pick up the apples from the ground",
+      "pickedText":"You took the apples from the ground, you feel a slight pain in your stomach",
+      "resourceChange":  {"hunger":5, "thirst":5, "physicalHealth":-5, "mentalHealth":0, "money": 0},
+      "newCards":[],
+      "removeCards":[9],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Kick the tree",
+      "pickedText":"You kicked the tree and took the fresh apples from the ground",
+      "resourceChange":  {"hunger":10, "thirst":5, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[],
+      "removeCards":[9],
+      "flags":[]
+    }
   }, {
     "id":11,
     "possibleLocation": ["City"],
     "interaction":"Action",
     "mainText":"While walking along the street a medical clinic catches your eye",
-    "decisionText1":"See a doctor",
-    "decisionText2":"Ignore the clinic",
-    "followUpText1":"You went inside the clinic and let got a checkup. You feel better",
-    "followUpText2":"You did not go inside the clinic",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":0, "money": -5},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"See a doctor",
+      "pickedText":"You went inside the clinic and let got a checkup. You feel better",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":0, "money": -5},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Ignore the clinic",
+      "pickedText":"You did not go inside the clinic",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":12,
     "possibleLocation": ["City"],
     "interaction":"Action",
     "mainText":"In the middle of the market you see a man looking for people willing to do day labor",
-    "decisionText1":"Work for him",
-    "decisionText2":"Ignore him",
-    "followUpText1":"You did some manual labor to earn yourself some money",
-    "followUpText2":"You ignored your opportunity for some quick cash",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":-10, "mentalHealth":0, "money": 10},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Work for him",
+      "pickedText":"You did some manual labor to earn yourself some money",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-10, "mentalHealth":0, "money": 10},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Ignore him",
+      "pickedText":"You ignored your opportunity for some quick cash",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":13,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
     "mainText":"A devote believer in red robes approaches you, wanting to talk about their deity",
-    "decisionText1":"Listen to them",
-    "decisionText2":"Stay away from them",
-    "followUpText1":"\"Greetings, fellow human! Are you interested in becoming a true believer?\" He gives you a pamphlet from the Mutan Order",
-    "followUpText2":"You ignore what they have to say",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "newCards1":[15],
-    "newCards2":[],
-    "removeCards1":[13,14],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Listen to them",
+      "pickedText":"\"Greetings, fellow human! Are you interested in becoming a true believer?\" He gives you a pamphlet from the Mutan Order",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[15],
+      "removeCards":[13,14],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Stay away from them",
+      "pickedText":"You ignore what they have to say",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":14,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
     "mainText":"A devote believer in green robes approaches you, wanting to talk about their deity",
-    "decisionText1":"Listen to them",
-    "decisionText2":"Stay away from them",
-    "followUpText1":"\"Greetings! Feeling down on your luck? Become part of the Fortuna Order and feel as lucky as never before!\" He gives you a pamphlet from the Fortuna Order",
-    "followUpText2":"You ignore what they have to say",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "newCards1":[17],
-    "newCards2":[],
-    "removeCards1":[13,14],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Listen to them",
+      "pickedText":"\"Greetings! Feeling down on your luck? Become part of the Fortuna Order and feel as lucky as never before!\" He gives you a pamphlet from the Fortuna Order",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[17],
+      "removeCards":[13,14],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Stay away from them",
+      "pickedText":"You ignore what they have to say",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":15,
     "possibleLocation": ["City"],
     "interaction":"Action",
     "mainText":"On your left you see a church of the Mutan Order",
-    "decisionText1":"Join the Mutan Order",
-    "decisionText2":"Ignore the church",
-    "followUpText1":"You joined the Mutan Order. You feel a weird presence coming from inside of you",
-    "followUpText2":"You ignored your chance to join the Mutan Order",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "newCards1":[16],
-    "newCards2":[],
-    "removeCards1":[15],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Join the Mutan Order",
+      "pickedText":"You joined the Mutan Order. You feel a weird presence coming from inside of you",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[16],
+      "removeCards":[15],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Ignore the church",
+      "pickedText":"You ignored your chance to join the Mutan Order",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":16,
     "possibleLocation": ["City", "Forest", "Desert"],
     "interaction":"Action",
     "mainText":"An agonizing pain overwhelms your entire body, feeling like your body turns inside out. You collapse on the ground",
-    "decisionText1":"?̶̢̙̱̂̂͜͠?̴̲͇̲̯͚̰͕̆̒̉͌?̴̯̱̹͓̲̝̓̄̈̎",
-    "decisionText2":"?̷̘̖̞̊͐̽̐̈́?̶͕͙̗̩̻̭̈́?̶̨̪̑̂͝",
-    "followUpText1":"When you wake up you find yourself looking different and being stronger than before. You feel like you aren't quite yourself anymore",
-    "followUpText2":"When you wake up you find yourself looking different and being stronger than before. You feel like you aren't quite yourself anymore",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":-30, "money": 0},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":-30, "money": 0},
-    "newCards1":[18,19],
-    "newCards2":[18,19],
-    "removeCards1":[16,1,5],
-    "removeCards2":[16,1,5],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"?̶̢̙̱̂̂͜͠?̴̲͇̲̯͚̰͕̆̒̉͌?̴̯̱̹͓̲̝̓̄̈̎",
+      "pickedText":"When you wake up you find yourself looking different and being stronger than before. You feel like you aren't quite yourself anymore",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":-30, "money": 0},
+      "newCards":[18,19],
+      "removeCards":[16,1,5],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"?̷̘̖̞̊͐̽̐̈́?̶͕͙̗̩̻̭̈́?̶̨̪̑̂͝",
+      "pickedText":"When you wake up you find yourself looking different and being stronger than before. You feel like you aren't quite yourself anymore",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":-30, "money": 0},
+      "newCards":[18,19],
+      "removeCards":[16,1,5],
+      "flags":[]
+    }
   }, {
     "id":17,
     "possibleLocation": ["City"],
     "interaction":"Action",
     "mainText":"On your left you see a church of the Fortuna Order",
-    "decisionText1":"Join the Fortuna Order",
-    "decisionText2":"Ignore the church",
-    "followUpText1":"You joined the Fortuna Order. You somehow feel luckier than before",
-    "followUpText2":"You ignored your chance to join the Fortuna Order",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "newCards1":[7,20],
-    "newCards2":[],
-    "removeCards1":[17,1],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Join the Fortuna Order",
+      "pickedText":"You joined the Fortuna Order. You somehow feel luckier than before",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[7,20],
+      "removeCards":[17,1],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Ignore the church",
+      "pickedText":"You ignored your chance to join the Fortuna Order",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":18,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
     "mainText":"A thief is ambushing you, wanting 15 coins",
-    "decisionText1":"Give him your money",
-    "decisionText2":"Fight back",
-    "followUpText1":"You reluctantly gave the thief your coins, wanting to punch him in the process",
-    "followUpText2":"You fought back, almost killing him in the process. You took the coins he left behind",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-10, "money":-15},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money":10},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Give him your money",
+      "pickedText":"You reluctantly gave the thief your coins, wanting to punch him in the process",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-10, "money":-15},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Fight back",
+      "pickedText":"You fought back, almost killing him in the process. You took the coins he left behind",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money":10},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":19,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
     "mainText":"Three Children are playing with each other. As they notice you one of them runs towards you. \"Hey! Do a trick!\"",
-    "decisionText1":"D̴̪̑ò̴̼ ̴͉͒å̸̻ ̴̯͒t̷̹̽r̶̺̔i̶̦̿c̵̙͋ḵ̸̓",
-    "decisionText2":"Ignore them",
-    "followUpText1":"On its own you body started to twist and turn into something far from human, losing consciousness in the process. You regained your consciousness looking human, yet different than before",
-    "followUpText2":"You walk away, feeling uneasy",
-    "resourceChange1": {"hunger":30, "thirst":20, "physicalHealth":-10, "mentalHealth":-20, "money":0},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"D̴̪̑ò̴̼ ̴͉͒å̸̻ ̴̯͒t̷̹̽r̶̺̔i̶̦̿c̵̙͋ḵ̸̓",
+      "pickedText":"On its own you body started to twist and turn into something far from human, losing consciousness in the process. You regained your consciousness looking human, yet different than before",
+      "resourceChange":  {"hunger":30, "thirst":20, "physicalHealth":-10, "mentalHealth":-20, "money":0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Ignore them",
+      "pickedText":"You walk away, feeling uneasy",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":20,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
     "mainText":"You find an earring on the ground. Shortly after a woman approaches you, claiming that she has lost her earring somewhere and asks you to help her find it",
-    "decisionText1":"Give her the earring",
-    "decisionText2":"Keep it",
-    "followUpText1":"You gave her the earring you found. As a thanks she gave you some coins",
-    "followUpText2":"You kept the earring and sold it at then nearest jewelery",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money": 5},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-5, "money": 10},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Give her the earring",
+      "pickedText":"You gave her the earring you found. As a thanks she gave you some coins",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money": 5},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Keep it",
+      "pickedText":"You kept the earring and sold it at then nearest jewelery",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-5, "money": 10},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":21,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
     "mainText":"You see a man trying to sell medicine. \"Buy it! Buy it! The new Inutilis medicine against every pain you have!\"",
-    "decisionText1":"Buy some Inutilis",
-    "decisionText2":"Ignore the man",
-    "followUpText1":"You bought and took some Inutilis, you feel like nothing has changed",
-    "followUpText2":"You didn't buy any Inutilis",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": -10},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "newCards1":[22],
-    "newCards2":[],
-    "removeCards1":[21],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Buy some Inutilis",
+      "pickedText":"You bought and took some Inutilis, you feel like nothing has changed",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": -10},
+      "newCards":[22],
+      "removeCards":[21],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Ignore the man",
+      "pickedText":"You didn't buy any Inutilis",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":22,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
     "mainText":"You see a man trying to sell medicine. \"Buy it! Buy it! The new Inutilis medicine against every pain you have!\"",
-    "decisionText1":"Demand a refund",
-    "decisionText2":"Ignore the man",
-    "followUpText1":"\"Refund? Why should I? There is nothing better than Inutilis! I can make you a deal though, 2 for the price of one, what do you say?\". You punch him in the face and walk away",
-    "followUpText2":"You didn't buy any Inutilis",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money": 0},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[22],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Demand a refund",
+      "pickedText":"\"Refund? Why should I? There is nothing better than Inutilis! I can make you a deal though, 2 for the price of one, what do you say?\". You punch him in the face and walk away",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money": 0},
+      "newCards":[],
+      "removeCards":[22],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Ignore the man",
+      "pickedText":"You didn't buy any Inutilis",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":23,
     "possibleLocation": ["Forest"],
     "interaction":"Action",
     "mainText":"There is a camp in the distance",
-    "decisionText1":"Walk towards the camp",
-    "decisionText2":"Walk past the camp",
-    "followUpText1":"At the camp you see a men sitting at a campfire all by himself. He invites you over to eat. You both take turns sleeping",
-    "followUpText2":"You walk past the camp",
-    "resourceChange1": {"hunger":5, "thirst":5, "physicalHealth":10, "mentalHealth":5, "money": 0},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Walk towards the camp",
+      "pickedText":"At the camp you see a men sitting at a campfire all by himself. He invites you over to eat. You both take turns sleeping",
+      "resourceChange":  {"hunger":5, "thirst":5, "physicalHealth":10, "mentalHealth":5, "money": 0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Walk past the camp",
+      "pickedText":"You walk past the camp",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":24,
     "possibleLocation": ["Forest"],
     "interaction":"Action",
     "mainText":"While walking through the forest you feel watched. Suddenly a Tiger cub jumps out of a bush and attacks you",
-    "decisionText1":"Defend yourself",
-    "decisionText2":"Run away and hide",
-    "followUpText1":"You screamed at the top of your lungs and put yourself in a defending position. It pounced on you, damaging your arms. You use the chance to kick the tiger cub in the stomach and run away",
-    "followUpText2":"You ran with all of your might, looking for a place to hide. You hid and waited for some time",
-    "resourceChange1": {"hunger":0, "thirst":0, "physicalHealth":-20, "mentalHealth":-5, "money": 0},
-    "resourceChange2": {"hunger":-5, "thirst":-5, "physicalHealth":-5, "mentalHealth": -5, "money": 0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Defend yourself",
+      "pickedText":"You screamed at the top of your lungs and put yourself in a defending position. It pounced on you, damaging your arms. You use the chance to kick the tiger cub in the stomach and run away",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-20, "mentalHealth":-5, "money": 0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Run away and hide",
+      "pickedText":"You ran with all of your might, looking for a place to hide. You hid and waited for some time",
+      "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":-5, "mentalHealth": -5, "money": 0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }, {
     "id":25,
     "possibleLocation": ["Forest"],
     "interaction":"Action",
     "mainText":"You see a bunny, not noticing your presence",
-    "decisionText1":"Hunt the bunny",
-    "decisionText2":"Spare the bunny",
-    "followUpText1":"You hunted the bunny",
-    "followUpText2":"You spared the bunny",
-    "resourceChange1": {"hunger":10, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-    "resourceChange2": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
-    "newCards1":[],
-    "newCards2":[],
-    "removeCards1":[],
-    "removeCards2":[],
-    "locationChange1": "",
-    "locationChange2": ""
+    "decisionLeft" : {
+      "choiceText":"Hunt the bunny",
+      "pickedText":"You hunted the bunny",
+      "resourceChange":  {"hunger":10, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Spare the bunny",
+      "pickedText":"You spared the bunny",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "newCards":[],
+      "removeCards":[],
+      "flags":[]
+    }
   }]
 }
