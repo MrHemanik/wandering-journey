@@ -5,7 +5,7 @@ import Browser.Events
 import Card exposing (Card)
 import Data
 import DecodeHelper
-import Element exposing (Element, alpha, centerX, centerY, clip, column, el, fill, height, image, inFront, layout, maximum, none, padding, paragraph, px, rgb255, row, spaceEvenly, spacing, text, width)
+import Element exposing (Element, alpha, centerX, centerY, clip, column, el, fill, height, image, inFront, layout, maximum, none, padding, paragraph, px, rgb255, rgba, row, spaceEvenly, spacing, text, width)
 import Element.Background as Background exposing (color)
 import Element.Border
 import Element.Font as Font
@@ -25,7 +25,7 @@ type Choice
 
 type Key
     = ChoiceKey Choice
-    | R
+    | Restart
     | UnknownKey
 
 
@@ -49,7 +49,7 @@ type Msg
 
 
 type alias Game =
-    { resources : Resources, allCards : List Card, unlockedCardIndexes : List Int, currentCards : List Card, location : Location, card : Maybe Card }
+    { resources : Resources, allCards : List Card, unlockedCardIndexes : List Int, currentCards : List Card, location : Location, card : Maybe Card, defaultCardIndexes : List Int }
 
 
 type alias JsonData =
@@ -101,7 +101,7 @@ keyDecoder =
                     ChoiceKey Right
 
                 "r" ->
-                    R
+                    Restart
 
                 _ ->
                     UnknownKey
@@ -135,46 +135,99 @@ view model =
     in
     viewBackground game.location <|
         column [ width fill, height fill ]
-            [ el [ centerX, width (px 800) ] <| viewResources game.resources
-            , el [ centerX, centerY, Background.color (rgb255 0xFF 0xFF 0xFF) ] <|
+            [ el [ centerX, width (px 800), padding 20 ] <| viewResources game.resources
+            , el [ centerX, width (px 800) ] <|
+                column [ padding 5, width (px 400), height fill, centerX, Background.color (rgba 0xFF 0xFF 0xFF 0.6), Element.Border.rounded 5 ]
+                    [ wrapText ("You are currently in a " ++ Location.toText game.location) ]
+            , el [ centerX, centerY ] <|
                 case model of
-                    GameOver _ _ ->
-                        Element.text (viewDeathMessage game.resources)
+                    GameOver _ highscore ->
+                        column [ width (px 800), height (px 300), Background.color (rgba 0xFF 0xFF 0xFF 0.9), padding 20, Element.Border.rounded 7, centerY ]
+                            [ column [ width fill, padding 20 ]
+                                [ wrapText (viewDeathMessage game.resources)
+                                ]
+                            , column [ width fill, padding 20 ]
+                                [ wrapText ("Highscore:  " ++ String.fromInt highscore) ]
+                            , column [ width fill, Element.alignBottom ]
+                                [ Element.Input.button [ Element.width (Element.minimum 100 fill) ]
+                                    { onPress = Just (Key Restart)
+                                    , label = wrapText "New Run"
+                                    }
+                                ]
+                            ]
 
                     Running choice _ _ ->
-                        Element.column [ width (px 800), height fill, padding 20, spacing 10 ]
+                        column [ Background.color (rgba 0xFF 0xFF 0xFF 0.9), width (px 800), height (px 300), padding 20, Element.Border.rounded 7 ]
                             [ case game.card of
                                 Just c ->
                                     case choice of
                                         None ->
-                                            Element.column [ width fill ]
-                                                [ wrapText c.mainText
-                                                , Element.wrappedRow [ width fill, spaceEvenly ]
-                                                    [ if isOptionAllowed game c.resourceChange1 then
-                                                        Element.Input.button [ Element.alignLeft, Element.width (Element.minimum 100 fill) ] { onPress = Just (Key (ChoiceKey Left)), label = wrapText c.decisionText1 }
+                                            column [ width fill, height fill ]
+                                                [ column [ width fill, padding 20 ]
+                                                    [ wrapText c.mainText
+                                                    ]
+                                                , row [ width fill, Element.alignBottom ]
+                                                    [ column [ width fill, spaceEvenly, centerX, centerY ]
+                                                        [ if isOptionAllowed game c.resourceChange1 then
+                                                            Element.Input.button [ Element.width (Element.minimum 100 fill) ]
+                                                                { onPress = Just (Key (ChoiceKey Left))
+                                                                , label =
+                                                                    Element.wrappedRow [ Element.alignLeft ]
+                                                                        [ image [ centerX, centerY ]
+                                                                            { src = "src/img/arrowLeft.svg"
+                                                                            , description = ""
+                                                                            }
+                                                                        , wrapText c.decisionText1
+                                                                        ]
+                                                                }
 
-                                                      else
-                                                        Element.Input.button [ Element.alignLeft, Element.width (Element.minimum 100 fill) ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText1) }
-                                                    , if isOptionAllowed game c.resourceChange2 then
-                                                        Element.Input.button [ Element.alignRight ] { onPress = Just (Key (ChoiceKey Right)), label = wrapText c.decisionText2 }
+                                                          else
+                                                            Element.Input.button [ Element.width (Element.minimum 100 fill) ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText1) }
+                                                        ]
+                                                    , column [ width fill, spaceEvenly, centerX, centerY ]
+                                                        [ if isOptionAllowed game c.resourceChange2 then
+                                                            Element.Input.button [ Element.width (Element.minimum 100 fill) ]
+                                                                { onPress = Just (Key (ChoiceKey Right))
+                                                                , label =
+                                                                    Element.wrappedRow [ Element.alignRight ]
+                                                                        [ wrapText c.decisionText2
+                                                                        , image [ centerX, centerY ]
+                                                                            { src = "src/img/arrowRight.svg"
+                                                                            , description = ""
+                                                                            }
+                                                                        ]
+                                                                }
 
-                                                      else
-                                                        Element.Input.button [ Element.alignRight ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText2) }
+                                                          else
+                                                            Element.Input.button [ Element.width (Element.minimum 100 fill) ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText2) }
+                                                        ]
                                                     ]
                                                 ]
 
                                         Left ->
-                                            Element.column [ width fill ]
-                                                [ wrapText c.mainText
-                                                , wrapText c.followUpText1
-                                                , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
+                                            column [ width fill, height fill ]
+                                                [ column [ width fill, padding 20 ]
+                                                    [ wrapText c.mainText
+                                                    ]
+                                                , column [ width fill, padding 20 ]
+                                                    [ wrapText c.followUpText1
+                                                    ]
+                                                , column [ width fill, Element.alignBottom ]
+                                                    [ Element.Input.button [ defaultFontSize, defaultFont, Font.center, width fill ] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
+                                                    ]
                                                 ]
 
                                         Right ->
-                                            Element.column [ width fill ]
-                                                [ wrapText c.mainText
-                                                , wrapText c.followUpText2
-                                                , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
+                                            column [ width fill, height fill ]
+                                                [ column [ width fill, padding 20 ]
+                                                    [ wrapText c.mainText
+                                                    ]
+                                                , column [ width fill, padding 20 ]
+                                                    [ wrapText c.followUpText2
+                                                    ]
+                                                , column [ width fill, Element.alignBottom ]
+                                                    [ Element.Input.button [ defaultFontSize, defaultFont, Font.center, width fill ] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
+                                                    ]
                                                 ]
 
                                 Nothing ->
@@ -236,9 +289,6 @@ viewDeathMessage resources =
     else if resources.mentalHealth <= 0 then
         "Died due to mental health"
 
-    else if resources.money <= 0 then
-        "No money left"
-
     else
         "Died of an unknown cause"
 
@@ -251,46 +301,90 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case model of
         GameOver _ _ ->
-            ( model, Cmd.none )
+            case msg of
+                Key Restart ->
+                    processKey Restart model
 
-        Running choice game highscore ->
+                _ ->
+                    ( model, Cmd.none )
+
+        Running _ game highscore ->
             case msg of
                 NewCard newCardIndex ->
-                    Debug.log (String.fromInt newCardIndex) ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
+                    if checkResourcesIsZero game.resources then
+                        ( GameOver game highscore, Cmd.none )
+
+                    else
+                        ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
 
                 Key key ->
-                    ( processKey key model, Cmd.none )
+                    processKey key model
 
                 GenerateNewCard ->
                     ( model, generateCard <| List.length game.currentCards )
 
 
-processKey : Key -> Model -> Model
+processKey : Key -> Model -> ( Model, Cmd Msg )
 processKey key model =
+    let
+        gameData =
+            case model of
+                GameOver gameState _ ->
+                    gameState
+
+                Running _ gameState _ ->
+                    gameState
+    in
     case key of
         ChoiceKey choice ->
             case model of
                 GameOver _ _ ->
-                    model
+                    ( model, Cmd.none )
 
-                Running _ game highscore ->
+                Running oldChoice game highscore ->
                     let
                         newUnlockedCardIndexes =
                             calculateUnlockedCardIndexes game.unlockedCardIndexes choice game.card
                     in
-                    Running choice
-                        { game
-                            | resources = calculateResourcesOnChoice game.resources choice game.location game.card
-                            , unlockedCardIndexes = newUnlockedCardIndexes
-                            , currentCards = getCurrentlyPossibleCards game.allCards newUnlockedCardIndexes game.location
-                        }
-                        (highscore + 100)
+                    if oldChoice == None then
+                        ( Running choice
+                            { game
+                                | resources = calculateResourcesOnChoice game.resources choice game.location game.card
+                                , unlockedCardIndexes = newUnlockedCardIndexes
+                                , currentCards = getCurrentlyPossibleCards game.allCards newUnlockedCardIndexes game.location
+                            }
+                            (highscore + 100)
+                        , Cmd.none
+                        )
 
-        R ->
-            model
+                    else
+                        ( model, generateCard <| List.length game.currentCards )
+
+        Restart ->
+            ( Running None
+                { resources = startingResources
+                , allCards = gameData.allCards
+                , unlockedCardIndexes = gameData.defaultCardIndexes
+                , currentCards = gameData.currentCards
+                , location = startingLocation
+                , card = Nothing
+                , defaultCardIndexes = gameData.defaultCardIndexes
+                }
+                0
+            , generateCard <| List.length gameData.currentCards
+            )
 
         UnknownKey ->
-            model
+            ( model, Cmd.none )
+
+
+checkResourcesIsZero : Resources -> Bool
+checkResourcesIsZero resources =
+    if resources.hunger == 0 || resources.thirst == 0 || resources.physicalHealth == 0 || resources.mentalHealth == 0 then
+        True
+
+    else
+        False
 
 
 calculateResourcesOnChoice : Resources -> Choice -> Location -> Maybe Card -> Resources
@@ -416,20 +510,21 @@ init flags =
                 currentCards =
                     getCurrentlyPossibleCards value.allCards value.startingCardIndexes startingLocation
             in
-            ( Running Left
+            ( Running None
                 { resources = startingResources
                 , allCards = value.allCards
                 , unlockedCardIndexes = value.startingCardIndexes
                 , currentCards = currentCards
                 , location = startingLocation
                 , card = Nothing
+                , defaultCardIndexes = value.startingCardIndexes
                 }
                 0
             , generateCard <| List.length currentCards
             )
 
         _ ->
-            ( Running Left { resources = startingResources, allCards = [], unlockedCardIndexes = [], currentCards = [], location = startingLocation, card = Nothing } 0, Cmd.none )
+            ( Running None { resources = startingResources, allCards = [], unlockedCardIndexes = [], currentCards = [], location = startingLocation, card = Nothing, defaultCardIndexes = [] } 0, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
