@@ -5,7 +5,7 @@ import Browser.Events
 import Card exposing (Card)
 import Data
 import DecodeHelper
-import Element exposing (Element, alpha, centerX, centerY, clip, el, fill, height, image, inFront, layout, none, padding, px, rgb255, spaceEvenly, spacing, width)
+import Element exposing (Element, alpha, centerX, centerY, clip, column, el, fill, height, image, inFront, layout, maximum, none, padding, px, rgb255, row, spaceEvenly, spacing, width)
 import Element.Background as Background exposing (color)
 import Element.Input
 import Html exposing (Html)
@@ -126,7 +126,7 @@ view model =
 
                 Running choice _ _ ->
                     Element.column [ width (px 800), height fill, padding 20, spacing 10 ]
-                        [ wrapText (viewResources game.resources)
+                        [ viewResources game.resources
                         , wrapText ("You're currently in " ++ Location.toText game.location)
                         , case game.card of
                             Just c ->
@@ -182,18 +182,57 @@ viewBackground location content =
             content
 
 
-viewResources : Resources -> String
+viewResources : Resources -> Element Msg
 viewResources resources =
-    "Hunger: "
-        ++ String.fromInt resources.hunger
-        ++ " Thirst: "
-        ++ String.fromInt resources.thirst
-        ++ " Physical Health: "
-        ++ String.fromInt resources.physicalHealth
-        ++ " Mental Health: "
-        ++ String.fromInt resources.mentalHealth
-        ++ " Money: "
-        ++ String.fromInt resources.money
+    let
+        columns src resource =
+            column
+                [ width <| maximum 600 fill
+                , centerX
+                , centerY
+                , padding 20
+                , spacing 20
+                ]
+                [ image []
+                    { src = src
+                    , description = ""
+                    }
+                , wrapText (String.fromInt resource ++ "%")
+                ]
+    in
+    row []
+        [ columns "src/img/hunger.svg" resources.hunger
+        , columns "src/img/thirst.svg" resources.thirst
+        , columns "src/img/physicalHealth.svg" resources.physicalHealth
+        , columns "src/img/mentalHealth.svg" resources.mentalHealth
+        , column
+            [ width <| maximum 600 fill
+            , centerX
+            , centerY
+            , padding 20
+            , spacing 20
+            ]
+            [ image []
+                { src = "src/img/money.svg"
+                , description = ""
+                }
+            , wrapText (String.fromInt resources.money)
+            ]
+        ]
+
+
+
+{- "Hunger: "
+   ++ String.fromInt resources.hunger
+   ++ " Thirst: "
+   ++ String.fromInt resources.thirst
+   ++ " Physical Health: "
+   ++ String.fromInt resources.physicalHealth
+   ++ " Mental Health: "
+   ++ String.fromInt resources.mentalHealth
+   ++ " Money: "
+   ++ String.fromInt resources.money
+-}
 
 
 viewDeathMessage : Resources -> String
