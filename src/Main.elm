@@ -25,7 +25,7 @@ type Choice
 
 type Key
     = ChoiceKey Choice
-    | R
+    | Restart
     | UnknownKey
 
 
@@ -49,7 +49,7 @@ type Msg
 
 
 type alias Game =
-    { resources : Resources, allCards : List Card, unlockedCardIndexes : List Int, currentCards : List Card, location : Location, card : Maybe Card }
+    { resources : Resources, allCards : List Card, unlockedCardIndexes : List Int, currentCards : List Card, location : Location, card : Maybe Card, defaultCardIndexes : List Int }
 
 
 type alias JsonData =
@@ -101,7 +101,7 @@ keyDecoder =
                     ChoiceKey Right
 
                 "r" ->
-                    R
+                    Restart
 
                 _ ->
                     UnknownKey
@@ -141,11 +141,23 @@ view model =
                     [ wrapText ("You are currently in a " ++ Location.toText game.location) ]
             , el [ centerX, centerY ] <|
                 case model of
-                    GameOver _ _ ->
-                        Element.text (viewDeathMessage game.resources)
+                    GameOver _ highscore ->
+                        column [ width (px 800), height (px 300), Background.color (rgba 0xFF 0xFF 0xFF 0.9), padding 20, Element.Border.rounded 7, centerY ]
+                            [ column [ width fill, padding 20 ]
+                                [ wrapText (viewDeathMessage game.resources)
+                                ]
+                            , column [ width fill, padding 20 ]
+                                [ wrapText ("Highscore:  " ++ String.fromInt highscore) ]
+                            , column [ width fill, Element.alignBottom ]
+                                [ Element.Input.button [ Element.width (Element.minimum 100 fill) ]
+                                    { onPress = Just (Key Restart)
+                                    , label = wrapText "New Run"
+                                    }
+                                ]
+                            ]
 
                     Running choice _ _ ->
-                        Element.column [ Background.color (rgba 0xFF 0xFF 0xFF 0.9), width (px 800), height (px 300), padding 20, Element.Border.rounded 7 ]
+                        column [ Background.color (rgba 0xFF 0xFF 0xFF 0.9), width (px 800), height (px 300), padding 20, Element.Border.rounded 7 ]
                             [ case game.card of
                                 Just c ->
                                     case choice of
@@ -277,9 +289,6 @@ viewDeathMessage resources =
     else if resources.mentalHealth <= 0 then
         "Died due to mental health"
 
-    else if resources.money <= 0 then
-        "No money left"
-
     else
         "Died of an unknown cause"
 
@@ -292,12 +301,21 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case model of
         GameOver _ _ ->
-            ( model, Cmd.none )
+            case msg of
+                Key Restart ->
+                    processKey Restart model
+
+                _ ->
+                    ( model, Cmd.none )
 
         Running _ game highscore ->
             case msg of
                 NewCard newCardIndex ->
-                    Debug.log (String.fromInt newCardIndex) ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
+                    if checkResourcesIsZero game.resources then
+                        ( GameOver game highscore, Cmd.none )
+
+                    else
+                        ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
 
                 Key key ->
                     processKey key model
@@ -308,6 +326,15 @@ update msg model =
 
 processKey : Key -> Model -> ( Model, Cmd Msg )
 processKey key model =
+    let
+        gameData =
+            case model of
+                GameOver gameState _ ->
+                    gameState
+
+                Running _ gameState _ ->
+                    gameState
+    in
     case key of
         ChoiceKey choice ->
             case model of
@@ -333,11 +360,31 @@ processKey key model =
                     else
                         ( model, generateCard <| List.length game.currentCards )
 
-        R ->
-            ( model, Cmd.none )
+        Restart ->
+            ( Running None
+                { resources = startingResources
+                , allCards = gameData.allCards
+                , unlockedCardIndexes = gameData.defaultCardIndexes
+                , currentCards = gameData.currentCards
+                , location = startingLocation
+                , card = Nothing
+                , defaultCardIndexes = gameData.defaultCardIndexes
+                }
+                0
+            , generateCard <| List.length gameData.currentCards
+            )
 
         UnknownKey ->
             ( model, Cmd.none )
+
+
+checkResourcesIsZero : Resources -> Bool
+checkResourcesIsZero resources =
+    if resources.hunger == 0 || resources.thirst == 0 || resources.physicalHealth == 0 || resources.mentalHealth == 0 then
+        True
+
+    else
+        False
 
 
 calculateResourcesOnChoice : Resources -> Choice -> Location -> Maybe Card -> Resources
@@ -463,20 +510,21 @@ init flags =
                 currentCards =
                     getCurrentlyPossibleCards value.allCards value.startingCardIndexes startingLocation
             in
-            ( Running Left
+            ( Running None
                 { resources = startingResources
                 , allCards = value.allCards
                 , unlockedCardIndexes = value.startingCardIndexes
                 , currentCards = currentCards
                 , location = startingLocation
                 , card = Nothing
+                , defaultCardIndexes = value.startingCardIndexes
                 }
                 0
             , generateCard <| List.length currentCards
             )
 
         _ ->
-            ( Running Left { resources = startingResources, allCards = [], unlockedCardIndexes = [], currentCards = [], location = startingLocation, card = Nothing } 0, Cmd.none )
+            ( Running None { resources = startingResources, allCards = [], unlockedCardIndexes = [], currentCards = [], location = startingLocation, card = Nothing, defaultCardIndexes = [] } 0, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
