@@ -10,12 +10,15 @@
 
 <script src="elm.js"></script>
 <script>
-    $.getJSON('cards.json').done(function(json){
-        console.log(json);
+    $.getJSON('cards.json').done(function(cardJson){
+        $.getJSON('items.json').done(function(itemJson){
+        console.log(cardJson);
+        console.log(itemJson);
         var app = Elm.Main.init({
-            flags: JSON.stringify(json), <!-- guide.elm-lang.org/interop/flags.html-->
+            flags: JSON.stringify(cardJson).slice(0,-1)+","+JSON.stringify(itemJson).substr(1), <!-- guide.elm-lang.org/interop/flags.html, also added both jsons into one-->
             node: document.getElementById('elm-app-is-loaded-here')
         });
+        })
     })
 
 </script>

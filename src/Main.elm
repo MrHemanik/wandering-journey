@@ -11,6 +11,7 @@ import Element.Border
 import Element.Font as Font
 import Element.Input
 import Html exposing (Html)
+import Item exposing (Item)
 import Json.Decode as Decode exposing (Decoder)
 import Location exposing (Location)
 import Random
@@ -49,11 +50,20 @@ type Msg
 
 
 type alias Game =
-    { resources : Resources, allCards : List Card, unlockedCardIndexes : List Int, currentCards : List Card, location : Location, card : Maybe Card, defaultCardIndexes : List Int }
+    { resources : Resources
+    , allCards : List Card
+    , allItems : List Item
+    , defaultCardIndexes : List Int
+    , unlockedCardIndexes : List Int
+    , activeItemsIndexes : List Int
+    , currentCards : List Card
+    , location : Location
+    , card : Maybe Card
+    }
 
 
 type alias JsonData =
-    { allCards : List Card, startingCardIndexes : List Int }
+    { items : List Item, allCards : List Card, startingCardIndexes : List Int }
 
 
 
@@ -112,6 +122,7 @@ keyDecoder =
 dataDecoder : Decoder JsonData
 dataDecoder =
     Decode.succeed JsonData
+        |> DecodeHelper.apply (Decode.field "items" (Decode.list Item.decoder))
         |> DecodeHelper.apply (Decode.field "cards" (Decode.list Card.decoder))
         |> DecodeHelper.apply (Decode.field "startingCards" (Decode.list Decode.int))
 
@@ -340,7 +351,7 @@ update msg model =
                         ( GameOver game highscore, Cmd.none )
 
                     else
-                        ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
+                        Debug.log "ah" ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
 
                 Key key ->
                     processKey key model
@@ -404,12 +415,14 @@ processKey key model =
         Restart ->
             ( Running None
                 { resources = startingResources
+                , allItems = gameData.allItems
                 , allCards = gameData.allCards
+                , defaultCardIndexes = gameData.defaultCardIndexes
                 , unlockedCardIndexes = gameData.defaultCardIndexes
+                , activeItemsIndexes = []
                 , currentCards = gameData.currentCards
                 , location = startingLocation
                 , card = Nothing
-                , defaultCardIndexes = gameData.defaultCardIndexes
                 }
                 0
             , generateCard <| List.length gameData.currentCards
@@ -553,19 +566,21 @@ init flags =
             in
             ( Running None
                 { resources = startingResources
+                , allItems = value.items
                 , allCards = value.allCards
+                , defaultCardIndexes = value.startingCardIndexes
                 , unlockedCardIndexes = value.startingCardIndexes
+                , activeItemsIndexes = []
                 , currentCards = currentCards
                 , location = startingLocation
                 , card = Nothing
-                , defaultCardIndexes = value.startingCardIndexes
                 }
                 0
             , generateCard <| List.length currentCards
             )
 
         _ ->
-            Debug.log "FailedToGetCards" ( Running None { resources = startingResources, allCards = [], unlockedCardIndexes = [], currentCards = [], location = startingLocation, card = Nothing, defaultCardIndexes = [] } 0, Cmd.none )
+            ( Running None { resources = startingResources, allCards = [], allItems = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing } 0, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg

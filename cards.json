@@ -112,7 +112,7 @@
     "mainText":"Three Children are playing with each other. As they notice you one of them runs towards you. \"Hey! Do a trick!\"",
     "decisionLeft" : {
       "choiceText":"Do a trick",
-      "pickedText":"They give you some apples to juggle with and you try your best. They walk away unimpressed.",
+      "pickedText":"They give you some apples to juggle with and you try your best. They walked away unimpressed.",
       "resourceChange":  {"hunger":10, "thirst":5, "physicalHealth":0, "mentalHealth":-10, "money":0},
       "newCards":[],
       "removeCards":[],
