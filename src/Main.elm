@@ -137,12 +137,12 @@ view model =
         column [ width fill, height fill ]
             [ el [ centerX, width (px 800), padding 20 ] <| viewResources game.resources
             , el [ centerX, width (px 800) ] <|
-                column [ padding 5, width (px 400), height fill, centerX, Background.color (rgba 0xFF 0xFF 0xFF 0.6), Element.Border.rounded 5 ]
+                column [ padding 5, width (px 400), height fill, centerX, Background.color (rgba 0x00 0x00 0x00 0.6), Font.color (rgb255 0xFF 0xFF 0xFF), Element.Border.rounded 5 ]
                     [ wrapText ("You are currently in a " ++ Location.toText game.location) ]
             , el [ centerX, centerY ] <|
                 case model of
                     GameOver _ highscore ->
-                        column [ width (px 800), height (px 300), Background.color (rgba 0xFF 0xFF 0xFF 0.9), padding 20, Element.Border.rounded 7, centerY ]
+                        column [ width (px 800), height (px 300), Background.color (rgba 0xFF 0xFF 0xFF 0.8), padding 20, Element.Border.rounded 7, centerY ]
                             [ column [ width fill, padding 20 ]
                                 [ wrapText (viewDeathMessage game.resources)
                                 ]
@@ -157,7 +157,7 @@ view model =
                             ]
 
                     Running choice _ _ ->
-                        column [ Background.color (rgba 0xFF 0xFF 0xFF 0.9), width (px 800), height (px 300), padding 20, Element.Border.rounded 7 ]
+                        column [ Background.color (rgba 0xFF 0xFF 0xFF 0.8), width (px 800), height (px 300), padding 20, Element.Border.rounded 7 ]
                             [ case game.card of
                                 Just c ->
                                     case choice of
@@ -259,7 +259,7 @@ viewBackground location content =
 viewResources : Resources -> Element Msg
 viewResources resources =
     let
-        columns src resource extraSign =
+        columns src resource extraSign isMoney =
             column
                 [ width fill
                 , padding 20
@@ -269,15 +269,34 @@ viewResources resources =
                     { src = src
                     , description = ""
                     }
-                , Element.paragraph [ defaultFont, defaultFontSize, Font.center, Font.color (rgb255 0xFF 0xFF 0xFF) ] [ text (String.fromInt resource ++ extraSign) ]
+                , Element.paragraph
+                    [ Background.color (rgba 0x00 0x00 0x00 0.4)
+                    , Element.Border.rounded 5
+                    , padding 8
+                    , defaultFont
+                    , defaultFontSize
+                    , Font.center
+                    , if resource >= 70 && isMoney == False then
+                        Font.color (rgb255 0x00 0xFF 0x00)
+
+                      else if resource > 20 && resource < 70 && isMoney == False then
+                        Font.color (rgb255 0xFF 0xF0 0x00)
+
+                      else if isMoney == False then
+                        Font.color (rgb255 0xFF 0x00 0x00)
+
+                      else
+                        Font.color (rgb255 0xFF 0xFF 0xFF)
+                    ]
+                    [ text (String.fromInt resource ++ extraSign) ]
                 ]
     in
     row [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leder.jpg", spaceEvenly, width fill ]
-        [ columns "src/img/hunger.svg" resources.hunger "%"
-        , columns "src/img/thirst.svg" resources.thirst "%"
-        , columns "src/img/physicalHealth.svg" resources.physicalHealth "%"
-        , columns "src/img/mentalHealth.svg" resources.mentalHealth "%"
-        , columns "src/img/money.svg" resources.money ""
+        [ columns "src/img/hunger.svg" resources.hunger "%" False
+        , columns "src/img/thirst.svg" resources.thirst "%" False
+        , columns "src/img/physicalHealth.svg" resources.physicalHealth "%" False
+        , columns "src/img/mentalHealth.svg" resources.mentalHealth "%" False
+        , columns "src/img/money.svg" resources.money "" True
         ]
 
 
