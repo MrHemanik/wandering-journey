@@ -10,6 +10,7 @@ import Element.Background as Background exposing (color)
 import Element.Border
 import Element.Font as Font
 import Element.Input
+import Flag exposing (Flag)
 import Html exposing (Html)
 import Item exposing (Item)
 import Json.Decode as Decode exposing (Decoder)
@@ -92,7 +93,7 @@ emptyResources =
 
 
 startingLocation =
-    Location.Forest
+    Location.City
 
 
 
@@ -495,7 +496,44 @@ calculateUnlockedCardIndexes uci choice maybeCard =
                         None ->
                             []
             in
-            List.filter (\a -> not (List.member a removeIndexes)) uci ++ newIndexes
+            removeEntriesFromList uci removeIndexes |> addEntriesToList newIndexes
+
+
+removeEntriesFromList : List a -> List a -> List a
+removeEntriesFromList list removeList =
+    List.filter (\a -> not (List.member a removeList)) list
+
+
+addEntriesToList : List comparable -> List comparable -> List comparable
+addEntriesToList list addList =
+    case addList of
+        [] ->
+            list
+
+        x :: xs ->
+            if List.member x list then
+                addEntriesToList list xs
+
+            else
+                addEntriesToList (List.sort (x :: list)) xs
+
+
+processFlag : List Flag -> Game -> Game
+processFlag flags game =
+    case flags of
+        [] ->
+            game
+
+        x :: xs ->
+            case x.flag of
+                "addItem" ->
+                    processFlag xs { game | activeItemsIndexes = Maybe.withDefault -1 (String.toInt x.content) :: game.activeItemsIndexes }
+
+                "removeItem" ->
+                    processFlag xs { game | activeItemsIndexes = game.activeItemsIndexes }
+
+                _ ->
+                    processFlag xs game
 
 
 
