@@ -294,44 +294,50 @@ update msg model =
         GameOver _ _ ->
             ( model, Cmd.none )
 
-        Running choice game highscore ->
+        Running _ game highscore ->
             case msg of
                 NewCard newCardIndex ->
                     Debug.log (String.fromInt newCardIndex) ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
 
                 Key key ->
-                    ( processKey key model, Cmd.none )
+                    processKey key model
 
                 GenerateNewCard ->
                     ( model, generateCard <| List.length game.currentCards )
 
 
-processKey : Key -> Model -> Model
+processKey : Key -> Model -> ( Model, Cmd Msg )
 processKey key model =
     case key of
         ChoiceKey choice ->
             case model of
                 GameOver _ _ ->
-                    model
+                    ( model, Cmd.none )
 
-                Running _ game highscore ->
+                Running oldChoice game highscore ->
                     let
                         newUnlockedCardIndexes =
                             calculateUnlockedCardIndexes game.unlockedCardIndexes choice game.card
                     in
-                    Running choice
-                        { game
-                            | resources = calculateResourcesOnChoice game.resources choice game.location game.card
-                            , unlockedCardIndexes = newUnlockedCardIndexes
-                            , currentCards = getCurrentlyPossibleCards game.allCards newUnlockedCardIndexes game.location
-                        }
-                        (highscore + 100)
+                    if oldChoice == None then
+                        ( Running choice
+                            { game
+                                | resources = calculateResourcesOnChoice game.resources choice game.location game.card
+                                , unlockedCardIndexes = newUnlockedCardIndexes
+                                , currentCards = getCurrentlyPossibleCards game.allCards newUnlockedCardIndexes game.location
+                            }
+                            (highscore + 100)
+                        , Cmd.none
+                        )
+
+                    else
+                        ( model, generateCard <| List.length game.currentCards )
 
         R ->
-            model
+            ( model, Cmd.none )
 
         UnknownKey ->
-            model
+            ( model, Cmd.none )
 
 
 calculateResourcesOnChoice : Resources -> Choice -> Location -> Maybe Card -> Resources
@@ -457,7 +463,7 @@ init flags =
                 currentCards =
                     getCurrentlyPossibleCards value.allCards value.startingCardIndexes startingLocation
             in
-            ( Running Left
+            ( Running None
                 { resources = startingResources
                 , allCards = value.allCards
                 , unlockedCardIndexes = value.startingCardIndexes
@@ -470,7 +476,7 @@ init flags =
             )
 
         _ ->
-            ( Running Left { resources = startingResources, allCards = [], unlockedCardIndexes = [], currentCards = [], location = startingLocation, card = Nothing } 0, Cmd.none )
+            ( Running None { resources = startingResources, allCards = [], unlockedCardIndexes = [], currentCards = [], location = startingLocation, card = Nothing } 0, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
