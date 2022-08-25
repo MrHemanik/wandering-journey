@@ -74,7 +74,7 @@ defaultFontSize =
 
 
 startingResources =
-    { hunger = 100, thirst = 100, physicalHealth = 100, mentalHealth = 100, money = 0 }
+    { hunger = 100, thirst = 100, physicalHealth = 100, mentalHealth = 100, money = 100 }
 
 
 emptyResources =
@@ -182,8 +182,8 @@ view model =
                                                                 }
 
                                                           else
-                                                            column []
-                                                                [ Element.paragraph [ Font.center, defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
+                                                            column [ Element.alignLeft ]
+                                                                [ Element.paragraph [ Element.width (Element.minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
                                                                 , wrapText c.decisionText1
                                                                 ]
                                                         ]
@@ -202,8 +202,8 @@ view model =
                                                                 }
 
                                                           else
-                                                            column []
-                                                                [ Element.paragraph [ Font.center, defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
+                                                            column [ Element.alignRight ]
+                                                                [ Element.paragraph [ Element.width (Element.minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
                                                                 , wrapText c.decisionText2
                                                                 ]
                                                         ]
@@ -353,15 +353,31 @@ processKey key model =
                             calculateUnlockedCardIndexes game.unlockedCardIndexes choice game.card
                     in
                     if oldChoice == None then
-                        ( Running choice
-                            { game
-                                | resources = calculateResourcesOnChoice game.resources choice game.location game.card
-                                , unlockedCardIndexes = newUnlockedCardIndexes
-                                , currentCards = getCurrentlyPossibleCards game.allCards newUnlockedCardIndexes game.location
-                            }
-                            (highscore + 100)
-                        , Cmd.none
-                        )
+                        let
+                            resource =
+                                case ( choice, game.card ) of
+                                    ( Left, Just c ) ->
+                                        c.resourceChange1
+
+                                    ( Right, Just c ) ->
+                                        c.resourceChange2
+
+                                    ( _, _ ) ->
+                                        { hunger = -100, thirst = -100, physicalHealth = -100, mentalHealth = -100, money = -100 }
+                        in
+                        if isOptionAllowed game resource then
+                            ( Running choice
+                                { game
+                                    | resources = calculateResourcesOnChoice game.resources choice game.location game.card
+                                    , unlockedCardIndexes = newUnlockedCardIndexes
+                                    , currentCards = getCurrentlyPossibleCards game.allCards newUnlockedCardIndexes game.location
+                                }
+                                (highscore + 1)
+                            , Cmd.none
+                            )
+
+                        else
+                            ( model, Cmd.none )
 
                     else
                         ( model, generateCard <| List.length game.currentCards )
