@@ -143,8 +143,7 @@ view model =
 
                     Running choice _ _ ->
                         Element.column [ width (px 800), height fill, padding 20, spacing 10 ]
-                            [ wrapText ("You're currently in " ++ Location.toText game.location)
-                            , case game.card of
+                            [ case game.card of
                                 Just c ->
                                     case choice of
                                         None ->
@@ -180,7 +179,6 @@ view model =
 
                                 Nothing ->
                                     Element.none
-                            , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Temporary: New Card" }
                             ]
             ]
 
