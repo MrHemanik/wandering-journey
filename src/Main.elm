@@ -119,53 +119,55 @@ view model =
                     gameState
     in
     viewBackground game.location <|
-        el [ centerX, centerY, Background.color (rgb255 0xFF 0xFF 0xFF) ] <|
-            case model of
-                GameOver _ _ ->
-                    Element.text (viewDeathMessage game.resources)
+        column [ centerX, centerY, spacing 100 ]
+            [ el [ Background.color (rgb255 0xFF 0xFF 0xFF), width (px 800) ] <| viewResources game.resources
+            , el [ Background.color (rgb255 0xFF 0xFF 0xFF) ] <|
+                case model of
+                    GameOver _ _ ->
+                        Element.text (viewDeathMessage game.resources)
 
-                Running choice _ _ ->
-                    Element.column [ width (px 800), height fill, padding 20, spacing 10 ]
-                        [ viewResources game.resources
-                        , wrapText ("You're currently in " ++ Location.toText game.location)
-                        , case game.card of
-                            Just c ->
-                                case choice of
-                                    None ->
-                                        Element.column [ width fill ]
-                                            [ wrapText c.mainText
-                                            , Element.wrappedRow [ width fill, spaceEvenly ]
-                                                [ if isOptionAllowed game c.resourceChange1 then
-                                                    Element.Input.button [ Element.alignLeft, Element.width (Element.minimum 100 fill) ] { onPress = Just (Key (ChoiceKey Left)), label = wrapText c.decisionText1 }
+                    Running choice _ _ ->
+                        Element.column [ width (px 800), height fill, padding 20, spacing 10 ]
+                            [ wrapText ("You're currently in " ++ Location.toText game.location)
+                            , case game.card of
+                                Just c ->
+                                    case choice of
+                                        None ->
+                                            Element.column [ width fill ]
+                                                [ wrapText c.mainText
+                                                , Element.wrappedRow [ width fill, spaceEvenly ]
+                                                    [ if isOptionAllowed game c.resourceChange1 then
+                                                        Element.Input.button [ Element.alignLeft, Element.width (Element.minimum 100 fill) ] { onPress = Just (Key (ChoiceKey Left)), label = wrapText c.decisionText1 }
 
-                                                  else
-                                                    Element.Input.button [ Element.alignLeft, Element.width (Element.minimum 100 fill) ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText1) }
-                                                , if isOptionAllowed game c.resourceChange2 then
-                                                    Element.Input.button [ Element.alignRight ] { onPress = Just (Key (ChoiceKey Right)), label = wrapText c.decisionText2 }
+                                                      else
+                                                        Element.Input.button [ Element.alignLeft, Element.width (Element.minimum 100 fill) ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText1) }
+                                                    , if isOptionAllowed game c.resourceChange2 then
+                                                        Element.Input.button [ Element.alignRight ] { onPress = Just (Key (ChoiceKey Right)), label = wrapText c.decisionText2 }
 
-                                                  else
-                                                    Element.Input.button [ Element.alignRight ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText2) }
+                                                      else
+                                                        Element.Input.button [ Element.alignRight ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText2) }
+                                                    ]
                                                 ]
-                                            ]
 
-                                    Left ->
-                                        Element.column [ width fill ]
-                                            [ wrapText c.mainText
-                                            , wrapText c.followUpText1
-                                            , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
-                                            ]
+                                        Left ->
+                                            Element.column [ width fill ]
+                                                [ wrapText c.mainText
+                                                , wrapText c.followUpText1
+                                                , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
+                                                ]
 
-                                    Right ->
-                                        Element.column [ width fill ]
-                                            [ wrapText c.mainText
-                                            , wrapText c.followUpText2
-                                            , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
-                                            ]
+                                        Right ->
+                                            Element.column [ width fill ]
+                                                [ wrapText c.mainText
+                                                , wrapText c.followUpText2
+                                                , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
+                                                ]
 
-                            Nothing ->
-                                Element.none
-                        , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Temporary: New Card" }
-                        ]
+                                Nothing ->
+                                    Element.none
+                            , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Temporary: New Card" }
+                            ]
+            ]
 
 
 viewBackground : Location -> Element Msg -> Html Msg
@@ -200,7 +202,7 @@ viewResources resources =
                 , wrapText (String.fromInt resource ++ "%")
                 ]
     in
-    row []
+    row [ spaceEvenly ]
         [ columns "src/img/hunger.svg" resources.hunger
         , columns "src/img/thirst.svg" resources.thirst
         , columns "src/img/physicalHealth.svg" resources.physicalHealth
