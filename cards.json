@@ -21,7 +21,7 @@
     "id":1,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
-    "mainText":"A thief is ambushing you",
+    "mainText":"A thief is ambushing you, wanting 15 coins",
     "decisionText1":"Give him your money",
     "decisionText2":"Fight back",
     "followUpText1":"You gave the thief money",

@@ -135,8 +135,16 @@ view model =
                                         Element.column [ width fill ]
                                             [ wrapText c.mainText
                                             , Element.wrappedRow [ width fill, spaceEvenly ]
-                                                [ Element.Input.button [ Element.alignLeft, Element.width (Element.minimum 100 fill) ] { onPress = Just (Key (ChoiceKey Left)), label = wrapText c.decisionText1 }
-                                                , Element.Input.button [ Element.alignRight ] { onPress = Just (Key (ChoiceKey Right)), label = wrapText c.decisionText2 }
+                                                [ if isOptionAllowed game c.resourceChange1 then
+                                                    Element.Input.button [ Element.alignLeft, Element.width (Element.minimum 100 fill) ] { onPress = Just (Key (ChoiceKey Left)), label = wrapText c.decisionText1 }
+
+                                                  else
+                                                    Element.Input.button [ Element.alignLeft, Element.width (Element.minimum 100 fill) ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText1) }
+                                                , if isOptionAllowed game c.resourceChange2 then
+                                                    Element.Input.button [ Element.alignRight ] { onPress = Just (Key (ChoiceKey Right)), label = wrapText c.decisionText2 }
+
+                                                  else
+                                                    Element.Input.button [ Element.alignRight ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText2) }
                                                 ]
                                             ]
 
@@ -353,8 +361,9 @@ getCurrentlyPossibleCards allCards unlockedCardsIndexes currentLocation =
             []
 
 
-
----- Helper Function ----
+isOptionAllowed : Game -> Resources -> Bool
+isOptionAllowed game choiceResources =
+    (game.resources.money + choiceResources.money) >= 0
 
 
 wrapText : String -> Element Msg

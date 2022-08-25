@@ -33,5 +33,5 @@ capResources rs =
     , thirst = max 0 rs.thirst |> min 100
     , physicalHealth = max 0 rs.physicalHealth |> min 100
     , mentalHealth = max 0 rs.mentalHealth |> min 100
-    , money = max 0 rs.money |> min 100
+    , money = max 0 rs.money
     }
