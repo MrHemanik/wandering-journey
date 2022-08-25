@@ -95,7 +95,8 @@
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":-30},
       "newCards":[],
       "removeCards":[4],
-      "flags":[]
+      "flags":[
+        {"flag": "addItem", "content":"0"}]
     },
     "decisionRight" : {
       "choiceText":"Try to get away",
@@ -166,7 +167,8 @@
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":0},
       "newCards":[8],
       "removeCards":[7],
-      "flags":[]
+      "flags":[
+        {"flag": "addItem", "content":"1"}]
     }
   }, {
     "id":8,
@@ -179,15 +181,17 @@
       "resourceChange":  {"hunger":10, "thirst":20, "physicalHealth":15, "mentalHealth":30, "money": 10},
       "newCards":[9],
       "removeCards":[8],
-      "flags":[]
+      "flags":[
+        {"flag": "removeItem", "content":"1"}]
     },
     "decisionRight" : {
       "choiceText":"Walk past him",
       "pickedText":"You walk past the man who is probably the owner of the bag you found earlier. Thinking that you may never find the owner you decided to take the contents for yourself",
       "resourceChange":  {"hunger":20, "thirst":20, "physicalHealth":20, "mentalHealth":-10, "money":20},
       "newCards":[],
-      "removeCards":[],
-      "flags":[]
+      "removeCards":[8],
+      "flags":[
+        {"flag": "removeItem", "content":"1"}]
     }
   }, {
     "id":9,
@@ -284,7 +288,8 @@
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "newCards":[15],
       "removeCards":[13,14],
-      "flags":[]
+      "flags":[
+        {"flag": "addItem", "content":"2"}]
     },
     "decisionRight" : {
       "choiceText":"Stay away from them",
@@ -305,7 +310,8 @@
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "newCards":[17],
       "removeCards":[13,14],
-      "flags":[]
+      "flags":[
+        {"flag": "addItem", "content":"3"}]
     },
     "decisionRight" : {
       "choiceText":"Stay away from them",
@@ -326,7 +332,9 @@
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "newCards":[16],
       "removeCards":[15],
-      "flags":[]
+      "flags":[
+        {"flag": "removeItem", "content":"2"},
+        {"flag": "addItem", "content":"4"}]
     },
     "decisionRight" : {
       "choiceText":"Ignore the church",
@@ -347,7 +355,9 @@
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":-30, "money": 0},
       "newCards":[18,19],
       "removeCards":[16,1,5],
-      "flags":[]
+      "flags":[
+        {"flag": "removeItem", "content":"4"},
+        {"flag": "addItem", "content":"6"}]
     },
     "decisionRight" : {
       "choiceText":"?̷̘̖̞̊͐̽̐̈́?̶͕͙̗̩̻̭̈́?̶̨̪̑̂͝",
@@ -355,7 +365,9 @@
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":-30, "money": 0},
       "newCards":[18,19],
       "removeCards":[16,1,5],
-      "flags":[]
+      "flags":[
+        {"flag": "removeItem", "content":"4"},
+        {"flag": "addItem", "content":"6"}]
     }
   }, {
     "id":17,
@@ -368,7 +380,9 @@
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "newCards":[7,20],
       "removeCards":[17,1],
-      "flags":[]
+      "flags":[
+        {"flag": "removeItem", "content":"3"},
+        {"flag": "addItem", "content":"5"}]
     },
     "decisionRight" : {
       "choiceText":"Ignore the church",

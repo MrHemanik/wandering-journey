@@ -5,11 +5,27 @@
     "description": "A mysterious stone you bought from a strange merchant"
   }, {
     "id":1,
+    "name": "Lost Bag",
+    "description": "A bag with a name tag, spelling [Pasmenik Friedner]"
+  }, {
+    "id":2,
     "name": "Mutan pamphlet",
     "description": "A pamphlet for the Mutan Order"
   }, {
-    "id":2,
+    "id":3,
     "name": "Fortuna pamphlet",
     "description": "A pamphlet for the Fortuna Order"
-    }]
+  }, {
+    "id":4,
+    "name": "Mutan affiliation token",
+    "description": "A token symbolizing your affiliation with the Mutan Order"
+  }, {
+    "id":5,
+    "name": "Fortuna affiliation token",
+    "description": "A token symbolizing your affiliation with the Fortuna Order"
+  }, {
+    "id":6,
+    "name": "Pulsating Mutan affiliation token",
+    "description": "A token symbolizing your affiliation with the Mutan Order. It feels strangely alive"
+  }]
 }

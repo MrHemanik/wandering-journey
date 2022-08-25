@@ -1,4 +1,4 @@
-module Location exposing (Location(..), decoder, toBackgroundImageUrl, toResourceDrain, toText)
+module Location exposing (Location(..), decoder, fromText, toBackgroundImageUrl, toResourceDrain, toText)
 
 import Json.Decode as Decode exposing (Decoder)
 import Resources exposing (Resources)
@@ -48,7 +48,23 @@ toText location =
             "City"
 
         _ ->
-            "Unknown"
+            "Nonexistent Place"
+
+
+fromText : String -> Location
+fromText location =
+    case location of
+        "Desert" ->
+            Desert
+
+        "Forest" ->
+            Forest
+
+        "City" ->
+            City
+
+        _ ->
+            None
 
 
 toBackgroundImageUrl : Location -> String

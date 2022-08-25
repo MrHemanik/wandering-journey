@@ -352,7 +352,7 @@ update msg model =
                         ( GameOver game highscore, Cmd.none )
 
                     else
-                        Debug.log "ah" ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
+                        ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
 
                 Key key ->
                     processKey key model
@@ -385,24 +385,26 @@ processKey key model =
                     in
                     if oldChoice == None then
                         let
-                            resource =
+                            ( resource, flags ) =
                                 case ( choice, game.card ) of
                                     ( Left, Just c ) ->
-                                        c.decisionLeft.resourceChange
+                                        ( c.decisionLeft.resourceChange, c.decisionLeft.flags )
 
                                     ( Right, Just c ) ->
-                                        c.decisionRight.resourceChange
+                                        ( c.decisionRight.resourceChange, c.decisionRight.flags )
 
                                     ( _, _ ) ->
-                                        { hunger = -100, thirst = -100, physicalHealth = -100, mentalHealth = -100, money = -100 }
+                                        ( { hunger = -100, thirst = -100, physicalHealth = -100, mentalHealth = -100, money = -100 }, [] )
                         in
                         if isOptionAllowed game resource then
                             ( Running choice
-                                { game
-                                    | resources = calculateResourcesOnChoice game.resources choice game.location game.card
-                                    , unlockedCardIndexes = newUnlockedCardIndexes
-                                    , currentCards = getCurrentlyPossibleCards game.allCards newUnlockedCardIndexes game.location
-                                }
+                                (processFlags flags
+                                    { game
+                                        | resources = calculateResourcesOnChoice game.resources choice game.location game.card
+                                        , unlockedCardIndexes = newUnlockedCardIndexes
+                                        , currentCards = getCurrentlyPossibleCards game.allCards newUnlockedCardIndexes game.location
+                                    }
+                                )
                                 (highscore + 1)
                             , Cmd.none
                             )
@@ -518,8 +520,8 @@ addEntriesToList list addList =
                 addEntriesToList (List.sort (x :: list)) xs
 
 
-processFlag : List Flag -> Game -> Game
-processFlag flags game =
+processFlags : List Flag -> Game -> Game
+processFlags flags game =
     case flags of
         [] ->
             game
@@ -527,13 +529,16 @@ processFlag flags game =
         x :: xs ->
             case x.flag of
                 "addItem" ->
-                    processFlag xs { game | activeItemsIndexes = Maybe.withDefault -1 (String.toInt x.content) :: game.activeItemsIndexes }
+                    processFlags xs { game | activeItemsIndexes = addEntriesToList game.activeItemsIndexes [ Maybe.withDefault -1 (String.toInt x.content) ] }
 
                 "removeItem" ->
-                    processFlag xs { game | activeItemsIndexes = game.activeItemsIndexes }
+                    processFlags xs { game | activeItemsIndexes = removeEntriesFromList game.activeItemsIndexes [ Maybe.withDefault -1 (String.toInt x.content) ] }
+
+                "changeLocation" ->
+                    processFlags xs { game | location = Location.fromText x.content }
 
                 _ ->
-                    processFlag xs game
+                    processFlags xs game
 
 
 
