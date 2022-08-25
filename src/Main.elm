@@ -463,7 +463,7 @@ init flags =
                 currentCards =
                     getCurrentlyPossibleCards value.allCards value.startingCardIndexes startingLocation
             in
-            ( Running None
+            ( Running Left
                 { resources = startingResources
                 , allCards = value.allCards
                 , unlockedCardIndexes = value.startingCardIndexes
@@ -476,7 +476,7 @@ init flags =
             )
 
         _ ->
-            ( Running None { resources = startingResources, allCards = [], unlockedCardIndexes = [], currentCards = [], location = startingLocation, card = Nothing } 0, Cmd.none )
+            ( Running Left { resources = startingResources, allCards = [], unlockedCardIndexes = [], currentCards = [], location = startingLocation, card = Nothing } 0, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
