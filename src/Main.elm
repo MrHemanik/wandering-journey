@@ -137,7 +137,7 @@ view model =
         column [ width fill, height fill ]
             [ el [ centerX, width (px 800), padding 20 ] <| viewResources game.resources
             , el [ centerX, width (px 800) ] <|
-                column [ padding 5, width (px 400), height fill, centerX, Background.color (rgba 0xFF 0xFF 0xFF 0.6) ]
+                column [ padding 5, width (px 400), height fill, centerX, Background.color (rgba 0xFF 0xFF 0xFF 0.6), Element.Border.rounded 5 ]
                     [ wrapText ("You are currently in a " ++ Location.toText game.location) ]
             , el [ centerX, centerY ] <|
                 case model of
@@ -145,39 +145,77 @@ view model =
                         Element.text (viewDeathMessage game.resources)
 
                     Running choice _ _ ->
-                        Element.column [ Background.color (rgb255 0xFF 0xFF 0xFF), width (px 800), height fill, padding 20 ]
+                        Element.column [ Background.color (rgba 0xFF 0xFF 0xFF 0.9), width (px 800), height (px 300), padding 20, Element.Border.rounded 7 ]
                             [ case game.card of
                                 Just c ->
                                     case choice of
                                         None ->
-                                            Element.column [ width fill ]
-                                                [ wrapText c.mainText
-                                                , Element.wrappedRow [ width fill, spaceEvenly ]
-                                                    [ if isOptionAllowed game c.resourceChange1 then
-                                                        Element.Input.button [ Element.alignLeft, Element.width (Element.minimum 100 fill) ] { onPress = Just (Key (ChoiceKey Left)), label = wrapText c.decisionText1 }
+                                            column [ width fill, height fill ]
+                                                [ column [ width fill, padding 20 ]
+                                                    [ wrapText c.mainText
+                                                    ]
+                                                , row [ width fill, Element.alignBottom ]
+                                                    [ column [ width fill, spaceEvenly, centerX, centerY ]
+                                                        [ if isOptionAllowed game c.resourceChange1 then
+                                                            Element.Input.button [ Element.width (Element.minimum 100 fill) ]
+                                                                { onPress = Just (Key (ChoiceKey Left))
+                                                                , label =
+                                                                    Element.wrappedRow [ Element.alignLeft ]
+                                                                        [ image [ centerX, centerY ]
+                                                                            { src = "src/img/arrowLeft.svg"
+                                                                            , description = ""
+                                                                            }
+                                                                        , wrapText c.decisionText1
+                                                                        ]
+                                                                }
 
-                                                      else
-                                                        Element.Input.button [ Element.alignLeft, Element.width (Element.minimum 100 fill) ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText1) }
-                                                    , if isOptionAllowed game c.resourceChange2 then
-                                                        Element.Input.button [ Element.alignRight ] { onPress = Just (Key (ChoiceKey Right)), label = wrapText c.decisionText2 }
+                                                          else
+                                                            Element.Input.button [ Element.width (Element.minimum 100 fill) ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText1) }
+                                                        ]
+                                                    , column [ width fill, spaceEvenly, centerX, centerY ]
+                                                        [ if isOptionAllowed game c.resourceChange2 then
+                                                            Element.Input.button [ Element.width (Element.minimum 100 fill) ]
+                                                                { onPress = Just (Key (ChoiceKey Right))
+                                                                , label =
+                                                                    Element.wrappedRow [ Element.alignRight ]
+                                                                        [ wrapText c.decisionText2
+                                                                        , image [ centerX, centerY ]
+                                                                            { src = "src/img/arrowRight.svg"
+                                                                            , description = ""
+                                                                            }
+                                                                        ]
+                                                                }
 
-                                                      else
-                                                        Element.Input.button [ Element.alignRight ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText2) }
+                                                          else
+                                                            Element.Input.button [ Element.width (Element.minimum 100 fill) ] { onPress = Nothing, label = wrapText ("Not enough money!" ++ c.decisionText2) }
+                                                        ]
                                                     ]
                                                 ]
 
                                         Left ->
-                                            Element.column [ width fill ]
-                                                [ wrapText c.mainText
-                                                , wrapText c.followUpText1
-                                                , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
+                                            column [ width fill, height fill ]
+                                                [ column [ width fill, padding 20 ]
+                                                    [ wrapText c.mainText
+                                                    ]
+                                                , column [ width fill, padding 20 ]
+                                                    [ wrapText c.followUpText1
+                                                    ]
+                                                , column [ width fill, Element.alignBottom ]
+                                                    [ Element.Input.button [ defaultFontSize, defaultFont, Font.center, width fill ] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
+                                                    ]
                                                 ]
 
                                         Right ->
-                                            Element.column [ width fill ]
-                                                [ wrapText c.mainText
-                                                , wrapText c.followUpText2
-                                                , Element.Input.button [] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
+                                            column [ width fill, height fill ]
+                                                [ column [ width fill, padding 20 ]
+                                                    [ wrapText c.mainText
+                                                    ]
+                                                , column [ width fill, padding 20 ]
+                                                    [ wrapText c.followUpText2
+                                                    ]
+                                                , column [ width fill, Element.alignBottom ]
+                                                    [ Element.Input.button [ defaultFontSize, defaultFont, Font.center, width fill ] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
+                                                    ]
                                                 ]
 
                                 Nothing ->
