@@ -5,8 +5,10 @@ import Browser.Events
 import Card exposing (Card)
 import Data
 import DecodeHelper
-import Element exposing (Element, alpha, centerX, centerY, clip, column, el, fill, height, image, inFront, layout, maximum, none, padding, px, rgb255, row, spaceEvenly, spacing, width)
+import Element exposing (Element, alpha, centerX, centerY, clip, column, el, fill, height, image, inFront, layout, maximum, none, padding, paragraph, px, rgb255, row, spaceEvenly, spacing, text, width)
 import Element.Background as Background exposing (color)
+import Element.Border
+import Element.Font as Font
 import Element.Input
 import Html exposing (Html)
 import Json.Decode as Decode exposing (Decoder)
@@ -56,6 +58,19 @@ type alias JsonData =
 
 
 ---- Preset Variables ----
+
+
+defaultFont =
+    Font.family
+        [ Font.external
+            { name = "Kalam"
+            , url = "https://fonts.googleapis.com/css?family=Kalam"
+            }
+        ]
+
+
+defaultFontSize =
+    Font.size 25
 
 
 startingResources =
@@ -119,9 +134,9 @@ view model =
                     gameState
     in
     viewBackground game.location <|
-        column [ centerX, centerY, spacing 100 ]
-            [ el [ Background.color (rgb255 0xFF 0xFF 0xFF), width (px 800) ] <| viewResources game.resources
-            , el [ Background.color (rgb255 0xFF 0xFF 0xFF) ] <|
+        column [ width fill, height fill ]
+            [ el [ centerX, width (px 800) ] <| viewResources game.resources
+            , el [ centerX, centerY, Background.color (rgb255 0xFF 0xFF 0xFF) ] <|
                 case model of
                     GameOver _ _ ->
                         Element.text (viewDeathMessage game.resources)
@@ -187,54 +202,26 @@ viewBackground location content =
 viewResources : Resources -> Element Msg
 viewResources resources =
     let
-        columns src resource =
+        columns src resource extraSign =
             column
-                [ width <| maximum 600 fill
-                , centerX
-                , centerY
+                [ width fill
                 , padding 20
                 , spacing 20
                 ]
-                [ image []
+                [ image [ Background.color (rgb255 0xFF 0xFF 0xFF), Element.Border.rounded 3, Element.Border.glow (rgb255 0xFF 0xFF 0xFF) 3, centerX, centerY ]
                     { src = src
                     , description = ""
                     }
-                , wrapText (String.fromInt resource ++ "%")
+                , Element.paragraph [ defaultFont, defaultFontSize, Font.center, Font.color (rgb255 0xFF 0xFF 0xFF) ] [ text (String.fromInt resource ++ extraSign) ]
                 ]
     in
-    row [ spaceEvenly ]
-        [ columns "src/img/hunger.svg" resources.hunger
-        , columns "src/img/thirst.svg" resources.thirst
-        , columns "src/img/physicalHealth.svg" resources.physicalHealth
-        , columns "src/img/mentalHealth.svg" resources.mentalHealth
-        , column
-            [ width <| maximum 600 fill
-            , centerX
-            , centerY
-            , padding 20
-            , spacing 20
-            ]
-            [ image []
-                { src = "src/img/money.svg"
-                , description = ""
-                }
-            , wrapText (String.fromInt resources.money)
-            ]
+    row [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leder.jpg", spaceEvenly, width fill ]
+        [ columns "src/img/hunger.svg" resources.hunger "%"
+        , columns "src/img/thirst.svg" resources.thirst "%"
+        , columns "src/img/physicalHealth.svg" resources.physicalHealth "%"
+        , columns "src/img/mentalHealth.svg" resources.mentalHealth "%"
+        , columns "src/img/money.svg" resources.money ""
         ]
-
-
-
-{- "Hunger: "
-   ++ String.fromInt resources.hunger
-   ++ " Thirst: "
-   ++ String.fromInt resources.thirst
-   ++ " Physical Health: "
-   ++ String.fromInt resources.physicalHealth
-   ++ " Mental Health: "
-   ++ String.fromInt resources.mentalHealth
-   ++ " Money: "
-   ++ String.fromInt resources.money
--}
 
 
 viewDeathMessage : Resources -> String
@@ -409,7 +396,7 @@ isOptionAllowed game choiceResources =
 
 wrapText : String -> Element Msg
 wrapText text =
-    Element.paragraph [] [ Element.text text ]
+    Element.paragraph [ Font.center, defaultFont, defaultFontSize ] [ Element.text text ]
 
 
 
