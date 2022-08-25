@@ -1,4 +1,4 @@
-module Location exposing (Location(..), decoder, toImageUrl, toResourceDrain, toText)
+module Location exposing (Location(..), decoder, toBackgroundImageUrl, toResourceDrain, toText)
 
 import Json.Decode as Decode exposing (Decoder)
 import Resources exposing (Resources)
@@ -51,9 +51,9 @@ toText location =
             "Unknown"
 
 
-toImageUrl : Location -> String
-toImageUrl location =
-    "src/img/" ++ toText location ++ ".png"
+toBackgroundImageUrl : Location -> String
+toBackgroundImageUrl location =
+    "src/img/bg" ++ toText location ++ ".png"
 
 
 toResourceDrain :

@@ -187,7 +187,7 @@ viewBackground : Location -> Element Msg -> Html Msg
 viewBackground location content =
     layout [] <|
         el
-            [ Background.tiled <| Location.toImageUrl location
+            [ Background.tiled <| Location.toBackgroundImageUrl location
             , width fill
             , height fill
             , clip
