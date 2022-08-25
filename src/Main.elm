@@ -92,7 +92,7 @@ emptyResources =
 
 
 startingLocation =
-    Location.City
+    Location.Forest
 
 
 
@@ -303,11 +303,11 @@ viewResources resources =
                 ]
     in
     row [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leder.jpg", spaceEvenly, width fill ]
-        [ columns "src/img/hunger.svg" resources.hunger "%" False
-        , columns "src/img/thirst.svg" resources.thirst "%" False
-        , columns "src/img/physicalHealth.svg" resources.physicalHealth "%" False
-        , columns "src/img/mentalHealth.svg" resources.mentalHealth "%" False
-        , columns "src/img/money.svg" resources.money "" True
+        [ columns "src/img/resources/hunger.svg" resources.hunger "%" False
+        , columns "src/img/resources/thirst.svg" resources.thirst "%" False
+        , columns "src/img/resources/physicalHealth.svg" resources.physicalHealth "%" False
+        , columns "src/img/resources/mentalHealth.svg" resources.mentalHealth "%" False
+        , columns "src/img/resources/money.svg" resources.money "" True
         ]
 
 

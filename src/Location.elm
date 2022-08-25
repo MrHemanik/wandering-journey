@@ -53,7 +53,7 @@ toText location =
 
 toBackgroundImageUrl : Location -> String
 toBackgroundImageUrl location =
-    "src/img/bg" ++ toText location ++ ".png"
+    "src/img/backgrounds/bg" ++ toText location ++ ".png"
 
 
 toResourceDrain :

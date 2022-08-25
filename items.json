@@ -1,5 +1,15 @@
 {
   "items" : [{
-    "id":0
-  }]
+    "id":0,
+    "name": "Red stone",
+    "description": "A mysterious stone you bought from a strange merchant"
+  }, {
+    "id":1,
+    "name": "Mutan pamphlet",
+    "description": "A pamphlet for the Mutan Order"
+  }, {
+    "id":2,
+    "name": "Fortuna pamphlet",
+    "description": "A pamphlet for the Fortuna Order"
+    }]
 }
