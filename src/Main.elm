@@ -7,8 +7,8 @@ import CardFlag exposing (CardFlag(..))
 import Condition exposing (Condition(..))
 import Data
 import DecodeHelper
-import Element exposing (Element, alpha, centerX, centerY, clip, column, el, fill, height, image, inFront, layout, maximum, minimum, none, padding, paragraph, px, rgb255, rgba, row, spaceEvenly, spacing, text, width)
-import Element.Background as Background exposing (color)
+import Element exposing (Element, centerX, centerY, clip, column, el, fill, height, image, layout, minimum, padding, px, rgb255, rgba, row, spaceEvenly, spacing, text, width)
+import Element.Background as Background
 import Element.Border
 import Element.Font as Font
 import Element.Input
@@ -794,7 +794,7 @@ init flags =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.map Key (Browser.Events.onKeyDown keyDecoder)
 
 
