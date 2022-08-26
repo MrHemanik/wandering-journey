@@ -475,7 +475,7 @@ update msg model =
                     ( model, generateCard <| List.length game.currentCards )
 
                 ToggleItemDetails id ->
-                    ( Running None game highscore { show | showDetail = not show.showDetail, item = Item.idToItem id game.allItems }, Cmd.none )
+                    ( Running choice game highscore { show | showDetail = not show.showDetail, item = Item.idToItem id game.allItems }, Cmd.none )
 
 
 processKey : Key -> Model -> ( Model, Cmd Msg )
