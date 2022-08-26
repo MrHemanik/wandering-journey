@@ -51,7 +51,7 @@ type Msg
     = Key Key
     | NewCard Int
     | GenerateNewCard
-    | Toggle Int
+    | ToggleItemDetails Int
 
 
 type alias Game =
@@ -201,7 +201,7 @@ view model =
                                                                 { onPress = Just (Key (ChoiceKey Left))
                                                                 , label =
                                                                     Element.wrappedRow [ Element.alignLeft ]
-                                                                        [ image [ centerX, centerY ]
+                                                                        [ image [ Element.alignLeft ]
                                                                             { src = "src/img/arrowLeft.svg"
                                                                             , description = ""
                                                                             }
@@ -215,6 +215,7 @@ view model =
                                                                 , wrapText c.decisionLeft.choiceText
                                                                 ]
                                                         ]
+                                                    , column [ Element.Border.width 1, height fill ] []
                                                     , column [ width fill, spaceEvenly, centerX, centerY ]
                                                         [ if isOptionAllowed game c.decisionRight.resourceChange then
                                                             Element.Input.button [ Element.width (Element.minimum 100 fill) ]
@@ -222,7 +223,7 @@ view model =
                                                                 , label =
                                                                     Element.wrappedRow [ Element.alignRight ]
                                                                         [ wrapText c.decisionRight.choiceText
-                                                                        , image [ centerX, centerY ]
+                                                                        , image [ Element.alignRight ]
                                                                             { src = "src/img/arrowRight.svg"
                                                                             , description = ""
                                                                             }
@@ -248,16 +249,16 @@ view model =
                                                     ]
                                                 , column [ width fill, Element.alignBottom ]
                                                     [ Element.Input.button
-                                                        [ defaultFontSize, defaultFont, Font.center, width fill ]
+                                                        [ defaultFontSize, defaultFont, width fill ]
                                                         { onPress = Just GenerateNewCard
                                                         , label =
                                                             Element.wrappedRow [ centerX, centerY ]
-                                                                [ image [ centerX, centerY ]
+                                                                [ image [ Element.alignLeft ]
                                                                     { src = "src/img/arrowLeft.svg"
                                                                     , description = ""
                                                                     }
                                                                 , wrapText "Move on"
-                                                                , image [ centerX, centerY ]
+                                                                , image [ Element.alignRight ]
                                                                     { src = "src/img/arrowRight.svg"
                                                                     , description = ""
                                                                     }
@@ -280,12 +281,12 @@ view model =
                                                         { onPress = Just GenerateNewCard
                                                         , label =
                                                             Element.wrappedRow [ centerX, centerY ]
-                                                                [ image [ centerX, centerY ]
+                                                                [ image [ Element.alignLeft ]
                                                                     { src = "src/img/arrowLeft.svg"
                                                                     , description = ""
                                                                     }
                                                                 , wrapText "Move on"
-                                                                , image [ centerX, centerY ]
+                                                                , image [ Element.alignRight ]
                                                                     { src = "src/img/arrowRight.svg"
                                                                     , description = ""
                                                                     }
@@ -377,7 +378,7 @@ viewItemBag items =
                     row [ centerX ]
                         [ column [ padding 20, centerX ]
                             [ Element.Input.button [ Element.width (Element.minimum 100 fill), centerX ]
-                                { onPress = Just (Toggle x)
+                                { onPress = Just (ToggleItemDetails x)
                                 , label =
                                     Element.wrappedRow [ centerX ]
                                         [ image
@@ -408,7 +409,7 @@ viewItemDetail : Item -> Element Msg
 viewItemDetail item =
     row [ Background.tiled "src/img/leder.jpg", Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Element.Border.rounded 3, centerX, width fill, height fill, spacing 20 ]
         [ Element.Input.button [ Element.width (Element.minimum 100 fill), centerX ]
-            { onPress = Just (Toggle item.id)
+            { onPress = Just (ToggleItemDetails item.id)
             , label =
                 Element.wrappedRow [ centerX, spacing 20, width fill ]
                     [ column [ padding 20, Element.Border.rounded 7 ]
@@ -473,7 +474,7 @@ update msg model =
                 GenerateNewCard ->
                     ( model, generateCard <| List.length game.currentCards )
 
-                Toggle id ->
+                ToggleItemDetails id ->
                     ( Running None game highscore { show | showDetail = not show.showDetail, item = Item.idToItem id game.allItems }, Cmd.none )
 
 
