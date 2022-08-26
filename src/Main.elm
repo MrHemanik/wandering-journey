@@ -8,7 +8,6 @@ import DecodeHelper
 import Element exposing (Element, alpha, centerX, centerY, clip, column, el, fill, height, image, inFront, layout, maximum, minimum, none, padding, paragraph, px, rgb255, rgba, row, spaceEvenly, spacing, text, width)
 import Element.Background as Background exposing (color)
 import Element.Border
-import Element.Events as Events
 import Element.Font as Font
 import Element.Input
 import Flag exposing (Flag(..))
@@ -39,7 +38,7 @@ type alias Highscore =
 
 type Model
     = GameOver Game Highscore
-    | Running Choice Game Highscore Show
+    | Running Choice Game Highscore ShowItemDetail
 
 
 
@@ -66,7 +65,7 @@ type alias Game =
     }
 
 
-type alias Show =
+type alias ShowItemDetail =
     { showDetail : Bool, item : Maybe Item }
 
 
@@ -152,7 +151,7 @@ view model =
                 Running _ gameState _ _ ->
                     gameState
 
-        show =
+        showItemDetail =
             case model of
                 GameOver _ _ ->
                     { showDetail = False, item = Nothing }
@@ -266,7 +265,16 @@ view model =
                                 Nothing ->
                                     Element.none
                             ]
-            , el [ centerX, width (px 800), padding 20 ] <| viewItemBag game.activeItemsIndexes game.allItems show
+            , case showItemDetail.item of
+                Nothing ->
+                    el [ centerX, width (px 800), padding 20 ] <| viewItemBag game.activeItemsIndexes
+
+                Just i ->
+                    if showItemDetail.showDetail then
+                        el [ centerX, width (px 800), padding 20 ] <| viewItemDetail i
+
+                    else
+                        el [ centerX, width (px 800), padding 20 ] <| viewItemBag game.activeItemsIndexes
             ]
 
 
@@ -328,8 +336,8 @@ viewResources resources =
         ]
 
 
-viewItemBag : List Int -> List Item -> Show -> Element Msg
-viewItemBag items list show =
+viewItemBag : List Int -> Element Msg
+viewItemBag items =
     let
         columns itemList =
             case itemList of
@@ -340,22 +348,7 @@ viewItemBag items list show =
                                 { onPress = Just (Toggle x)
                                 , label =
                                     Element.wrappedRow [ centerX ]
-                                        [ case show.item of
-                                            Nothing ->
-                                                wrapText ""
-
-                                            Just i ->
-                                                case Item.idToItem x list of
-                                                    Nothing ->
-                                                        wrapText ""
-
-                                                    Just y ->
-                                                        if show.showDetail && i.id == x then
-                                                            viewItemDetail y
-
-                                                        else
-                                                            wrapText ""
-                                        , image
+                                        [ image
                                             [ Background.color (rgba 0x00 0x00 0x00 0.4), Element.Border.rounded 3, centerX ]
                                             { src = Item.itemToImageUrl x
                                             , description = ""
@@ -381,9 +374,22 @@ viewItemBag items list show =
 
 viewItemDetail : Item -> Element Msg
 viewItemDetail item =
-    column [ Background.color (rgba 0x00 0x00 0x00 0.4), Element.Border.rounded 3, centerX, width fill, height fill ]
-        [ wrapText item.name
-        , wrapText item.description
+    row [ Background.tiled "src/img/leder.jpg", Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Element.Border.rounded 3, centerX, width fill, height fill, spacing 20 ]
+        [ Element.Input.button [ Element.width (Element.minimum 100 fill), centerX ]
+            { onPress = Just (Toggle item.id)
+            , label =
+                Element.wrappedRow [ centerX, spacing 20, width fill ]
+                    [ column [ padding 20, Element.Border.rounded 7 ]
+                        [ image
+                            [ Background.color (rgba 0x00 0x00 0x00 0.4), Element.Border.rounded 3, centerX ]
+                            { src = Item.itemToImageUrl item.id
+                            , description = ""
+                            }
+                        ]
+                    , column [ Background.color (rgba 0xFF 0xFF 0xFF 0.6), Element.Border.rounded 7, padding 20, width (Element.maximum 250 fill) ] [ wrapText item.name ]
+                    , column [ Background.color (rgba 0xFF 0xFF 0xFF 0.6), Element.Border.rounded 7, padding 20, width (Element.maximum 350 fill) ] [ wrapText item.description ]
+                    ]
+            }
         ]
 
 
@@ -662,7 +668,7 @@ init flags =
                 , allCards = value.allCards
                 , defaultCardIndexes = value.startingCardIndexes
                 , unlockedCardIndexes = value.startingCardIndexes
-                , activeItemsIndexes = [ 0, 1, 2, 3, 4, 5, 6, 3 ]
+                , activeItemsIndexes = []
                 , currentCards = currentCards
                 , location = startingLocation
                 , card = Nothing
