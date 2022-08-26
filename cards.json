@@ -24,7 +24,7 @@
     "mainText":"A thief is ambushing you, wanting 15 coins",
     "decisionLeft" : {
       "choiceText":"Give him your money",
-      "pickedText":"You gave the thief money",
+      "pickedText":"You gave the thief some money",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-5, "money":-15},
       "flags":[]
     },
@@ -33,7 +33,31 @@
       "pickedText":"You tried to fight back but failed",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-15, "mentalHealth":5, "money":0},
       "flags":[]
-    }
+    },
+    "flags": [{
+      "conditionalDecision": {
+        "condition": {
+          "ownItem": 0
+        },
+        "overwriteSide": true,
+        "decision": {
+          "choiceText": "Hit him with a stone!!",
+          "pickedText": "You tried to fight back but failed",
+          "resourceChange": {"hunger": 0, "thirst": 0, "physicalHealth": -15, "mentalHealth": 5, "money": 0},
+          "flags":[]
+        }}},{
+      "conditionalDecision": {
+        "condition": {
+          "ownItem": 0
+        },
+        "overwriteSide": false,
+        "decision": {
+          "choiceText": "Give him the stone!!",
+          "pickedText": "You tried to fight back but failed",
+          "resourceChange": {"hunger": 0, "thirst": 0, "physicalHealth": -15, "mentalHealth": 5, "money": 0},
+          "flags":[]
+        }
+      }}]
   }, {
     "id":2,
     "possibleLocation": ["City"],

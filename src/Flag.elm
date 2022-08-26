@@ -4,6 +4,13 @@ import Json.Decode as Decode exposing (Decoder)
 import Location exposing (Location)
 
 
+{-| States a modifier to our model.
+Flags can be part of a decision and will be processed after a decision is made
+or are part of a card and will be processed when a card is generated in form of CardFlag. This is useful for ConditionalDecisions
+
+    AddItem 0
+
+-}
 type Flag
     = AddItem Int
     | RemoveItem Int

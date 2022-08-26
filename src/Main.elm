@@ -3,6 +3,8 @@ module Main exposing (main)
 import Browser
 import Browser.Events
 import Card exposing (Card)
+import CardFlag exposing (CardFlag(..))
+import Condition exposing (Condition(..))
 import Data
 import DecodeHelper
 import Element exposing (Element, alpha, centerX, centerY, clip, column, el, fill, height, image, inFront, layout, maximum, minimum, none, padding, paragraph, px, rgb255, rgba, row, spaceEvenly, spacing, text, width)
@@ -463,7 +465,7 @@ update msg model =
                         ( GameOver game highscore, Cmd.none )
 
                     else
-                        ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore show, Cmd.none )
+                        ( Running None (processCardFlags { game | card = Card.getCardByIndex game.currentCards newCardIndex }) highscore show, Cmd.none )
 
                 Key key ->
                     processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } highscore show)
@@ -622,8 +624,51 @@ processFlags flags game =
                 ChangeLocation location ->
                     processFlags xs { game | location = location }
 
-                Unknown ->
+                _ ->
                     Debug.log "Unknown Flag detected" processFlags xs game
+
+
+processCardFlags : Game -> Game
+processCardFlags inputGame =
+    let
+        process flags game =
+            case flags of
+                [] ->
+                    game
+
+                x :: xs ->
+                    case x of
+                        ConditionalDecision condition overwriteSide decision ->
+                            process xs <|
+                                case ( isConditionTrue condition game, game.card, overwriteSide ) of
+                                    ( True, Just c, False ) ->
+                                        Debug.log "left" { game | card = Just { c | decisionLeft = decision } }
+
+                                    ( True, Just c, True ) ->
+                                        Debug.log "right" { game | card = Just { c | decisionRight = decision } }
+
+                                    _ ->
+                                        game
+
+                        DefaultFlag flag ->
+                            process xs (processFlags [ flag ] game)
+    in
+    case inputGame.card of
+        Nothing ->
+            Debug.log "No card to process cardFlags from" inputGame
+
+        Just card ->
+            process card.flags inputGame
+
+
+isConditionTrue : Condition -> Game -> Bool
+isConditionTrue condition game =
+    case condition of
+        OwnItem id ->
+            List.member id game.activeItemsIndexes
+
+        Condition.Unknown ->
+            False
 
 
 
