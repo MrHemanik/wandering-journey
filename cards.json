@@ -1,5 +1,5 @@
 {
-  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27],
+  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29],
   "cards" : [{
     "id":0,
     "possibleLocation": ["City"],
@@ -504,7 +504,7 @@
     "decisionLeft" : {
       "choiceText":"Defend yourself",
       "pickedText":"You screamed at the top of your lungs and put yourself in a defending position. It pounced on you, damaging your arms. You use the chance to kick the tiger cub in the stomach and run away",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-20, "mentalHealth":-5, "money": 0},
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-15, "mentalHealth":-5, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
@@ -568,7 +568,7 @@
     "id":28,
     "possibleLocation": ["Forest"],
     "interaction":"Action",
-    "mainText":"You arrived at the river you heard, it seems to be flowing fast",
+    "mainText":"You arrived at the river you heard. It seems to be flowing fast",
     "decisionLeft" : {
       "choiceText":"Drink out of the river",
       "pickedText":"You drank out of the river, clenching your thirst",
@@ -585,16 +585,16 @@
     "id":29,
     "possibleLocation": ["Forest"],
     "interaction":"Action",
-    "mainText":"",
+    "mainText":"You see a stone ruin on your way",
     "decisionLeft" : {
-      "choiceText":"",
-      "pickedText":"",
+      "choiceText":"Walk towards the ruin",
+      "pickedText":"You walked towards the ruin",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "flags":[]
+      "flags":[{"followUp": 30}]
     },
     "decisionRight" : {
-      "choiceText":"",
-      "pickedText":"",
+      "choiceText":"Ignore the ruin",
+      "pickedText":"You walked ahead without going near the ruin",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
     }
@@ -602,18 +602,51 @@
     "id":30,
     "possibleLocation": ["Forest"],
     "interaction":"Action",
-    "mainText":"",
+    "mainText":"You see the ruin right in front of you. It seems to be some sort of crypt. A big stone door with a sigill portraying what looks like a shield with wings blocks your way",
     "decisionLeft" : {
-      "choiceText":"",
-      "pickedText":"",
+      "choiceText":"Look around",
+      "pickedText":"You looked at the carvings on the walls, showing a stone radiating light with people worshiping it. Sadly you did not find an entry",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
-      "choiceText":"",
-      "pickedText":"",
+      "choiceText":"Try to break yourself in",
+      "pickedText":"You tried to destroy the door with your hands but were unable to do so",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
-    }
-  }]
+    },
+    "flags": [
+      {
+        "conditionalDecision": {
+          "condition": {
+            "ownItem": 0
+          },
+          "overwriteSide": false,
+          "decision": {
+            "choiceText":"Go inside the ruin",
+            "pickedText":"You went inside the ruin",
+            "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
+            "flags":[{"followUp": 31}]
+          }}}]
+  }, {
+    "id":31,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"Inside of there ruin is big room with a stone pedestal right in the middle. The whole room is decorated in elaborate patterns. Your red crystal seems to be reacting to it",
+    "decisionLeft" : {
+      "choiceText":"Place your red crystal on the pedestal",
+      "pickedText":"As soon as you placed the crystal red rays of light spew out of it, illuminating the whole room. Suddenly you felt the ground shaking and walls crumbling. You picked up the red crystal and dashed outside while the ruin collapsed",
+      "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":-5, "mentalHealth":0, "money": 0},
+      "flags":[
+        {"removeItem": 0},
+        {"addItem": 8},
+        {"removeCards": [29]}]
+    },
+    "decisionRight" : {
+      "choiceText":"Search for treasure",
+      "pickedText":"You searched the room for treasure. Luckily you find a chest you can open. As soon as you opened the chest and grabbed a pile of coins the ground starts to tremble. You ran outside while the ruin collapsed, making its secrets lost forever",
+      "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":-5, "mentalHealth": 0, "money": 40},
+      "flags":[{"removeCards": [29]}]
+    }}
+  ]
 }

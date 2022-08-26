@@ -81,7 +81,7 @@ toResourceDrain location =
             { hunger = -2, thirst = -2, physicalHealth = 0, mentalHealth = -1, money = 0 }
 
         Forest ->
-            { hunger = -1, thirst = -2, physicalHealth = 0, mentalHealth = -1, money = 0 }
+            { hunger = -1, thirst = -1, physicalHealth = -1, mentalHealth = 0, money = 0 }
 
         City ->
             { hunger = -1, thirst = -1, physicalHealth = 0, mentalHealth = 1, money = 0 }

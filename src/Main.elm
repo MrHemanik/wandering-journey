@@ -265,7 +265,12 @@ view model =
                                                                     { src = "src/img/arrowLeft.svg"
                                                                     , description = ""
                                                                     }
-                                                                , wrapText "Move on"
+                                                                , case game.nextCard of
+                                                                    Nothing ->
+                                                                        wrapText "Move on"
+
+                                                                    Just _ ->
+                                                                        wrapText "Continue"
                                                                 , image [ width (px 40), height (px 40) ]
                                                                     { src = "src/img/arrowRight.svg"
                                                                     , description = ""
@@ -299,7 +304,12 @@ view model =
                                                                     { src = "src/img/arrowLeft.svg"
                                                                     , description = ""
                                                                     }
-                                                                , wrapText "Move on"
+                                                                , case game.nextCard of
+                                                                    Nothing ->
+                                                                        wrapText "Move on"
+
+                                                                    Just _ ->
+                                                                        wrapText "Continue"
                                                                 , image [ width (px 40), height (px 40) ]
                                                                     { src = "src/img/arrowRight.svg"
                                                                     , description = ""
