@@ -1,8 +1,8 @@
 {
   "items" : [{
     "id":0,
-    "name": "Red stone",
-    "description": "A mysterious stone you bought from a strange merchant"
+    "name": "Red  crystal",
+    "description": "A mysterious crystal you bought from a strange merchant"
   }, {
     "id":1,
     "name": "Lost Bag",
@@ -27,5 +27,13 @@
     "id":6,
     "name": "Pulsating Mutan affiliation token",
     "description": "A token symbolizing your affiliation with the Mutan Order. It feels strangely alive"
+  }, {
+    "id":7,
+    "name": "Flowers",
+    "description": "Flowers you bought from a child"
+  }, {
+    "id":8,
+    "name": "Red crystal",
+    "description": "A mysterious crystal you bought from a strange merchant. It seems to be glowing"
   }]
 }
