@@ -10,7 +10,7 @@ import Element.Background as Background exposing (color)
 import Element.Border
 import Element.Font as Font
 import Element.Input
-import Flag exposing (Flag)
+import Flag exposing (Flag(..))
 import Html exposing (Html)
 import Item exposing (Item)
 import Json.Decode as Decode exposing (Decoder)
@@ -345,7 +345,7 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        Running _ game highscore ->
+        Running choice game highscore ->
             case msg of
                 NewCard newCardIndex ->
                     if checkResourcesIsZero game.resources then
@@ -355,7 +355,7 @@ update msg model =
                         ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
 
                 Key key ->
-                    processKey key model
+                    processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } highscore)
 
                 GenerateNewCard ->
                     ( model, generateCard <| List.length game.currentCards )
@@ -527,18 +527,18 @@ processFlags flags game =
             game
 
         x :: xs ->
-            case x.flag of
-                "addItem" ->
-                    processFlags xs { game | activeItemsIndexes = addEntriesToList game.activeItemsIndexes [ Maybe.withDefault -1 (String.toInt x.content) ] }
+            case x of
+                AddItem int ->
+                    processFlags xs { game | activeItemsIndexes = addEntriesToList game.activeItemsIndexes [ int ] }
 
-                "removeItem" ->
-                    processFlags xs { game | activeItemsIndexes = removeEntriesFromList game.activeItemsIndexes [ Maybe.withDefault -1 (String.toInt x.content) ] }
+                RemoveItem int ->
+                    processFlags xs { game | activeItemsIndexes = removeEntriesFromList game.activeItemsIndexes [ int ] }
 
-                "changeLocation" ->
-                    processFlags xs { game | location = Location.fromText x.content }
+                ChangeLocation location ->
+                    processFlags xs { game | location = location }
 
-                _ ->
-                    processFlags xs game
+                Unknown ->
+                    Debug.log "Unknown Flag detected" processFlags xs game
 
 
 
@@ -623,7 +623,7 @@ init flags =
             )
 
         _ ->
-            ( Running None { resources = startingResources, allCards = [], allItems = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing } 0, Cmd.none )
+            Debug.log "Failed to load Data" ( Running None { resources = startingResources, allCards = [], allItems = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing } 0, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg

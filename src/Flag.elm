@@ -1,17 +1,21 @@
-module Flag exposing (..)
+module Flag exposing (Flag(..), decoder)
 
-import DecodeHelper
 import Json.Decode as Decode exposing (Decoder)
+import Location exposing (Location)
 
 
-type alias Flag =
-    { flag : String
-    , content : String
-    }
+type Flag
+    = AddItem Int
+    | RemoveItem Int
+    | ChangeLocation Location
+    | Unknown
 
 
 decoder : Decoder Flag
 decoder =
-    Decode.succeed Flag
-        |> DecodeHelper.apply (Decode.field "flag" Decode.string)
-        |> DecodeHelper.apply (Decode.field "content" Decode.string)
+    Decode.oneOf
+        [ Decode.map AddItem (Decode.field "addItem" Decode.int)
+        , Decode.map RemoveItem (Decode.field "removeItem" Decode.int)
+        , Decode.map ChangeLocation (Decode.field "changeLocation" Location.decoder)
+        , Decode.succeed Unknown
+        ]

@@ -96,7 +96,7 @@
       "newCards":[],
       "removeCards":[4],
       "flags":[
-        {"flag": "addItem", "content":"0"}]
+        {"addItem": 0}]
     },
     "decisionRight" : {
       "choiceText":"Try to get away",
@@ -168,7 +168,7 @@
       "newCards":[8],
       "removeCards":[7],
       "flags":[
-        {"flag": "addItem", "content":"1"}]
+        {"addItem": 1}]
     }
   }, {
     "id":8,
@@ -182,7 +182,7 @@
       "newCards":[9],
       "removeCards":[8],
       "flags":[
-        {"flag": "removeItem", "content":"1"}]
+        {"removeItem": 1}]
     },
     "decisionRight" : {
       "choiceText":"Walk past him",
@@ -191,7 +191,7 @@
       "newCards":[],
       "removeCards":[8],
       "flags":[
-        {"flag": "removeItem", "content":"1"}]
+        {"removeItem": 1}]
     }
   }, {
     "id":9,
@@ -289,7 +289,7 @@
       "newCards":[15],
       "removeCards":[13,14],
       "flags":[
-        {"flag": "addItem", "content":"2"}]
+        {"addItem": 2}]
     },
     "decisionRight" : {
       "choiceText":"Stay away from them",
@@ -311,7 +311,7 @@
       "newCards":[17],
       "removeCards":[13,14],
       "flags":[
-        {"flag": "addItem", "content":"3"}]
+        {"addItem": 3}]
     },
     "decisionRight" : {
       "choiceText":"Stay away from them",
@@ -333,8 +333,8 @@
       "newCards":[16],
       "removeCards":[15],
       "flags":[
-        {"flag": "removeItem", "content":"2"},
-        {"flag": "addItem", "content":"4"}]
+        {"removeItem": 2},
+        {"addItem": 4}]
     },
     "decisionRight" : {
       "choiceText":"Ignore the church",
@@ -356,8 +356,8 @@
       "newCards":[18,19],
       "removeCards":[16,1,5],
       "flags":[
-        {"flag": "removeItem", "content":"4"},
-        {"flag": "addItem", "content":"6"}]
+        {"removeItem": 4},
+        {"addItem": 6}]
     },
     "decisionRight" : {
       "choiceText":"?̷̘̖̞̊͐̽̐̈́?̶͕͙̗̩̻̭̈́?̶̨̪̑̂͝",
@@ -366,8 +366,8 @@
       "newCards":[18,19],
       "removeCards":[16,1,5],
       "flags":[
-        {"flag": "removeItem", "content":"4"},
-        {"flag": "addItem", "content":"6"}]
+        {"removeItem": 4},
+        {"addItem": 6}]
     }
   }, {
     "id":17,
@@ -381,8 +381,8 @@
       "newCards":[7,20],
       "removeCards":[17,1],
       "flags":[
-        {"flag": "removeItem", "content":"3"},
-        {"flag": "addItem", "content":"5"}]
+        {"removeItem": 3},
+        {"addItem": 5}]
     },
     "decisionRight" : {
       "choiceText":"Ignore the church",
