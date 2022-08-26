@@ -5,15 +5,17 @@ import Browser.Events
 import Card exposing (Card)
 import Data
 import DecodeHelper
-import Element exposing (Element, alpha, centerX, centerY, clip, column, el, fill, height, image, inFront, layout, maximum, none, padding, paragraph, px, rgb255, rgba, row, spaceEvenly, spacing, text, width)
+import Element exposing (Element, alpha, centerX, centerY, clip, column, el, fill, height, image, inFront, layout, maximum, minimum, none, padding, paragraph, px, rgb255, rgba, row, spaceEvenly, spacing, text, width)
 import Element.Background as Background exposing (color)
 import Element.Border
+import Element.Events as Events
 import Element.Font as Font
 import Element.Input
 import Flag exposing (Flag(..))
 import Html exposing (Html)
 import Item exposing (Item)
 import Json.Decode as Decode exposing (Decoder)
+import List exposing (length)
 import Location exposing (Location)
 import Random
 import Resources exposing (Resources)
@@ -37,7 +39,7 @@ type alias Highscore =
 
 type Model
     = GameOver Game Highscore
-    | Running Choice Game Highscore
+    | Running Choice Game Highscore Show
 
 
 
@@ -48,6 +50,7 @@ type Msg
     = Key Key
     | NewCard Int
     | GenerateNewCard
+    | Toggle Int
 
 
 type alias Game =
@@ -61,6 +64,10 @@ type alias Game =
     , location : Location
     , card : Maybe Card
     }
+
+
+type alias Show =
+    { showDetail : Bool, item : Maybe Item }
 
 
 type alias JsonData =
@@ -142,8 +149,16 @@ view model =
                 GameOver gameState _ ->
                     gameState
 
-                Running _ gameState _ ->
+                Running _ gameState _ _ ->
                     gameState
+
+        show =
+            case model of
+                GameOver _ _ ->
+                    { showDetail = False, item = Nothing }
+
+                Running _ _ _ showDetail ->
+                    showDetail
     in
     viewBackground game.location <|
         column [ width fill, height fill ]
@@ -168,7 +183,7 @@ view model =
                                 ]
                             ]
 
-                    Running choice _ _ ->
+                    Running choice _ _ _ ->
                         column [ Background.color (rgba 0xFF 0xFF 0xFF 0.8), width (px 800), height (px 300), padding 20, Element.Border.rounded 7 ]
                             [ case game.card of
                                 Just c ->
@@ -251,6 +266,7 @@ view model =
                                 Nothing ->
                                     Element.none
                             ]
+            , el [ centerX, width (px 800), padding 20 ] <| viewItemBag game.activeItemsIndexes game.allItems show
             ]
 
 
@@ -312,6 +328,65 @@ viewResources resources =
         ]
 
 
+viewItemBag : List Int -> List Item -> Show -> Element Msg
+viewItemBag items list show =
+    let
+        columns itemList =
+            case itemList of
+                x :: xs ->
+                    row [ centerX ]
+                        [ column [ padding 20, centerX ]
+                            [ Element.Input.button [ Element.width (Element.minimum 100 fill), centerX ]
+                                { onPress = Just (Toggle x)
+                                , label =
+                                    Element.wrappedRow [ centerX ]
+                                        [ case show.item of
+                                            Nothing ->
+                                                wrapText ""
+
+                                            Just i ->
+                                                case Item.idToItem x list of
+                                                    Nothing ->
+                                                        wrapText ""
+
+                                                    Just y ->
+                                                        if show.showDetail && i.id == x then
+                                                            viewItemDetail y
+
+                                                        else
+                                                            wrapText ""
+                                        , image
+                                            [ Background.color (rgba 0x00 0x00 0x00 0.4), Element.Border.rounded 3, centerX ]
+                                            { src = Item.itemToImageUrl x
+                                            , description = ""
+                                            }
+                                        ]
+                                }
+                            ]
+                        , columns xs
+                        ]
+
+                [] ->
+                    column [] []
+    in
+    if length items > 0 then
+        row
+            [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leder.jpg", spaceEvenly, height fill, centerX ]
+            [ columns items
+            ]
+
+    else
+        row [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leder.jpg", spaceEvenly, height (px 100), centerX, width (px 100) ] []
+
+
+viewItemDetail : Item -> Element Msg
+viewItemDetail item =
+    column [ Background.color (rgba 0x00 0x00 0x00 0.4), Element.Border.rounded 3, centerX, width fill, height fill ]
+        [ wrapText item.name
+        , wrapText item.description
+        ]
+
+
 viewDeathMessage : Resources -> String
 viewDeathMessage resources =
     if resources.hunger <= 0 then
@@ -345,20 +420,23 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        Running choice game highscore ->
+        Running choice game highscore show ->
             case msg of
                 NewCard newCardIndex ->
                     if checkResourcesIsZero game.resources then
                         ( GameOver game highscore, Cmd.none )
 
                     else
-                        ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore, Cmd.none )
+                        ( Running None { game | card = Card.getCardByIndex game.currentCards newCardIndex } highscore show, Cmd.none )
 
                 Key key ->
-                    processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } highscore)
+                    processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } highscore show)
 
                 GenerateNewCard ->
                     ( model, generateCard <| List.length game.currentCards )
+
+                Toggle id ->
+                    ( Running None game highscore { show | showDetail = not show.showDetail, item = Item.idToItem id game.allItems }, Cmd.none )
 
 
 processKey : Key -> Model -> ( Model, Cmd Msg )
@@ -369,7 +447,7 @@ processKey key model =
                 GameOver gameState _ ->
                     gameState
 
-                Running _ gameState _ ->
+                Running _ gameState _ _ ->
                     gameState
     in
     case key of
@@ -378,7 +456,7 @@ processKey key model =
                 GameOver _ _ ->
                     ( model, Cmd.none )
 
-                Running oldChoice game highscore ->
+                Running oldChoice game highscore _ ->
                     if oldChoice == None then
                         let
                             ( resource, flags ) =
@@ -402,6 +480,7 @@ processKey key model =
                                     , currentCards = getCurrentlyPossibleCards fpg.allCards fpg.unlockedCardIndexes fpg.location
                                 }
                                 (highscore + 1)
+                                { showDetail = False, item = Nothing }
                             , Cmd.none
                             )
 
@@ -424,6 +503,7 @@ processKey key model =
                 , card = Nothing
                 }
                 0
+                { showDetail = False, item = Nothing }
             , generateCard <| List.length gameData.currentCards
             )
 
@@ -582,17 +662,18 @@ init flags =
                 , allCards = value.allCards
                 , defaultCardIndexes = value.startingCardIndexes
                 , unlockedCardIndexes = value.startingCardIndexes
-                , activeItemsIndexes = []
+                , activeItemsIndexes = [ 0, 1, 2, 3, 4, 5, 6, 3 ]
                 , currentCards = currentCards
                 , location = startingLocation
                 , card = Nothing
                 }
                 0
+                { showDetail = False, item = Nothing }
             , generateCard <| List.length currentCards
             )
 
         _ ->
-            Debug.log "Failed to load Data" ( Running None { resources = startingResources, allCards = [], allItems = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing } 0, Cmd.none )
+            Debug.log "Failed to load Data" ( Running None { resources = startingResources, allCards = [], allItems = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing } 0 { showDetail = False, item = Nothing }, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
