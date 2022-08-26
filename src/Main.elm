@@ -245,7 +245,22 @@ view model =
                                                     [ wrapText c.decisionLeft.pickedText
                                                     ]
                                                 , column [ width fill, Element.alignBottom ]
-                                                    [ Element.Input.button [ defaultFontSize, defaultFont, Font.center, width fill ] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
+                                                    [ Element.Input.button
+                                                        [ defaultFontSize, defaultFont, Font.center, width fill ]
+                                                        { onPress = Just GenerateNewCard
+                                                        , label =
+                                                            Element.wrappedRow [ centerX, centerY ]
+                                                                [ image [ centerX, centerY ]
+                                                                    { src = "src/img/arrowLeft.svg"
+                                                                    , description = ""
+                                                                    }
+                                                                , wrapText "Move on"
+                                                                , image [ centerX, centerY ]
+                                                                    { src = "src/img/arrowRight.svg"
+                                                                    , description = ""
+                                                                    }
+                                                                ]
+                                                        }
                                                     ]
                                                 ]
 
@@ -258,7 +273,22 @@ view model =
                                                     [ wrapText c.decisionRight.pickedText
                                                     ]
                                                 , column [ width fill, Element.alignBottom ]
-                                                    [ Element.Input.button [ defaultFontSize, defaultFont, Font.center, width fill ] { onPress = Just GenerateNewCard, label = Element.text "Move on" }
+                                                    [ Element.Input.button
+                                                        [ defaultFontSize, defaultFont, Font.center, width fill ]
+                                                        { onPress = Just GenerateNewCard
+                                                        , label =
+                                                            Element.wrappedRow [ centerX, centerY ]
+                                                                [ image [ centerX, centerY ]
+                                                                    { src = "src/img/arrowLeft.svg"
+                                                                    , description = ""
+                                                                    }
+                                                                , wrapText "Move on"
+                                                                , image [ centerX, centerY ]
+                                                                    { src = "src/img/arrowRight.svg"
+                                                                    , description = ""
+                                                                    }
+                                                                ]
+                                                        }
                                                     ]
                                                 ]
 
