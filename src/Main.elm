@@ -185,7 +185,7 @@ view model =
                             ]
 
                     Running choice _ _ _ ->
-                        column [ Background.color (rgba 0xFF 0xFF 0xFF 0.8), width (px 800), height (px 300), padding 20, Element.Border.rounded 7 ]
+                        column [ Background.color (rgba 0xFF 0xFF 0xFF 0.8), width (px 800), height (fill |> minimum 400), padding 20, Element.Border.rounded 7 ]
                             [ case game.card of
                                 Just c ->
                                     case choice of
@@ -201,7 +201,7 @@ view model =
                                                                 { onPress = Just (Key (ChoiceKey Left))
                                                                 , label =
                                                                     Element.wrappedRow [ Element.alignLeft ]
-                                                                        [ image [ Element.alignLeft ]
+                                                                        [ image [ width (px 40), height (px 40) ]
                                                                             { src = "src/img/arrowLeft.svg"
                                                                             , description = ""
                                                                             }
@@ -223,7 +223,7 @@ view model =
                                                                 , label =
                                                                     Element.wrappedRow [ Element.alignRight ]
                                                                         [ wrapText c.decisionRight.choiceText
-                                                                        , image [ Element.alignRight ]
+                                                                        , image [ width (px 40), height (px 40) ]
                                                                             { src = "src/img/arrowRight.svg"
                                                                             , description = ""
                                                                             }
@@ -253,12 +253,12 @@ view model =
                                                         { onPress = Just GenerateNewCard
                                                         , label =
                                                             Element.wrappedRow [ centerX, centerY ]
-                                                                [ image [ Element.alignLeft ]
+                                                                [ image [ width (px 40), height (px 40) ]
                                                                     { src = "src/img/arrowLeft.svg"
                                                                     , description = ""
                                                                     }
                                                                 , wrapText "Move on"
-                                                                , image [ Element.alignRight ]
+                                                                , image [ width (px 40), height (px 40) ]
                                                                     { src = "src/img/arrowRight.svg"
                                                                     , description = ""
                                                                     }
@@ -281,12 +281,12 @@ view model =
                                                         { onPress = Just GenerateNewCard
                                                         , label =
                                                             Element.wrappedRow [ centerX, centerY ]
-                                                                [ image [ Element.alignLeft ]
+                                                                [ image [ width (px 40), height (px 40) ]
                                                                     { src = "src/img/arrowLeft.svg"
                                                                     , description = ""
                                                                     }
                                                                 , wrapText "Move on"
-                                                                , image [ Element.alignRight ]
+                                                                , image [ width (px 40), height (px 40) ]
                                                                     { src = "src/img/arrowRight.svg"
                                                                     , description = ""
                                                                     }
