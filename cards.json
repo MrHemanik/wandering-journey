@@ -1,5 +1,5 @@
 {
-  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,21,23,24,25],
+  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25],
   "cards" : [{
     "id":0,
     "possibleLocation": ["City"],
@@ -37,24 +37,24 @@
     "flags": [{
       "conditionalDecision": {
         "condition": {
-          "ownItem": 0
+          "ownItem": 6
         },
-        "overwriteSide": true,
+        "overwriteSide": false,
         "decision": {
-          "choiceText": "Hit him with a stone!!",
-          "pickedText": "You tried to fight back but failed",
-          "resourceChange": {"hunger": 0, "thirst": 0, "physicalHealth": -15, "mentalHealth": 5, "money": 0},
+          "choiceText":"Give him your money",
+          "pickedText":"You reluctantly gave the thief your coins, wanting to punch him in the process",
+          "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-10, "money":-15},
           "flags":[]
         }}},{
       "conditionalDecision": {
         "condition": {
-          "ownItem": 0
+          "ownItem": 6
         },
-        "overwriteSide": false,
+        "overwriteSide": true,
         "decision": {
-          "choiceText": "Give him the stone!!",
-          "pickedText": "You tried to fight back but failed",
-          "resourceChange": {"hunger": 0, "thirst": 0, "physicalHealth": -15, "mentalHealth": 5, "money": 0},
+          "choiceText":"Fight back",
+          "pickedText":"You fought back, almost killing him in the process. You took the coins he left behind",
+          "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money":10},
           "flags":[]
         }
       }}]
@@ -127,7 +127,20 @@
       "pickedText":"You walk away, disappointing them",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-5, "money":0},
       "flags":[]
-    }
+    },
+    "flags": [
+      {
+        "conditionalDecision": {
+          "condition": {
+            "ownItem": 6
+          },
+          "overwriteSide": false,
+          "decision": {
+            "choiceText":"D̴̪̑ò̴̼ ̴͉͒å̸̻ ̴̯͒t̷̹̽r̶̺̔i̶̦̿c̵̙͋ḵ̸̓",
+            "pickedText":"On its own you body started to twist and turn into something far from human, losing consciousness in the process. You regained your consciousness looking human, yet different than before",
+            "resourceChange":  {"hunger":30, "thirst":20, "physicalHealth":-10, "mentalHealth":-20, "money":0},
+            "flags":[]
+    }}}]
   }, {
     "id":6,
     "possibleLocation": ["City"],
@@ -313,9 +326,12 @@
     },
     "decisionRight" : {
       "choiceText":"Ignore the church",
-      "pickedText":"You ignored your chance to join the Mutan Order",
+      "pickedText":"You ignored your chance to join the Mutan Order and discarded their pamphlet.",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "flags":[]
+      "flags":[
+        {"removeItem": 2},
+        {"addCards":[13,14]},
+        {"removeCards":[15]}]
     }
   }, {
     "id":16,
@@ -329,8 +345,7 @@
       "flags":[
         {"removeItem": 4},
         {"addItem": 6},
-        {"addCards":[18,19]},
-        {"removeCards":[16,1,5]}]
+        {"removeCards":[16]}]
     },
     "decisionRight" : {
       "choiceText":"?̷̘̖̞̊͐̽̐̈́?̶͕͙̗̩̻̭̈́?̶̨̪̑̂͝",
@@ -339,8 +354,7 @@
       "flags":[
         {"removeItem": 4},
         {"addItem": 6},
-        {"addCards":[18,19]},
-        {"removeCards":[16,1,5]}]
+        {"removeCards":[16]}]
     }
   }, {
     "id":17,
@@ -354,47 +368,50 @@
       "flags":[
         {"removeItem": 3},
         {"addItem": 5},
-        {"addCards":[7,20]},
+        {"addCards":[7,19,20]},
         {"removeCards":[17,1]}]
     },
     "decisionRight" : {
       "choiceText":"Ignore the church",
-      "pickedText":"You ignored your chance to join the Fortuna Order",
+      "pickedText":"You ignored your chance to join the Fortuna Order and discarded their pamphlet.",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "flags":[]
+      "flags":[
+        {"removeItem": 3},
+        {"addCards":[13,14]},
+        {"removeCards":[17]}]
     }
   }, {
     "id":18,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
-    "mainText":"A thief is ambushing you, wanting 15 coins",
+    "mainText":"You see a child selling some picked flowers",
     "decisionLeft" : {
-      "choiceText":"Give him your money",
-      "pickedText":"You reluctantly gave the thief your coins, wanting to punch him in the process",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-10, "money":-15},
-      "flags":[]
+      "choiceText":"Buy some flowers from the child",
+      "pickedText":"You bought some flowers from the child. He seems genuinely happy",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":-5},
+      "flags":[{"addItem": 7}]
     },
     "decisionRight" : {
-      "choiceText":"Fight back",
-      "pickedText":"You fought back, almost killing him in the process. You took the coins he left behind",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money":10},
+      "choiceText":"Do not buy flowers",
+      "pickedText":"The child looked disappointed but went right to the next potential customer",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
       "flags":[]
     }
   }, {
     "id":19,
-    "possibleLocation": ["City"],
+    "possibleLocation": ["City","Forest","Desert"],
     "interaction":"Conversation",
-    "mainText":"Three Children are playing with each other. As they notice you one of them runs towards you. \"Hey! Do a trick!\"",
+    "mainText":"A smiling man approaches you. \"Ah, a fellow follower of the Fortuna Order! You look like you need some help. What can I do for you?\"",
     "decisionLeft" : {
-      "choiceText":"D̴̪̑ò̴̼ ̴͉͒å̸̻ ̴̯͒t̷̹̽r̶̺̔i̶̦̿c̵̙͋ḵ̸̓",
-      "pickedText":"On its own you body started to twist and turn into something far from human, losing consciousness in the process. You regained your consciousness looking human, yet different than before",
-      "resourceChange":  {"hunger":30, "thirst":20, "physicalHealth":-10, "mentalHealth":-20, "money":0},
+      "choiceText":"Ask for food and water",
+      "pickedText":"\"Of course, of course! I have some stew left, think nothing of it! I will always help a member of the Fortuna Order\" You ate some stew the friendly stranger gave you",
+      "resourceChange":  {"hunger":10, "thirst":5, "physicalHealth":0, "mentalHealth":5, "money":0},
       "flags":[]
     },
     "decisionRight" : {
-      "choiceText":"Ignore them",
-      "pickedText":"You walk away, feeling uneasy",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
+      "choiceText":"Ask for a place to rest",
+      "pickedText":"\"Of course, of course! You must be tired. You can rest with me, think nothing of it! I will always help a member of the Fortuna Order\". You slept well",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":15, "mentalHealth":5, "money":0},
       "flags":[]
     }
   }, {
