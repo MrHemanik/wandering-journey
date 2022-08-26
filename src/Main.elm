@@ -379,10 +379,6 @@ processKey key model =
                     ( model, Cmd.none )
 
                 Running oldChoice game highscore ->
-                    let
-                        newUnlockedCardIndexes =
-                            calculateUnlockedCardIndexes game.unlockedCardIndexes choice game.card
-                    in
                     if oldChoice == None then
                         let
                             ( resource, flags ) =
@@ -395,16 +391,16 @@ processKey key model =
 
                                     ( _, _ ) ->
                                         ( { hunger = -100, thirst = -100, physicalHealth = -100, mentalHealth = -100, money = -100 }, [] )
+
+                            fpg =
+                                processFlags flags game
                         in
                         if isOptionAllowed game resource then
                             ( Running choice
-                                (processFlags flags
-                                    { game
-                                        | resources = calculateResourcesOnChoice game.resources choice game.location game.card
-                                        , unlockedCardIndexes = newUnlockedCardIndexes
-                                        , currentCards = getCurrentlyPossibleCards game.allCards newUnlockedCardIndexes game.location
-                                    }
-                                )
+                                { fpg
+                                    | resources = calculateResourcesOnChoice fpg.resources choice fpg.location fpg.card
+                                    , currentCards = getCurrentlyPossibleCards fpg.allCards fpg.unlockedCardIndexes fpg.location
+                                }
                                 (highscore + 1)
                             , Cmd.none
                             )
@@ -468,39 +464,6 @@ calculateResourcesOnChoice resources choice location maybeCard =
                 |> Resources.capResources
 
 
-calculateUnlockedCardIndexes : List Int -> Choice -> Maybe Card -> List Int
-calculateUnlockedCardIndexes uci choice maybeCard =
-    case maybeCard of
-        Nothing ->
-            uci
-
-        Just card ->
-            let
-                newIndexes =
-                    case choice of
-                        Left ->
-                            card.decisionLeft.newCards
-
-                        Right ->
-                            card.decisionRight.newCards
-
-                        None ->
-                            []
-
-                removeIndexes =
-                    case choice of
-                        Left ->
-                            card.decisionLeft.removeCards
-
-                        Right ->
-                            card.decisionRight.removeCards
-
-                        None ->
-                            []
-            in
-            removeEntriesFromList uci removeIndexes |> addEntriesToList newIndexes
-
-
 removeEntriesFromList : List a -> List a -> List a
 removeEntriesFromList list removeList =
     List.filter (\a -> not (List.member a removeList)) list
@@ -533,6 +496,12 @@ processFlags flags game =
 
                 RemoveItem int ->
                     processFlags xs { game | activeItemsIndexes = removeEntriesFromList game.activeItemsIndexes [ int ] }
+
+                AddCards list ->
+                    processFlags xs { game | unlockedCardIndexes = addEntriesToList game.unlockedCardIndexes list }
+
+                RemoveCards list ->
+                    processFlags xs { game | unlockedCardIndexes = removeEntriesFromList game.unlockedCardIndexes list }
 
                 ChangeLocation location ->
                     processFlags xs { game | location = location }

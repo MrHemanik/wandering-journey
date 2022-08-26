@@ -9,16 +9,12 @@
       "choiceText":"Buy some food",
       "pickedText":"You bought some food from the merchant",
       "resourceChange": {"hunger":15, "thirst":5, "physicalHealth":0, "mentalHealth":0, "money":-5},
-      "newCards": [],
-      "removeCards": [],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Walk away",
       "pickedText":"You decided you do not need food right now",
       "resourceChange": {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
-      "newCards": [],
-      "removeCards": [],
       "flags":[]
     }
   }, {
@@ -30,16 +26,12 @@
       "choiceText":"Give him your money",
       "pickedText":"You gave the thief money",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-5, "money":-15},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Fight back",
       "pickedText":"You tried to fight back but failed",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-15, "mentalHealth":5, "money":0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -51,16 +43,12 @@
       "choiceText":"Help her carry the bags",
       "pickedText":"You helped the old lady carrying the apples home. As a thanks she gave you a bag to keep",
       "resourceChange":  {"hunger":30, "thirst":20, "physicalHealth":-5, "mentalHealth":5, "money":0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Ignore her",
       "pickedText":"You ignored the struggles of the old lady and strode onwards",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-10, "money":0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -72,16 +60,12 @@
       "choiceText":"Rest for a bit",
       "pickedText":"You bought yourself a room and got some rest",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":15, "money":-5},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Move on",
       "pickedText":"You walked onwards, dismissing a safe place to rest",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -93,17 +77,14 @@
       "choiceText":"Give him money",
       "pickedText":"You gave him some money and in return he gave you a red crystal",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":-30},
-      "newCards":[],
-      "removeCards":[4],
       "flags":[
-        {"addItem": 0}]
+        {"addItem": 0},
+        {"removeCards":[4]}]
     },
     "decisionRight" : {
       "choiceText":"Try to get away",
       "pickedText":"\"A mistake! Without guidance you will wander until you die!\"",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -115,16 +96,12 @@
       "choiceText":"Do a trick",
       "pickedText":"They give you some apples to juggle with and you try your best. They walked away unimpressed.",
       "resourceChange":  {"hunger":10, "thirst":5, "physicalHealth":0, "mentalHealth":-10, "money":0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Ignore them",
       "pickedText":"You walk away, disappointing them",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-5, "money":0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -136,17 +113,13 @@
       "choiceText":"Drink from it",
       "pickedText":"You drank from the fountain and felt your stomach hurting shortly after",
       "resourceChange":  {"hunger":0, "thirst":15, "physicalHealth":-5, "mentalHealth":0, "money":0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Throw in a coin",
       "pickedText":"You threw a coin in the fountain for good luck",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":-1},
-      "newCards":[7],
-      "removeCards":[],
-      "flags":[]
+      "flags":[{"addCards":[7]}]
     }
   }, {
     "id":7,
@@ -157,18 +130,16 @@
       "choiceText":"Take the contents of the bag for yourself",
       "pickedText":"You opened the bag and found food, water, bandages and some money",
       "resourceChange":  {"hunger":30, "thirst":30, "physicalHealth":30, "mentalHealth":0, "money": 20},
-      "newCards":[],
-      "removeCards":[7],
-      "flags":[]
+      "flags":[{"removeCards":[7]}]
     },
     "decisionRight" : {
       "choiceText":"Take the bag with you for the owner",
       "pickedText":"You took the bag with you in hopes of finding the rightful owner",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":0},
-      "newCards":[8],
-      "removeCards":[7],
       "flags":[
-        {"addItem": 1}]
+        {"addItem": 1},
+        {"addCards":[8]},
+        {"removeCards":[7]}]
     }
   }, {
     "id":8,
@@ -179,19 +150,18 @@
       "choiceText":"Give him the bag you have found",
       "pickedText":"\"You found my stuff? I cannot thank you enough! Here, take some of it for yourself\"",
       "resourceChange":  {"hunger":10, "thirst":20, "physicalHealth":15, "mentalHealth":30, "money": 10},
-      "newCards":[9],
-      "removeCards":[8],
       "flags":[
-        {"removeItem": 1}]
+        {"removeItem": 1},
+        {"addCards":[9]},
+        {"removeCards":[8]}]
     },
     "decisionRight" : {
       "choiceText":"Walk past him",
       "pickedText":"You walk past the man who is probably the owner of the bag you found earlier. Thinking that you may never find the owner you decided to take the contents for yourself",
       "resourceChange":  {"hunger":20, "thirst":20, "physicalHealth":20, "mentalHealth":-10, "money":20},
-      "newCards":[],
-      "removeCards":[8],
       "flags":[
-        {"removeItem": 1}]
+        {"removeItem": 1},
+        {"removeCards":[8]}]
     }
   }, {
     "id":9,
@@ -202,17 +172,14 @@
       "choiceText":"Knock on the door",
       "pickedText":"A familiar face opens the door. The man whose bag you found invites you out of gratitude in to stay the night. You feel well rested",
       "resourceChange":  {"hunger":30, "thirst":30, "physicalHealth":40, "mentalHealth":40, "money": 0},
-      "newCards":[],
-      "removeCards":[9],
-      "flags":[]
+      "flags":[
+        {"removeCards":[9]}]
     },
     "decisionRight" : {
       "choiceText":"Walk past the house",
       "pickedText":"As soon as you walk past the house a familiar face slams open the door. The man whose bag you found invites you out of gratitude in to stay the night. You feel well rested",
       "resourceChange":  {"hunger":30, "thirst":30, "physicalHealth":40, "mentalHealth":40, "money": 0},
-      "newCards":[],
-      "removeCards":[9],
-      "flags":[]
+      "flags":[{"removeCards":[9]}]
     }
   }, {
     "id":10,
@@ -223,16 +190,12 @@
       "choiceText":"Pick up the apples from the ground",
       "pickedText":"You took the apples from the ground, you feel a slight pain in your stomach",
       "resourceChange":  {"hunger":5, "thirst":5, "physicalHealth":-5, "mentalHealth":0, "money": 0},
-      "newCards":[],
-      "removeCards":[9],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Kick the tree",
       "pickedText":"You kicked the tree and took the fresh apples from the ground",
       "resourceChange":  {"hunger":10, "thirst":5, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[],
-      "removeCards":[9],
       "flags":[]
     }
   }, {
@@ -244,16 +207,12 @@
       "choiceText":"See a doctor",
       "pickedText":"You went inside the clinic and let got a checkup. You feel better",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":0, "money": -5},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Ignore the clinic",
       "pickedText":"You did not go inside the clinic",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -265,16 +224,12 @@
       "choiceText":"Work for him",
       "pickedText":"You did some manual labor to earn yourself some money",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-10, "mentalHealth":0, "money": 10},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Ignore him",
       "pickedText":"You ignored your opportunity for some quick cash",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -286,17 +241,15 @@
       "choiceText":"Listen to them",
       "pickedText":"\"Greetings, fellow human! Are you interested in becoming a true believer?\" He gives you a pamphlet from the Mutan Order",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[15],
-      "removeCards":[13,14],
       "flags":[
-        {"addItem": 2}]
+        {"addItem": 2},
+        {"addCards":[15]},
+        {"removeCards":[13,14]}]
     },
     "decisionRight" : {
       "choiceText":"Stay away from them",
       "pickedText":"You ignore what they have to say",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -308,17 +261,15 @@
       "choiceText":"Listen to them",
       "pickedText":"\"Greetings! Feeling down on your luck? Become part of the Fortuna Order and feel as lucky as never before!\" He gives you a pamphlet from the Fortuna Order",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[17],
-      "removeCards":[13,14],
       "flags":[
-        {"addItem": 3}]
+        {"addItem": 3},
+        {"addCards":[17]},
+        {"removeCards":[13,14]}]
     },
     "decisionRight" : {
       "choiceText":"Stay away from them",
       "pickedText":"You ignore what they have to say",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -330,18 +281,16 @@
       "choiceText":"Join the Mutan Order",
       "pickedText":"You joined the Mutan Order. You feel a weird presence coming from inside of you",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[16],
-      "removeCards":[15],
       "flags":[
         {"removeItem": 2},
-        {"addItem": 4}]
+        {"addItem": 4},
+        {"addCards":[16]},
+        {"removeCards":[15]}]
     },
     "decisionRight" : {
       "choiceText":"Ignore the church",
       "pickedText":"You ignored your chance to join the Mutan Order",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -353,21 +302,21 @@
       "choiceText":"?̶̢̙̱̂̂͜͠?̴̲͇̲̯͚̰͕̆̒̉͌?̴̯̱̹͓̲̝̓̄̈̎",
       "pickedText":"When you wake up you find yourself looking different and being stronger than before. You feel like you aren't quite yourself anymore",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":-30, "money": 0},
-      "newCards":[18,19],
-      "removeCards":[16,1,5],
       "flags":[
         {"removeItem": 4},
-        {"addItem": 6}]
+        {"addItem": 6},
+        {"addCards":[18,19]},
+        {"removeCards":[16,1,5]}]
     },
     "decisionRight" : {
       "choiceText":"?̷̘̖̞̊͐̽̐̈́?̶͕͙̗̩̻̭̈́?̶̨̪̑̂͝",
       "pickedText":"When you wake up you find yourself looking different and being stronger than before. You feel like you aren't quite yourself anymore",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":-30, "money": 0},
-      "newCards":[18,19],
-      "removeCards":[16,1,5],
       "flags":[
         {"removeItem": 4},
-        {"addItem": 6}]
+        {"addItem": 6},
+        {"addCards":[18,19]},
+        {"removeCards":[16,1,5]}]
     }
   }, {
     "id":17,
@@ -378,18 +327,16 @@
       "choiceText":"Join the Fortuna Order",
       "pickedText":"You joined the Fortuna Order. You somehow feel luckier than before",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[7,20],
-      "removeCards":[17,1],
       "flags":[
         {"removeItem": 3},
-        {"addItem": 5}]
+        {"addItem": 5},
+        {"addCards":[7,20]},
+        {"removeCards":[17,1]}]
     },
     "decisionRight" : {
       "choiceText":"Ignore the church",
       "pickedText":"You ignored your chance to join the Fortuna Order",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -401,16 +348,12 @@
       "choiceText":"Give him your money",
       "pickedText":"You reluctantly gave the thief your coins, wanting to punch him in the process",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-10, "money":-15},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Fight back",
       "pickedText":"You fought back, almost killing him in the process. You took the coins he left behind",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money":10},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -422,16 +365,12 @@
       "choiceText":"D̴̪̑ò̴̼ ̴͉͒å̸̻ ̴̯͒t̷̹̽r̶̺̔i̶̦̿c̵̙͋ḵ̸̓",
       "pickedText":"On its own you body started to twist and turn into something far from human, losing consciousness in the process. You regained your consciousness looking human, yet different than before",
       "resourceChange":  {"hunger":30, "thirst":20, "physicalHealth":-10, "mentalHealth":-20, "money":0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Ignore them",
       "pickedText":"You walk away, feeling uneasy",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -443,16 +382,12 @@
       "choiceText":"Give her the earring",
       "pickedText":"You gave her the earring you found. As a thanks she gave you some coins",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money": 5},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Keep it",
       "pickedText":"You kept the earring and sold it at then nearest jewelery",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-5, "money": 10},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -464,16 +399,14 @@
       "choiceText":"Buy some Inutilis",
       "pickedText":"You bought and took some Inutilis, you feel like nothing has changed",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": -10},
-      "newCards":[22],
-      "removeCards":[21],
-      "flags":[]
+      "flags":[
+        {"addCards":[22]},
+        {"removeCards":[21]}]
     },
     "decisionRight" : {
       "choiceText":"Ignore the man",
       "pickedText":"You didn't buy any Inutilis",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -485,16 +418,13 @@
       "choiceText":"Demand a refund",
       "pickedText":"\"Refund? Why should I? There is nothing better than Inutilis! I can make you a deal though, 2 for the price of one, what do you say?\". You punch him in the face and walk away",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money": 0},
-      "newCards":[],
-      "removeCards":[22],
-      "flags":[]
+      "flags":[
+        {"removeCards":[22]}]
     },
     "decisionRight" : {
       "choiceText":"Ignore the man",
       "pickedText":"You didn't buy any Inutilis",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -506,16 +436,12 @@
       "choiceText":"Walk towards the camp",
       "pickedText":"At the camp you see a men sitting at a campfire all by himself. He invites you over to eat. You both take turns sleeping",
       "resourceChange":  {"hunger":5, "thirst":5, "physicalHealth":10, "mentalHealth":5, "money": 0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Walk past the camp",
       "pickedText":"You walk past the camp",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -527,16 +453,12 @@
       "choiceText":"Defend yourself",
       "pickedText":"You screamed at the top of your lungs and put yourself in a defending position. It pounced on you, damaging your arms. You use the chance to kick the tiger cub in the stomach and run away",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-20, "mentalHealth":-5, "money": 0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Run away and hide",
       "pickedText":"You ran with all of your might, looking for a place to hide. You hid and waited for some time",
       "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":-5, "mentalHealth": -5, "money": 0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }, {
@@ -548,16 +470,12 @@
       "choiceText":"Hunt the bunny",
       "pickedText":"You hunted the bunny",
       "resourceChange":  {"hunger":10, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Spare the bunny",
       "pickedText":"You spared the bunny",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
-      "newCards":[],
-      "removeCards":[],
       "flags":[]
     }
   }]
