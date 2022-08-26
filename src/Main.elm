@@ -51,6 +51,7 @@ type Msg
     = Key Key
     | NewCard Int
     | GenerateNewCard
+    | LoadCard
     | ToggleItemDetails Int
 
 
@@ -64,6 +65,7 @@ type alias Game =
     , currentCards : List Card
     , location : Location
     , card : Maybe Card
+    , nextCard : Maybe Card
     }
 
 
@@ -93,7 +95,7 @@ defaultFontSize =
 
 
 startingResources =
-    { hunger = 100, thirst = 100, physicalHealth = 100, mentalHealth = 100, money = 100 }
+    { hunger = 70, thirst = 70, physicalHealth = 70, mentalHealth = 70, money = 70 }
 
 
 emptyResources =
@@ -101,7 +103,7 @@ emptyResources =
 
 
 startingLocation =
-    Location.City
+    Location.Forest
 
 
 
@@ -250,7 +252,13 @@ view model =
                                                 , column [ width fill, Element.alignBottom ]
                                                     [ Element.Input.button
                                                         [ defaultFontSize, defaultFont, width fill ]
-                                                        { onPress = Just GenerateNewCard
+                                                        { onPress =
+                                                            case game.nextCard of
+                                                                Nothing ->
+                                                                    Just GenerateNewCard
+
+                                                                Just _ ->
+                                                                    Just LoadCard
                                                         , label =
                                                             Element.wrappedRow [ centerX, centerY ]
                                                                 [ image [ width (px 40), height (px 40) ]
@@ -278,7 +286,13 @@ view model =
                                                 , column [ width fill, Element.alignBottom ]
                                                     [ Element.Input.button
                                                         [ defaultFontSize, defaultFont, Font.center, width fill ]
-                                                        { onPress = Just GenerateNewCard
+                                                        { onPress =
+                                                            case game.nextCard of
+                                                                Nothing ->
+                                                                    Just GenerateNewCard
+
+                                                                Just _ ->
+                                                                    Just LoadCard
                                                         , label =
                                                             Element.wrappedRow [ centerX, centerY ]
                                                                 [ image [ width (px 40), height (px 40) ]
@@ -468,6 +482,13 @@ update msg model =
                     else
                         ( Running None (processCardFlags { game | card = Card.getCardByIndex game.currentCards newCardIndex }) highscore show, Cmd.none )
 
+                LoadCard ->
+                    if checkResourcesIsZero game.resources then
+                        ( GameOver game highscore, Cmd.none )
+
+                    else
+                        Debug.log "load" ( Running None (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) highscore show, Cmd.none )
+
                 Key key ->
                     processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } highscore show)
 
@@ -495,7 +516,7 @@ processKey key model =
                 GameOver _ _ ->
                     ( model, Cmd.none )
 
-                Running oldChoice game highscore _ ->
+                Running oldChoice game highscore show ->
                     if oldChoice == None then
                         let
                             ( resource, flags ) =
@@ -527,7 +548,16 @@ processKey key model =
                             ( model, Cmd.none )
 
                     else
-                        ( model, generateCard <| List.length game.currentCards )
+                        case game.nextCard of
+                            Nothing ->
+                                ( model, generateCard <| List.length game.currentCards )
+
+                            Just _ ->
+                                if checkResourcesIsZero game.resources then
+                                    ( GameOver game highscore, Cmd.none )
+
+                                else
+                                    Debug.log "load" ( Running None (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) highscore show, Cmd.none )
 
         Restart ->
             ( Running None
@@ -540,6 +570,7 @@ processKey key model =
                 , currentCards = gameData.currentCards
                 , location = startingLocation
                 , card = Nothing
+                , nextCard = Nothing
                 }
                 0
                 { showDetail = False, item = Nothing }
@@ -610,11 +641,11 @@ processFlags flags game =
 
         x :: xs ->
             case x of
-                AddItem int ->
-                    processFlags xs { game | activeItemsIndexes = addEntriesToList game.activeItemsIndexes [ int ] }
+                AddItem id ->
+                    processFlags xs { game | activeItemsIndexes = addEntriesToList game.activeItemsIndexes [ id ] }
 
-                RemoveItem int ->
-                    processFlags xs { game | activeItemsIndexes = removeEntriesFromList game.activeItemsIndexes [ int ] }
+                RemoveItem id ->
+                    processFlags xs { game | activeItemsIndexes = removeEntriesFromList game.activeItemsIndexes [ id ] }
 
                 AddCards list ->
                     processFlags xs { game | unlockedCardIndexes = addEntriesToList game.unlockedCardIndexes list }
@@ -624,6 +655,9 @@ processFlags flags game =
 
                 ChangeLocation location ->
                     processFlags xs { game | location = location }
+
+                FollowUp id ->
+                    processFlags xs { game | nextCard = Card.getCardById game.allCards id }
 
                 _ ->
                     Debug.log "Unknown Flag detected" processFlags xs game
@@ -748,6 +782,7 @@ init flags =
                 , currentCards = currentCards
                 , location = startingLocation
                 , card = Nothing
+                , nextCard = Nothing
                 }
                 0
                 { showDetail = False, item = Nothing }
@@ -755,7 +790,7 @@ init flags =
             )
 
         _ ->
-            Debug.log "Failed to load Data" ( Running None { resources = startingResources, allCards = [], allItems = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing } 0 { showDetail = False, item = Nothing }, Cmd.none )
+            Debug.log "Failed to load Data" ( Running None { resources = startingResources, allCards = [], allItems = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing, nextCard = Nothing } 0 { showDetail = False, item = Nothing }, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg

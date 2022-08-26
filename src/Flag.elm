@@ -17,6 +17,7 @@ type Flag
     | AddCards (List Int)
     | RemoveCards (List Int)
     | ChangeLocation Location
+    | FollowUp Int
     | Unknown
 
 
@@ -28,5 +29,6 @@ decoder =
         , Decode.map AddCards (Decode.field "addCards" (Decode.list Decode.int))
         , Decode.map RemoveCards (Decode.field "removeCards" (Decode.list Decode.int))
         , Decode.map ChangeLocation (Decode.field "changeLocation" Location.decoder)
+        , Decode.map FollowUp (Decode.field "followUp" Decode.int)
         , Decode.succeed Unknown
         ]

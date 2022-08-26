@@ -1,4 +1,4 @@
-module Card exposing (Card, decoder, getCardByIndex)
+module Card exposing (Card, decoder, getCardById, getCardByIndex)
 
 import Array
 import CardFlag exposing (CardFlag)
@@ -35,3 +35,17 @@ decoder =
 getCardByIndex : List Card -> Int -> Maybe Card
 getCardByIndex list index =
     Array.get index (Array.fromList list)
+
+
+getCardById : List Card -> Int -> Maybe Card
+getCardById allCards id =
+    case allCards of
+        [] ->
+            Nothing
+
+        x :: xs ->
+            if x.id == id then
+                Just x
+
+            else
+                getCardById xs id

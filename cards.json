@@ -1,5 +1,5 @@
 {
-  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25],
+  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27],
   "cards" : [{
     "id":0,
     "possibleLocation": ["City"],
@@ -119,7 +119,7 @@
     "decisionLeft" : {
       "choiceText":"Do a trick",
       "pickedText":"They give you some apples to juggle with and you try your best. They walked away unimpressed.",
-      "resourceChange":  {"hunger":10, "thirst":5, "physicalHealth":0, "mentalHealth":-10, "money":0},
+      "resourceChange":  {"hunger":5, "thirst":5, "physicalHealth":0, "mentalHealth":-10, "money":0},
       "flags":[]
     },
     "decisionRight" : {
@@ -138,7 +138,7 @@
           "decision": {
             "choiceText":"D̴̪̑ò̴̼ ̴͉͒å̸̻ ̴̯͒t̷̹̽r̶̺̔i̶̦̿c̵̙͋ḵ̸̓",
             "pickedText":"On its own you body started to twist and turn into something far from human, losing consciousness in the process. You regained your consciousness looking human, yet different than before",
-            "resourceChange":  {"hunger":30, "thirst":20, "physicalHealth":-10, "mentalHealth":-20, "money":0},
+            "resourceChange":  {"hunger":15, "thirst":10, "physicalHealth":-15, "mentalHealth":-15, "money":0},
             "flags":[]
     }}}]
   }, {
@@ -149,13 +149,13 @@
     "decisionLeft" : {
       "choiceText":"Drink from it",
       "pickedText":"You drank from the fountain and felt your stomach hurting shortly after",
-      "resourceChange":  {"hunger":0, "thirst":15, "physicalHealth":-5, "mentalHealth":0, "money":0},
+      "resourceChange":  {"hunger":0, "thirst":5, "physicalHealth":-5, "mentalHealth":0, "money":0},
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Throw in a coin",
       "pickedText":"You threw a coin in the fountain for good luck",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":-1},
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money":-1},
       "flags":[{"addCards":[7]}]
     }
   }, {
@@ -396,7 +396,18 @@
       "pickedText":"The child looked disappointed but went right to the next potential customer",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
       "flags":[]
-    }
+    },
+    "flags": [{"conditionalDecision": {
+        "condition": {
+          "ownItem": 7
+        },
+        "overwriteSide": false,
+        "decision": {
+          "choiceText":"Donate him some money",
+          "pickedText":"You gave him some money. After his initial confusion that you do not want a flower in return he gave you a big smile",
+          "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":-5},
+          "flags":[]
+        }}}]
   }, {
     "id":19,
     "possibleLocation": ["City","Forest","Desert"],
@@ -516,6 +527,91 @@
     "decisionRight" : {
       "choiceText":"Spare the bunny",
       "pickedText":"You spared the bunny",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  },{
+    "id":26,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"A flock of birds sit on trees and chirp in harmony",
+    "decisionLeft" : {
+      "choiceText":"Listen to the birdsong",
+      "pickedText":"You listened to their birdsong, you cannot seem to get it out of your head",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Throw a rock at them",
+      "pickedText":"You picked up a rock, aimed at a bird and threw it. You missed",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  },{
+    "id":27,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"You hear a river near you",
+    "decisionLeft" : {
+      "choiceText":"Walk towards the river",
+      "pickedText":"You walked towards the river",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "flags":[{"followUp": 28}]
+    },
+    "decisionRight" : {
+      "choiceText":"Ignore the sounds of water",
+      "pickedText":"You ignored the river",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  },{
+    "id":28,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"You arrived at the river you heard, it seems to be flowing fast",
+    "decisionLeft" : {
+      "choiceText":"Drink out of the river",
+      "pickedText":"You drank out of the river, clenching your thirst",
+      "resourceChange":  {"hunger":0, "thirst":15, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Try to cross it",
+      "pickedText":"You tried to cross the river but the current was too fast. After a lot of struggling you made it out",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-20, "mentalHealth": -5, "money": 0},
+      "flags":[]
+    }
+  },{
+    "id":29,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"",
+    "decisionLeft" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  },{
+    "id":30,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"",
+    "decisionLeft" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"",
+      "pickedText":"",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
     }
