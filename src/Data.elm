@@ -1,11 +1,10 @@
-module Data exposing (Data(..), fromResult)
+module Data exposing (Data(..), fromResult, handleError)
 
 import Json.Decode exposing (Error(..))
 
 
 type Data value
-    = Loading
-    | Failure Error
+    = Failure Error
     | Success value
 
 

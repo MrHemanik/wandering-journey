@@ -429,10 +429,10 @@
     "id":20,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
-    "mainText":"You find an earring on the ground. Shortly after a woman approaches you, claiming that she has lost her earring somewhere and asks you to help her find it",
+    "mainText":"You find a piece of jewelery on the ground. Shortly after a woman approaches you, claiming that she has lost her earring somewhere and asks you to help her find it",
     "decisionLeft" : {
-      "choiceText":"Give her the earring",
-      "pickedText":"You gave her the earring you found. As a thanks she gave you some coins",
+      "choiceText":"Give her the jewelery",
+      "pickedText":"You gave her the jewelery you found. As a thanks she gave you some coins",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money": 5},
       "flags":[]
     },

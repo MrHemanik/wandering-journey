@@ -21,6 +21,7 @@ import Item exposing (Item)
 import Json.Decode as Decode exposing (Decoder)
 import List exposing (length)
 import Location exposing (Location)
+import Player exposing (Player)
 import Random
 import Resources exposing (Resources)
 
@@ -42,8 +43,8 @@ type alias Highscore =
 
 
 type Model
-    = GameOver Game Highscore
-    | Running (Maybe Choice) Game Highscore ShowItemDetail
+    = GameOver Game Player Highscore
+    | Running (Maybe Choice) Game Player Highscore ShowItemDetail
 
 
 
@@ -178,18 +179,18 @@ view model =
     let
         game =
             case model of
-                GameOver gameState _ ->
+                GameOver gameState _ _ ->
                     gameState
 
-                Running _ gameState _ _ ->
+                Running _ gameState _ _ _ ->
                     gameState
 
         showItemDetail =
             case model of
-                GameOver _ _ ->
+                GameOver _ _ _ ->
                     { showDetail = False, item = Nothing }
 
-                Running _ _ _ showDetail ->
+                Running _ _ _ _ showDetail ->
                     showDetail
     in
     viewBackground game.location <|
@@ -287,7 +288,7 @@ viewCard : Model -> Element Msg
 viewCard model =
     column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ] <|
         case model of
-            GameOver game score ->
+            GameOver game _ score ->
                 [ el [ width fill, padding 20 ] <|
                     wrapText
                         (if score <= 2500 then
@@ -308,7 +309,7 @@ viewCard model =
                     }
                 ]
 
-            Running maybeChoice game _ _ ->
+            Running maybeChoice game _ _ _ ->
                 [ case game.card of
                     Just c ->
                         column [ width fill, height fill ]
@@ -508,7 +509,7 @@ viewItemDetail item =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case model of
-        GameOver _ _ ->
+        GameOver _ _ _ ->
             case msg of
                 Key Restart ->
                     processKey Restart model
@@ -516,50 +517,50 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        Running choice game highscore show ->
+        Running choice game player highscore show ->
             case msg of
                 NewCard newCardIndex ->
                     if checkResourcesIsZero game.resources then
-                        ( GameOver game highscore, Cmd.none )
+                        ( GameOver game player highscore, Cmd.none )
 
                     else
-                        ( Running Nothing (processCardFlags { game | card = Card.getCardByIndex game.currentCards newCardIndex }) highscore show, Cmd.none )
+                        ( Running Nothing (processCardFlags { game | card = Card.getCardByIndex game.currentCards newCardIndex }) player highscore show, Cmd.none )
 
                 LoadCard ->
                     if checkResourcesIsZero game.resources then
-                        ( GameOver game highscore, Cmd.none )
+                        ( GameOver game player highscore, Cmd.none )
 
                     else
-                        Debug.log "load" ( Running Nothing (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) highscore show, Cmd.none )
+                        Debug.log "load" ( Running Nothing (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) player highscore show, Cmd.none )
 
                 Key key ->
-                    processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } highscore show)
+                    processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } player highscore show)
 
                 GenerateNewCard ->
                     ( model, generateCard <| List.length game.currentCards )
 
                 ToggleItemDetails id ->
-                    ( Running choice game highscore { show | showDetail = not show.showDetail, item = Item.idToItem id game.allItems }, Cmd.none )
+                    ( Running choice game player highscore { show | showDetail = not show.showDetail, item = Item.idToItem id game.allItems }, Cmd.none )
 
 
 processKey : Key -> Model -> ( Model, Cmd Msg )
 processKey key model =
     let
-        gameData =
+        ( gameData, playerData ) =
             case model of
-                GameOver gameState _ ->
-                    gameState
+                GameOver gameState playerState _ ->
+                    ( gameState, playerState )
 
-                Running _ gameState _ _ ->
-                    gameState
+                Running _ gameState playerState _ _ ->
+                    ( gameState, playerState )
     in
     case key of
         ChoiceKey choice ->
             case model of
-                GameOver _ _ ->
+                GameOver _ _ _ ->
                     ( model, Cmd.none )
 
-                Running oldChoice game highscore show ->
+                Running oldChoice game player highscore show ->
                     if oldChoice == Nothing then
                         let
                             ( resource, flags ) =
@@ -582,6 +583,7 @@ processKey key model =
                                     | resources = calculateResourcesOnChoice fpg.resources choice fpg.location fpg.card
                                     , currentCards = getCurrentlyPossibleCards fpg.allCards fpg.unlockedCardIndexes fpg.location
                                 }
+                                player
                                 (highscore + 50)
                                 { showDetail = False, item = Nothing }
                             , Cmd.none
@@ -597,10 +599,10 @@ processKey key model =
 
                             Just _ ->
                                 if checkResourcesIsZero game.resources then
-                                    ( GameOver game highscore, Cmd.none )
+                                    ( GameOver game player highscore, Cmd.none )
 
                                 else
-                                    Debug.log "load" ( Running Nothing (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) highscore show, Cmd.none )
+                                    Debug.log "load" ( Running Nothing (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) player highscore show, Cmd.none )
 
         Restart ->
             ( Running Nothing
@@ -615,6 +617,7 @@ processKey key model =
                 , card = Nothing
                 , nextCard = Nothing
                 }
+                playerData
                 0
                 { showDetail = False, item = Nothing }
             , generateCard <| List.length gameData.currentCards
@@ -650,12 +653,13 @@ processKey key model =
                                     i :: activeItemIndexesToItemList xs allItems
             in
             case model of
-                GameOver _ _ ->
+                GameOver _ _ _ ->
                     ( model, Cmd.none )
 
-                Running choice game highscore show ->
+                Running choice game player highscore show ->
                     ( Running choice
                         game
+                        player
                         highscore
                         { show
                             | showDetail = not show.showDetail
@@ -847,33 +851,19 @@ wrapText text =
 ---- Default functions ----
 
 
-init : ( String, Maybe String ) -> ( Model, Cmd Msg )
+init : ( String, String ) -> ( Model, Cmd Msg )
 init flags =
     let
-        ( inputGameData, inputPlayerData ) =
+        ( gameData, playerData ) =
             flags
 
-        gameDataResponse =
-            Decode.decodeString gameDataDecoder inputGameData
-
-        gameData =
-            Data.fromResult gameDataResponse
-    in
-    case gameData of
-        Data.Success value ->
-            let
-                currentCards =
-                    getCurrentlyPossibleCards value.allCards value.startingCardIndexes startingLocation
-            in
-            Debug.log
-                (case inputPlayerData of
-                    Just pd ->
-                        pd
-
-                    _ ->
-                        ""
-                )
-                ( Running Nothing
+        game =
+            case Data.fromResult <| Decode.decodeString gameDataDecoder gameData of
+                Data.Success value ->
+                    let
+                        currentCards =
+                            getCurrentlyPossibleCards value.allCards value.startingCardIndexes startingLocation
+                    in
                     { resources = startingResources
                     , allItems = value.items
                     , allCards = value.allCards
@@ -885,13 +875,22 @@ init flags =
                     , card = Nothing
                     , nextCard = Nothing
                     }
-                    0
-                    { showDetail = False, item = Nothing }
-                , generateCard <| List.length currentCards
-                )
 
-        _ ->
-            Debug.log "Failed to load Data" ( Running Nothing { resources = startingResources, allCards = [], allItems = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing, nextCard = Nothing } 0 { showDetail = False, item = Nothing }, Cmd.none )
+                Data.Failure _ ->
+                    { resources = startingResources, allCards = [], allItems = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing, nextCard = Nothing }
+
+        player =
+            Debug.log "player" <|
+                case Data.fromResult <| Decode.decodeString Player.decoder playerData of
+                    Data.Success pl ->
+                        pl
+
+                    Data.Failure _ ->
+                        { startingCards = game.defaultCardIndexes, unlockedAchievements = [], highscore = 0 }
+    in
+    ( Running Nothing game player 0 { showDetail = False, item = Nothing }
+    , generateCard <| List.length game.currentCards
+    )
 
 
 subscriptions : Model -> Sub Msg
@@ -899,7 +898,7 @@ subscriptions _ =
     Sub.map Key (Browser.Events.onKeyDown keyDecoder)
 
 
-main : Program ( String, Maybe String ) Model Msg
+main : Program ( String, String ) Model Msg
 main =
     Browser.element
         { init = init
