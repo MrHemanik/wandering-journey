@@ -1,4 +1,4 @@
-module Item exposing (Item, decoder, idToItem, itemToImageUrl)
+module Item exposing (Item, decoder, idToItem, itemIdToImageUrl)
 
 import DecodeHelper
 import Json.Decode as Decode exposing (Decoder)
@@ -19,8 +19,8 @@ decoder =
         |> DecodeHelper.apply (Decode.field "description" Decode.string)
 
 
-itemToImageUrl : Int -> String
-itemToImageUrl id =
+itemIdToImageUrl : Int -> String
+itemIdToImageUrl id =
     "src/img/items/" ++ String.fromInt id ++ ".png"
 
 

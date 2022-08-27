@@ -7,11 +7,11 @@ import CardFlag exposing (CardFlag(..))
 import Condition exposing (Condition(..))
 import Data
 import DecodeHelper
-import Element exposing (Element, centerX, centerY, clip, column, el, fill, height, image, layout, maximum, minimum, padding, paddingXY, px, rgb255, rgba, row, spaceEvenly, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, clip, column, el, fill, height, image, layout, maximum, minimum, none, padding, paddingXY, paragraph, px, rgb255, rgba, row, spaceEvenly, spacing, text, width, wrappedRow)
 import Element.Background as Background
-import Element.Border
+import Element.Border as Border
 import Element.Font as Font
-import Element.Input
+import Element.Input as Input
 import Flag exposing (Flag(..))
 import Html exposing (Html)
 import Item exposing (Item)
@@ -167,19 +167,19 @@ view model =
         column [ width fill, height fill ]
             [ viewResources game.resources
             , el [ centerX, width (px 800) ] <|
-                column [ padding 5, width (px 400), height fill, centerX, Background.color (rgba 0x00 0x00 0x00 0.6), Font.color (rgb255 0xFF 0xFF 0xFF), Element.Border.rounded 5 ]
+                column [ padding 5, width (px 400), height fill, centerX, Background.color (rgba 0x00 0x00 0x00 0.6), Font.color (rgb255 0xFF 0xFF 0xFF), Border.rounded 5 ]
                     [ wrapText ("You are currently in a " ++ Location.toText game.location) ]
             , el [ centerX, centerY ] <|
                 case model of
                     GameOver _ highscore ->
-                        column [ width (px 800), height (px 300), Background.color (rgba 0xFF 0xFF 0xFF 0.8), padding 20, Element.Border.rounded 7, centerY ]
+                        column [ width (px 800), height (px 300), Background.color (rgba 0xFF 0xFF 0xFF 0.8), padding 20, Border.rounded 7, centerY ]
                             [ column [ width fill, padding 20 ]
                                 [ wrapText (viewDeathMessage game.resources)
                                 ]
                             , column [ width fill, padding 20 ]
                                 [ wrapText ("Highscore:  " ++ String.fromInt highscore) ]
-                            , column [ width fill, Element.alignBottom ]
-                                [ Element.Input.button [ Element.width (Element.minimum 100 fill) ]
+                            , column [ width fill, alignBottom ]
+                                [ Input.button [ width (minimum 100 fill) ]
                                     { onPress = Just (Key Restart)
                                     , label = wrapText "New Run"
                                     }
@@ -187,7 +187,7 @@ view model =
                             ]
 
                     Running choice _ _ _ ->
-                        column [ Background.color (rgba 0xFF 0xFF 0xFF 0.8), width (px 800), height (fill |> minimum 400), padding 20, Element.Border.rounded 7 ]
+                        column [ Background.color (rgba 0xFF 0xFF 0xFF 0.8), width (px 800), height (fill |> minimum 400), padding 20, Border.rounded 7 ]
                             [ case game.card of
                                 Just c ->
                                     case choice of
@@ -196,13 +196,13 @@ view model =
                                                 [ column [ width fill, padding 20 ]
                                                     [ wrapText c.mainText
                                                     ]
-                                                , row [ width fill, Element.alignBottom ]
+                                                , row [ width fill, alignBottom ]
                                                     [ column [ width fill, spaceEvenly, centerX, centerY ]
                                                         [ if isOptionAllowed game c.decisionLeft.resourceChange then
-                                                            Element.Input.button [ Element.width (Element.minimum 100 fill) ]
+                                                            Input.button [ width (minimum 100 fill) ]
                                                                 { onPress = Just (Key (ChoiceKey Left))
                                                                 , label =
-                                                                    Element.wrappedRow [ Element.alignLeft ]
+                                                                    wrappedRow [ alignLeft ]
                                                                         [ image [ width (px 40), height (px 40) ]
                                                                             { src = "src/img/arrowLeft.svg"
                                                                             , description = ""
@@ -212,18 +212,18 @@ view model =
                                                                 }
 
                                                           else
-                                                            column [ Element.alignLeft ]
-                                                                [ Element.paragraph [ Element.width (Element.minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
+                                                            column [ alignLeft ]
+                                                                [ paragraph [ width (minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
                                                                 , wrapText c.decisionLeft.choiceText
                                                                 ]
                                                         ]
-                                                    , column [ Element.Border.width 1, height fill ] []
+                                                    , column [ Border.width 1, height fill ] []
                                                     , column [ width fill, spaceEvenly, centerX, centerY ]
                                                         [ if isOptionAllowed game c.decisionRight.resourceChange then
-                                                            Element.Input.button [ Element.width (Element.minimum 100 fill) ]
+                                                            Input.button [ width (minimum 100 fill) ]
                                                                 { onPress = Just (Key (ChoiceKey Right))
                                                                 , label =
-                                                                    Element.wrappedRow [ Element.alignRight ]
+                                                                    wrappedRow [ alignRight ]
                                                                         [ wrapText c.decisionRight.choiceText
                                                                         , image [ width (px 40), height (px 40) ]
                                                                             { src = "src/img/arrowRight.svg"
@@ -233,8 +233,8 @@ view model =
                                                                 }
 
                                                           else
-                                                            column [ Element.alignRight ]
-                                                                [ Element.paragraph [ Element.width (Element.minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
+                                                            column [ alignRight ]
+                                                                [ paragraph [ width (minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
                                                                 , wrapText c.decisionRight.choiceText
                                                                 ]
                                                         ]
@@ -249,8 +249,8 @@ view model =
                                                 , column [ width fill, padding 20 ]
                                                     [ wrapText c.decisionLeft.pickedText
                                                     ]
-                                                , column [ width fill, Element.alignBottom ]
-                                                    [ Element.Input.button
+                                                , column [ width fill, alignBottom ]
+                                                    [ Input.button
                                                         [ defaultFontSize, defaultFont, width fill ]
                                                         { onPress =
                                                             case game.nextCard of
@@ -260,7 +260,7 @@ view model =
                                                                 Just _ ->
                                                                     Just LoadCard
                                                         , label =
-                                                            Element.wrappedRow [ centerX, centerY ]
+                                                            wrappedRow [ centerX, centerY ]
                                                                 [ image [ width (px 40), height (px 40) ]
                                                                     { src = "src/img/arrowLeft.svg"
                                                                     , description = ""
@@ -288,8 +288,8 @@ view model =
                                                 , column [ width fill, padding 20 ]
                                                     [ wrapText c.decisionRight.pickedText
                                                     ]
-                                                , column [ width fill, Element.alignBottom ]
-                                                    [ Element.Input.button
+                                                , column [ width fill, alignBottom ]
+                                                    [ Input.button
                                                         [ defaultFontSize, defaultFont, Font.center, width fill ]
                                                         { onPress =
                                                             case game.nextCard of
@@ -299,7 +299,7 @@ view model =
                                                                 Just _ ->
                                                                     Just LoadCard
                                                         , label =
-                                                            Element.wrappedRow [ centerX, centerY ]
+                                                            wrappedRow [ centerX, centerY ]
                                                                 [ image [ width (px 40), height (px 40) ]
                                                                     { src = "src/img/arrowLeft.svg"
                                                                     , description = ""
@@ -320,7 +320,7 @@ view model =
                                                 ]
 
                                 Nothing ->
-                                    Element.none
+                                    none
                             ]
             , case showItemDetail.item of
                 Nothing ->
@@ -355,13 +355,13 @@ viewResources resources =
         resourceElement src resource isMoney =
             column
                 [ width fill, paddingXY 5 20, spacing 20 ]
-                [ image [ Background.color (rgb255 0xFF 0xFF 0xFF), Element.Border.rounded 3, Element.Border.glow (rgb255 0xFF 0xFF 0xFF) 3, centerX, centerY ]
+                [ image [ Background.color (rgb255 0xFF 0xFF 0xFF), Border.rounded 3, Border.glow (rgb255 0xFF 0xFF 0xFF) 3, centerX, centerY ]
                     { src = src
                     , description = ""
                     }
-                , Element.row
+                , row
                     [ Background.color (rgba 0x00 0x00 0x00 0.4)
-                    , Element.Border.rounded 5
+                    , Border.rounded 5
                     , padding 8
                     , width fill
                     , defaultFont
@@ -393,7 +393,7 @@ viewResources resources =
                 ]
     in
     el [ paddingXY 0 20, width fill ] <|
-        row [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, width (minimum 400 <| maximum 800 fill), centerX ]
+        row [ Border.rounded 7, Border.width 3, Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, width (minimum 400 <| maximum 800 fill), centerX ]
             [ resourceElement "src/img/resources/hunger.svg" resources.hunger False
             , resourceElement "src/img/resources/thirst.svg" resources.thirst False
             , resourceElement "src/img/resources/physicalHealth.svg" resources.physicalHealth False
@@ -405,55 +405,52 @@ viewResources resources =
 viewItemBag : List Int -> Element Msg
 viewItemBag items =
     let
-        columns itemList =
-            case itemList of
-                x :: xs ->
-                    row [ centerX ]
-                        [ column [ padding 20, centerX ]
-                            [ Element.Input.button [ Element.width (Element.minimum 100 fill), centerX ]
-                                { onPress = Just (ToggleItemDetails x)
-                                , label =
-                                    Element.wrappedRow [ centerX ]
-                                        [ image
-                                            [ Background.color (rgba 0x00 0x00 0x00 0.4), Element.Border.rounded 3, centerX ]
-                                            { src = Item.itemToImageUrl x
-                                            , description = ""
-                                            }
-                                        ]
-                                }
-                            ]
-                        , columns xs
+        portrayAllItems itemList =
+            -- text "" as first element because when clicking the first element is always highlighted, with this an empty element will be highlighted, bypassing the highlight
+            [ text "" ] ++ List.map itemElement itemList
+
+        itemElement item =
+            Input.button [ width (minimum 100 fill), centerX, padding 20 ]
+                { onPress = Just (ToggleItemDetails item)
+                , label =
+                    wrappedRow [ centerX ]
+                        [ image
+                            [ Background.color (rgba 0x00 0x00 0x00 0.4), Border.rounded 3, centerX ]
+                            { src = Item.itemIdToImageUrl item
+                            , description = ""
+                            }
                         ]
-
-                [] ->
-                    column [] []
+                }
     in
-    if List.length items > 0 then
-        row
-            [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, height fill, centerX ]
-            [ columns items
-            ]
+    row
+        ([ Border.rounded 7, Border.width 3, Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, centerX ]
+            ++ (if List.length items > 0 then
+                    [ height fill ]
 
-    else
-        row [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, height (px 100), centerX, width (px 100) ] []
+                else
+                    [ height (px 100), width (px 100) ]
+               )
+        )
+    <|
+        portrayAllItems items
 
 
 viewItemDetail : Item -> Element Msg
 viewItemDetail item =
-    row [ Background.tiled "src/img/leder.jpg", Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Element.Border.rounded 3, centerX, width fill, height fill, spacing 20 ]
-        [ Element.Input.button [ Element.width (Element.minimum 100 fill), centerX ]
+    row [ Background.tiled "src/img/leather.jpg", Border.width 3, Border.color (rgb255 0x00 0x00 0x00), Border.rounded 3, centerX, width fill, height fill, spacing 20 ]
+        [ Input.button [ width (minimum 100 fill), centerX ]
             { onPress = Just (ToggleItemDetails item.id)
             , label =
-                Element.wrappedRow [ centerX, spacing 20, width fill ]
-                    [ column [ padding 20, Element.Border.rounded 7 ]
+                wrappedRow [ centerX, spacing 20, width fill ]
+                    [ column [ padding 20, Border.rounded 7 ]
                         [ image
-                            [ Background.color (rgba 0x00 0x00 0x00 0.4), Element.Border.rounded 3, centerX ]
-                            { src = Item.itemToImageUrl item.id
+                            [ Background.color (rgba 0x00 0x00 0x00 0.4), Border.rounded 3, centerX ]
+                            { src = Item.itemIdToImageUrl item.id
                             , description = ""
                             }
                         ]
-                    , column [ Background.color (rgba 0xFF 0xFF 0xFF 0.6), Element.Border.rounded 7, padding 20, width (Element.maximum 250 fill) ] [ wrapText item.name ]
-                    , column [ Background.color (rgba 0xFF 0xFF 0xFF 0.6), Element.Border.rounded 7, padding 20, width (Element.maximum 350 fill) ] [ wrapText item.description ]
+                    , column [ Background.color (rgba 0xFF 0xFF 0xFF 0.6), Border.rounded 7, padding 20, width (maximum 250 fill) ] [ wrapText item.name ]
+                    , column [ Background.color (rgba 0xFF 0xFF 0xFF 0.6), Border.rounded 7, padding 20, width (maximum 350 fill) ] [ wrapText item.description ]
                     ]
             }
         ]
@@ -769,7 +766,7 @@ isOptionAllowed game choiceResources =
 
 wrapText : String -> Element Msg
 wrapText text =
-    Element.paragraph [ Font.center, defaultFont, defaultFontSize ] [ Element.text text ]
+    paragraph [ Font.center, defaultFont, defaultFontSize ] [ Element.text text ]
 
 
 
