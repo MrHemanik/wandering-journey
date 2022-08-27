@@ -159,8 +159,8 @@ keyDecoder =
     Decode.map toKey (Decode.field "key" Decode.string)
 
 
-dataDecoder : Decoder JsonData
-dataDecoder =
+gameDataDecoder : Decoder JsonData
+gameDataDecoder =
     Decode.succeed JsonData
         |> DecodeHelper.apply (Decode.field "items" (Decode.list Item.decoder))
         |> DecodeHelper.apply (Decode.field "cards" (Decode.list Card.decoder))
@@ -847,37 +847,48 @@ wrapText text =
 ---- Default functions ----
 
 
-init : String -> ( Model, Cmd Msg )
+init : ( String, Maybe String ) -> ( Model, Cmd Msg )
 init flags =
     let
-        dataResponse =
-            Decode.decodeString dataDecoder flags
+        ( inputGameData, inputPlayerData ) =
+            flags
 
-        data =
-            Data.fromResult dataResponse
+        gameDataResponse =
+            Decode.decodeString gameDataDecoder inputGameData
+
+        gameData =
+            Data.fromResult gameDataResponse
     in
-    case data of
+    case gameData of
         Data.Success value ->
             let
                 currentCards =
                     getCurrentlyPossibleCards value.allCards value.startingCardIndexes startingLocation
             in
-            ( Running Nothing
-                { resources = startingResources
-                , allItems = value.items
-                , allCards = value.allCards
-                , defaultCardIndexes = value.startingCardIndexes
-                , unlockedCardIndexes = value.startingCardIndexes
-                , activeItemsIndexes = []
-                , currentCards = currentCards
-                , location = startingLocation
-                , card = Nothing
-                , nextCard = Nothing
-                }
-                0
-                { showDetail = False, item = Nothing }
-            , generateCard <| List.length currentCards
-            )
+            Debug.log
+                (case inputPlayerData of
+                    Just pd ->
+                        pd
+
+                    _ ->
+                        ""
+                )
+                ( Running Nothing
+                    { resources = startingResources
+                    , allItems = value.items
+                    , allCards = value.allCards
+                    , defaultCardIndexes = value.startingCardIndexes
+                    , unlockedCardIndexes = value.startingCardIndexes
+                    , activeItemsIndexes = []
+                    , currentCards = currentCards
+                    , location = startingLocation
+                    , card = Nothing
+                    , nextCard = Nothing
+                    }
+                    0
+                    { showDetail = False, item = Nothing }
+                , generateCard <| List.length currentCards
+                )
 
         _ ->
             Debug.log "Failed to load Data" ( Running Nothing { resources = startingResources, allCards = [], allItems = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing, nextCard = Nothing } 0 { showDetail = False, item = Nothing }, Cmd.none )
@@ -888,7 +899,7 @@ subscriptions _ =
     Sub.map Key (Browser.Events.onKeyDown keyDecoder)
 
 
-main : Program String Model Msg
+main : Program ( String, Maybe String ) Model Msg
 main =
     Browser.element
         { init = init
