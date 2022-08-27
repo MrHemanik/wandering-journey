@@ -167,159 +167,7 @@ view model =
         column [ width fill, height fill ]
             [ viewResources game.resources
             , viewLocation game.location
-            , el [ centerX, centerY ] <|
-                case model of
-                    GameOver _ highscore ->
-                        column [ width (px 800), height (px 300), Background.color (rgba 0xFF 0xFF 0xFF 0.8), padding 20, Border.rounded 7, centerY ]
-                            [ column [ width fill, padding 20 ]
-                                [ wrapText (Resources.deathMessage game.resources)
-                                ]
-                            , column [ width fill, padding 20 ]
-                                [ wrapText ("Highscore:  " ++ String.fromInt highscore) ]
-                            , column [ width fill, alignBottom ]
-                                [ Input.button [ width (minimum 100 fill) ]
-                                    { onPress = Just (Key Restart)
-                                    , label = wrapText "New Run"
-                                    }
-                                ]
-                            ]
-
-                    Running choice _ _ _ ->
-                        column [ Background.color (rgba 0xFF 0xFF 0xFF 0.8), width (px 800), height (fill |> minimum 400), padding 20, Border.rounded 7 ]
-                            [ case game.card of
-                                Just c ->
-                                    case choice of
-                                        None ->
-                                            column [ width fill, height fill ]
-                                                [ column [ width fill, padding 20 ]
-                                                    [ wrapText c.mainText
-                                                    ]
-                                                , row [ width fill, alignBottom ]
-                                                    [ column [ width fill, spaceEvenly, centerX, centerY ]
-                                                        [ if isOptionAllowed game c.decisionLeft.resourceChange then
-                                                            Input.button [ width (minimum 100 fill) ]
-                                                                { onPress = Just (Key (ChoiceKey Left))
-                                                                , label =
-                                                                    wrappedRow [ alignLeft ]
-                                                                        [ image [ width (px 40), height (px 40) ]
-                                                                            { src = "src/img/arrowLeft.svg"
-                                                                            , description = ""
-                                                                            }
-                                                                        , wrapText c.decisionLeft.choiceText
-                                                                        ]
-                                                                }
-
-                                                          else
-                                                            column [ alignLeft ]
-                                                                [ paragraph [ width (minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
-                                                                , wrapText c.decisionLeft.choiceText
-                                                                ]
-                                                        ]
-                                                    , column [ Border.width 1, height fill ] []
-                                                    , column [ width fill, spaceEvenly, centerX, centerY ]
-                                                        [ if isOptionAllowed game c.decisionRight.resourceChange then
-                                                            Input.button [ width (minimum 100 fill) ]
-                                                                { onPress = Just (Key (ChoiceKey Right))
-                                                                , label =
-                                                                    wrappedRow [ alignRight ]
-                                                                        [ wrapText c.decisionRight.choiceText
-                                                                        , image [ width (px 40), height (px 40) ]
-                                                                            { src = "src/img/arrowRight.svg"
-                                                                            , description = ""
-                                                                            }
-                                                                        ]
-                                                                }
-
-                                                          else
-                                                            column [ alignRight ]
-                                                                [ paragraph [ width (minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
-                                                                , wrapText c.decisionRight.choiceText
-                                                                ]
-                                                        ]
-                                                    ]
-                                                ]
-
-                                        Left ->
-                                            column [ width fill, height fill ]
-                                                [ column [ width fill, padding 20 ]
-                                                    [ wrapText c.mainText
-                                                    ]
-                                                , column [ width fill, padding 20 ]
-                                                    [ wrapText c.decisionLeft.pickedText
-                                                    ]
-                                                , column [ width fill, alignBottom ]
-                                                    [ Input.button
-                                                        [ defaultFontSize, defaultFont, width fill ]
-                                                        { onPress =
-                                                            case game.nextCard of
-                                                                Nothing ->
-                                                                    Just GenerateNewCard
-
-                                                                Just _ ->
-                                                                    Just LoadCard
-                                                        , label =
-                                                            wrappedRow [ centerX, centerY ]
-                                                                [ image [ width (px 40), height (px 40) ]
-                                                                    { src = "src/img/arrowLeft.svg"
-                                                                    , description = ""
-                                                                    }
-                                                                , case game.nextCard of
-                                                                    Nothing ->
-                                                                        wrapText "Move on"
-
-                                                                    Just _ ->
-                                                                        wrapText "Continue"
-                                                                , image [ width (px 40), height (px 40) ]
-                                                                    { src = "src/img/arrowRight.svg"
-                                                                    , description = ""
-                                                                    }
-                                                                ]
-                                                        }
-                                                    ]
-                                                ]
-
-                                        Right ->
-                                            column [ width fill, height fill ]
-                                                [ column [ width fill, padding 20 ]
-                                                    [ wrapText c.mainText
-                                                    ]
-                                                , column [ width fill, padding 20 ]
-                                                    [ wrapText c.decisionRight.pickedText
-                                                    ]
-                                                , column [ width fill, alignBottom ]
-                                                    [ Input.button
-                                                        [ defaultFontSize, defaultFont, Font.center, width fill ]
-                                                        { onPress =
-                                                            case game.nextCard of
-                                                                Nothing ->
-                                                                    Just GenerateNewCard
-
-                                                                Just _ ->
-                                                                    Just LoadCard
-                                                        , label =
-                                                            wrappedRow [ centerX, centerY ]
-                                                                [ image [ width (px 40), height (px 40) ]
-                                                                    { src = "src/img/arrowLeft.svg"
-                                                                    , description = ""
-                                                                    }
-                                                                , case game.nextCard of
-                                                                    Nothing ->
-                                                                        wrapText "Move on"
-
-                                                                    Just _ ->
-                                                                        wrapText "Continue"
-                                                                , image [ width (px 40), height (px 40) ]
-                                                                    { src = "src/img/arrowRight.svg"
-                                                                    , description = ""
-                                                                    }
-                                                                ]
-                                                        }
-                                                    ]
-                                                ]
-
-                                Nothing ->
-                                    none
-                            ]
+            , viewCard model
             , el [ centerX, width (px 800), paddingXY 0 20 ] <|
                 case showItemDetail.item of
                     Nothing ->
@@ -402,8 +250,162 @@ viewResources resources =
 
 viewLocation : Location -> Element Msg
 viewLocation location =
-    el [ padding 5, width (px 400), centerX, Background.color (rgba 0x00 0x00 0x00 0.6), Font.color (rgb255 0xFF 0xFF 0xFF), Border.rounded 5 ] <|
+    el [ padding 5, width (minimum 400 (maximum 800 shrink)), centerX, Background.color (rgba 0x00 0x00 0x00 0.6), Font.color (rgb255 0xFF 0xFF 0xFF), Border.rounded 5 ] <|
         wrapText ("You are currently in a " ++ Location.toText location)
+
+
+viewCard : Model -> Element Msg
+viewCard model =
+    el [ centerX, centerY ] <|
+        case model of
+            GameOver game highscore ->
+                column [ width (px 800), height (px 300), Background.color (rgba 0xFF 0xFF 0xFF 0.8), padding 20, Border.rounded 7, centerY ]
+                    [ el [ width fill, padding 20 ] <|
+                        wrapText (Resources.deathMessage game.resources)
+                    , el [ width fill, padding 20 ] <|
+                        wrapText ("Highscore:  " ++ String.fromInt highscore)
+                    , Input.button [ width (minimum 100 fill), alignBottom ]
+                        { onPress = Just (Key Restart)
+                        , label = wrapText "New Run"
+                        }
+                    ]
+
+            Running choice game _ _ ->
+                column [ Background.color (rgba 0xFF 0xFF 0xFF 0.8), width (px 800), height (fill |> minimum 400), padding 20, Border.rounded 7 ]
+                    [ case game.card of
+                        Just c ->
+                            case choice of
+                                None ->
+                                    column [ width fill, height fill ]
+                                        [ column [ width fill, padding 20 ]
+                                            [ wrapText c.mainText
+                                            ]
+                                        , row [ width fill, alignBottom ]
+                                            [ column [ width fill, spaceEvenly, centerX, centerY ]
+                                                [ if isOptionAllowed game c.decisionLeft.resourceChange then
+                                                    Input.button [ width (minimum 100 fill) ]
+                                                        { onPress = Just (Key (ChoiceKey Left))
+                                                        , label =
+                                                            wrappedRow [ alignLeft ]
+                                                                [ image [ width (px 40), height (px 40) ]
+                                                                    { src = "src/img/arrowLeft.svg"
+                                                                    , description = ""
+                                                                    }
+                                                                , wrapText c.decisionLeft.choiceText
+                                                                ]
+                                                        }
+
+                                                  else
+                                                    column [ alignLeft ]
+                                                        [ paragraph [ width (minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
+                                                        , wrapText c.decisionLeft.choiceText
+                                                        ]
+                                                ]
+                                            , column [ Border.width 1, height fill ] []
+                                            , column [ width fill, spaceEvenly, centerX, centerY ]
+                                                [ if isOptionAllowed game c.decisionRight.resourceChange then
+                                                    Input.button [ width (minimum 100 fill) ]
+                                                        { onPress = Just (Key (ChoiceKey Right))
+                                                        , label =
+                                                            wrappedRow [ alignRight ]
+                                                                [ wrapText c.decisionRight.choiceText
+                                                                , image [ width (px 40), height (px 40) ]
+                                                                    { src = "src/img/arrowRight.svg"
+                                                                    , description = ""
+                                                                    }
+                                                                ]
+                                                        }
+
+                                                  else
+                                                    column [ alignRight ]
+                                                        [ paragraph [ width (minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
+                                                        , wrapText c.decisionRight.choiceText
+                                                        ]
+                                                ]
+                                            ]
+                                        ]
+
+                                Left ->
+                                    column [ width fill, height fill ]
+                                        [ column [ width fill, padding 20 ]
+                                            [ wrapText c.mainText
+                                            ]
+                                        , column [ width fill, padding 20 ]
+                                            [ wrapText c.decisionLeft.pickedText
+                                            ]
+                                        , column [ width fill, alignBottom ]
+                                            [ Input.button
+                                                [ defaultFontSize, defaultFont, width fill ]
+                                                { onPress =
+                                                    case game.nextCard of
+                                                        Nothing ->
+                                                            Just GenerateNewCard
+
+                                                        Just _ ->
+                                                            Just LoadCard
+                                                , label =
+                                                    wrappedRow [ centerX, centerY ]
+                                                        [ image [ width (px 40), height (px 40) ]
+                                                            { src = "src/img/arrowLeft.svg"
+                                                            , description = ""
+                                                            }
+                                                        , case game.nextCard of
+                                                            Nothing ->
+                                                                wrapText "Move on"
+
+                                                            Just _ ->
+                                                                wrapText "Continue"
+                                                        , image [ width (px 40), height (px 40) ]
+                                                            { src = "src/img/arrowRight.svg"
+                                                            , description = ""
+                                                            }
+                                                        ]
+                                                }
+                                            ]
+                                        ]
+
+                                Right ->
+                                    column [ width fill, height fill ]
+                                        [ column [ width fill, padding 20 ]
+                                            [ wrapText c.mainText
+                                            ]
+                                        , column [ width fill, padding 20 ]
+                                            [ wrapText c.decisionRight.pickedText
+                                            ]
+                                        , column [ width fill, alignBottom ]
+                                            [ Input.button
+                                                [ defaultFontSize, defaultFont, Font.center, width fill ]
+                                                { onPress =
+                                                    case game.nextCard of
+                                                        Nothing ->
+                                                            Just GenerateNewCard
+
+                                                        Just _ ->
+                                                            Just LoadCard
+                                                , label =
+                                                    wrappedRow [ centerX, centerY ]
+                                                        [ image [ width (px 40), height (px 40) ]
+                                                            { src = "src/img/arrowLeft.svg"
+                                                            , description = ""
+                                                            }
+                                                        , case game.nextCard of
+                                                            Nothing ->
+                                                                wrapText "Move on"
+
+                                                            Just _ ->
+                                                                wrapText "Continue"
+                                                        , image [ width (px 40), height (px 40) ]
+                                                            { src = "src/img/arrowRight.svg"
+                                                            , description = ""
+                                                            }
+                                                        ]
+                                                }
+                                            ]
+                                        ]
+
+                        Nothing ->
+                            none
+                    ]
 
 
 viewItems : List Int -> Element Msg
