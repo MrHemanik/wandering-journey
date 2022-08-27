@@ -40,16 +40,16 @@ capResources rs =
 deathMessage : Resources -> String
 deathMessage resources =
     if resources.hunger <= 0 then
-        "Died of starvation"
+        "You are starving, left with nothing to eat. Your stomach tightens painfully and you faint from the pain"
 
     else if resources.thirst <= 0 then
-        "Died of thirst"
+        "Your throat is dry and you find yourself getting weaker and weaker until you finally collapse. You die of thirst"
 
     else if resources.physicalHealth <= 0 then
-        "Died due to injuries"
+        "Your whole body hurts from your numerous injuries. You try to find help but it is too late for you. Eventually, the pain overwhelms you, until you are no more"
 
     else if resources.mentalHealth <= 0 then
-        "Died due to mental health"
+        "Your mind keeps playing tricks on you until you can no longer tell the difference between reality and imagination. You lost your sanity and yourself"
 
     else
-        "Died of an unknown cause"
+        "You died for an unknown reason. Nobody in this world knows what happened to you"

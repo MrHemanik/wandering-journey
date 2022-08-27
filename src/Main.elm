@@ -284,13 +284,32 @@ viewLocation location =
 
 viewCard : Model -> Element Msg
 viewCard model =
+    let
+        score =
+            case model of
+                GameOver _ highscore ->
+                    highscore
+
+                Running _ _ highscore _ ->
+                    highscore
+    in
     column [ centerX, centerY, Background.color (rgba 0xFF 0xFF 0xFF 0.8), width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ] <|
         case model of
             GameOver game highscore ->
                 [ el [ width fill, padding 20 ] <|
-                    wrapText (Resources.deathMessage game.resources)
+                    wrapText
+                        (if score <= 2500 then
+                            "Your short Journey ends here."
+
+                         else if score <= 7500 then
+                            "Your Journey ends here."
+
+                         else
+                            "Your long Journey ends here."
+                        )
+                , wrapText (Resources.deathMessage game.resources)
                 , el [ width fill, padding 20 ] <|
-                    wrapText ("Highscore:  " ++ String.fromInt highscore)
+                    wrapText ("Distance traveled:  " ++ String.fromInt highscore ++ " meters")
                 , Input.button [ width (minimum 100 fill), alignBottom ]
                     { onPress = Just (Key Restart)
                     , label = wrapText "New Run"
@@ -512,7 +531,7 @@ processKey key model =
                                     | resources = calculateResourcesOnChoice fpg.resources choice fpg.location fpg.card
                                     , currentCards = getCurrentlyPossibleCards fpg.allCards fpg.unlockedCardIndexes fpg.location
                                 }
-                                (highscore + 1)
+                                (highscore + 50)
                                 { showDetail = False, item = Nothing }
                             , Cmd.none
                             )
