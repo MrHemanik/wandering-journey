@@ -297,128 +297,87 @@ viewCard model =
                     }
                 ]
 
-            Running choice game _ _ ->
+            Running maybeChoice game _ _ ->
                 [ case game.card of
                     Just c ->
                         column [ width fill, height fill ]
-                            [ column [ width fill, padding 20 ]
-                                [ wrapText c.mainText
-                                ]
-                            , case choice of
-                                Nothing ->
-                                    row [ width fill, alignBottom ]
-                                        [ if isOptionAllowed game c.decisionLeft.resourceChange then
-                                            Input.button [ width (minimum 100 fill) ]
-                                                { onPress = Just (Key (ChoiceKey Left))
-                                                , label =
-                                                    wrappedRow [ alignLeft ]
-                                                        [ arrowLeft
-                                                        , wrapText c.decisionLeft.choiceText
-                                                        ]
-                                                }
-
-                                          else
-                                            column [ alignLeft ]
-                                                [ paragraph [ width (minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
-                                                , wrapText c.decisionLeft.choiceText
+                            ([ row [ width fill, padding 20 ] [ wrapText c.mainText ] ]
+                                ++ (case maybeChoice of
+                                        Nothing ->
+                                            [ row [ width fill, alignBottom ]
+                                                [ choiceButton game.resources c.decisionLeft Left
+                                                , el [ Border.width 1, height fill ] <| none
+                                                , choiceButton game.resources c.decisionRight Right
                                                 ]
-                                        , el [ Border.width 1, height fill ] <| none
-                                        , if isOptionAllowed game c.decisionRight.resourceChange then
-                                            Input.button [ width (minimum 100 fill) ]
-                                                { onPress = Just (Key (ChoiceKey Right))
-                                                , label =
-                                                    wrappedRow [ alignRight ]
-                                                        [ wrapText c.decisionRight.choiceText
-                                                        , arrowRight
-                                                        ]
-                                                }
+                                            ]
 
-                                          else
-                                            column [ alignRight ]
-                                                [ paragraph [ width (minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
-                                                , wrapText c.decisionRight.choiceText
-                                                ]
-                                        ]
+                                        Just choice ->
+                                            let
+                                                decision =
+                                                    case choice of
+                                                        Left ->
+                                                            c.decisionLeft
 
-                                Just Left ->
-                                    column [ width fill, height fill ]
-                                        [ column [ width fill, padding 20 ] [ wrapText c.decisionLeft.pickedText ]
-                                        , column [ width fill, alignBottom ]
-                                            [ Input.button
-                                                [ defaultFontSize, defaultFont, width fill ]
-                                                { onPress =
-                                                    case game.nextCard of
-                                                        Nothing ->
-                                                            Just GenerateNewCard
-
-                                                        Just _ ->
-                                                            Just LoadCard
-                                                , label =
-                                                    wrappedRow [ centerX, centerY ]
-                                                        [ image [ width (px 40), height (px 40) ]
-                                                            { src = "src/img/arrowLeft.svg"
-                                                            , description = ""
-                                                            }
-                                                        , case game.nextCard of
+                                                        Right ->
+                                                            c.decisionRight
+                                            in
+                                            [ row [ width fill, padding 20 ] [ wrapText decision.pickedText ]
+                                            , row [ width fill, alignBottom ]
+                                                [ Input.button [ width (minimum 100 fill) ]
+                                                    { onPress =
+                                                        case game.nextCard of
                                                             Nothing ->
-                                                                wrapText "Move on"
+                                                                Just GenerateNewCard
 
                                                             Just _ ->
-                                                                wrapText "Continue"
-                                                        , image [ width (px 40), height (px 40) ]
-                                                            { src = "src/img/arrowRight.svg"
-                                                            , description = ""
-                                                            }
-                                                        ]
-                                                }
-                                            ]
-                                        ]
+                                                                Just LoadCard
+                                                    , label =
+                                                        wrappedRow [ centerX, centerY ]
+                                                            [ arrowLeft
+                                                            , case game.nextCard of
+                                                                Nothing ->
+                                                                    wrapText "Move on"
 
-                                Just Right ->
-                                    column [ width fill, height fill ]
-                                        [ column [ width fill, padding 20 ]
-                                            [ wrapText c.decisionRight.pickedText
+                                                                Just _ ->
+                                                                    wrapText "Continue"
+                                                            , arrowRight
+                                                            ]
+                                                    }
+                                                ]
                                             ]
-                                        , column [ width fill, alignBottom ]
-                                            [ Input.button
-                                                [ defaultFontSize, defaultFont, Font.center, width fill ]
-                                                { onPress =
-                                                    case game.nextCard of
-                                                        Nothing ->
-                                                            Just GenerateNewCard
-
-                                                        Just _ ->
-                                                            Just LoadCard
-                                                , label =
-                                                    wrappedRow [ centerX, centerY ]
-                                                        [ image [ width (px 40), height (px 40) ]
-                                                            { src = "src/img/arrowLeft.svg"
-                                                            , description = ""
-                                                            }
-                                                        , case game.nextCard of
-                                                            Nothing ->
-                                                                wrapText "Move on"
-
-                                                            Just _ ->
-                                                                wrapText "Continue"
-                                                        , image [ width (px 40), height (px 40) ]
-                                                            { src = "src/img/arrowRight.svg"
-                                                            , description = ""
-                                                            }
-                                                        ]
-                                                }
-                                            ]
-                                        ]
-                            ]
+                                   )
+                            )
 
                     Nothing ->
                         none
                 ]
 
 
-choiceButton : Decision -> Choice -> Element Msg
-choiceButton decision choice =
-    text ""
+choiceButton : Resources -> Decision -> Choice -> Element Msg
+choiceButton resources decision choice =
+    if isOptionAllowed resources decision.resourceChange then
+        Input.button [ width (minimum 100 fill) ]
+            { onPress = Just (Key (ChoiceKey choice))
+            , label =
+                case choice of
+                    Left ->
+                        wrappedRow [ alignLeft ]
+                            [ arrowLeft
+                            , wrapText decision.choiceText
+                            ]
+
+                    Right ->
+                        wrappedRow [ alignRight ]
+                            [ wrapText decision.choiceText
+                            , arrowRight
+                            ]
+            }
+
+    else
+        column [ alignLeft ]
+            [ paragraph [ width (minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
+            , wrapText decision.choiceText
+            ]
 
 
 arrowLeft : Element Msg
@@ -547,7 +506,7 @@ processKey key model =
                             fpg =
                                 processFlags flags game
                         in
-                        if isOptionAllowed game resource then
+                        if isOptionAllowed game.resources resource then
                             ( Running (Just choice)
                                 { fpg
                                     | resources = calculateResourcesOnChoice fpg.resources choice fpg.location fpg.card
@@ -804,9 +763,9 @@ getCurrentlyPossibleCards allCards unlockedCardsIndexes currentLocation =
             []
 
 
-isOptionAllowed : Game -> Resources -> Bool
-isOptionAllowed game choiceResources =
-    (game.resources.money + choiceResources.money) >= 0
+isOptionAllowed : Resources -> Resources -> Bool
+isOptionAllowed gameResources choiceResources =
+    (gameResources.money + choiceResources.money) >= 0
 
 
 wrapText : String -> Element Msg
