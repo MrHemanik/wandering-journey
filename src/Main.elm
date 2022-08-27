@@ -367,30 +367,38 @@ viewCard model =
 choiceButton : Resources -> Decision -> Choice -> Element Msg
 choiceButton resources decision choice =
     column [ width fill ] <|
-        (if isOptionAllowed resources decision.resourceChange then
+        if isOptionAllowed resources decision.resourceChange then
             [ Input.button [ width (minimum 100 fill) ]
                 { onPress = Just (Key (ChoiceKey choice))
                 , label =
-                    case choice of
-                        Left ->
-                            wrappedRow [ alignLeft ] [ arrowLeft, wrapText decision.choiceText ]
+                    column [ width fill ] <|
+                        [ case choice of
+                            Left ->
+                                wrappedRow [ alignLeft, width fill ] [ arrowLeft, wrapText decision.choiceText, priceLabel decision.resourceChange.money ]
 
-                        Right ->
-                            wrappedRow [ alignRight ] [ wrapText decision.choiceText, arrowRight ]
+                            Right ->
+                                wrappedRow [ alignRight, width fill, paddingXY 2 0 ] [ wrapText decision.choiceText, priceLabel decision.resourceChange.money, arrowRight ]
+                        ]
                 }
             ]
 
-         else
-            [ paragraph [ width (minimum 100 fill), Font.center, Font.color Color.red ] [ wrapText "Not enough money! " ]
-            , wrapText decision.choiceText
+        else
+            [ wrapText decision.choiceText
+            , paragraph [ width (minimum 100 fill), Font.center, Font.color Color.red ] [ wrapText "Not enough money! " ]
             ]
-        )
-            ++ (if decision.resourceChange.money < 0 then
-                    [ row [ Border.width 2, Border.color Color.black, Border.rounded 3, centerX, padding 4 ] [ wrapText <| String.fromInt decision.resourceChange.money ++ " coins" ] ]
 
-                else
-                    [ none ]
-               )
+
+priceLabel : Int -> Element Msg
+priceLabel money =
+    if money < 0 then
+        el [ width <| minimum 40 <| maximum 100 fill ] <|
+            wrappedRow [ Background.color Color.transBlackLight, Border.width 2, Border.color Color.black, Border.rounded 3, centerX, padding 4 ]
+                [ wrapText <| String.fromInt money
+                , image [ width (px 30), height (px 30), centerX ] { src = "src/img/resources/money.svg", description = "" }
+                ]
+
+    else
+        none
 
 
 arrowLeft : Element Msg
