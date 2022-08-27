@@ -5,11 +5,12 @@ import Browser
 import Browser.Events
 import Card exposing (Card)
 import CardFlag exposing (CardFlag(..))
+import Color
 import Condition exposing (Condition(..))
 import Data
 import Decision exposing (Decision)
 import DecodeHelper
-import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, clip, column, el, fill, height, image, layout, maximum, minimum, none, padding, paddingXY, paragraph, px, rgb255, rgba, row, shrink, spaceEvenly, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, clip, column, el, fill, height, image, layout, maximum, minimum, none, padding, paddingXY, paragraph, px, row, shrink, spaceEvenly, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -101,7 +102,7 @@ startingResources =
 
 
 startingLocation =
-    Location.Forest
+    Location.City
 
 
 
@@ -229,12 +230,12 @@ viewResources resources =
         resourceElement src resource isMoney =
             column
                 [ width fill, paddingXY 5 20, spacing 20 ]
-                [ image [ Background.color (rgb255 0xFF 0xFF 0xFF), Border.rounded 3, Border.glow (rgb255 0xFF 0xFF 0xFF) 3, centerX, centerY ]
+                [ image [ Background.color Color.white, Border.rounded 3, Border.glow Color.white 3, centerX, centerY ]
                     { src = src
                     , description = ""
                     }
                 , row
-                    [ Background.color (rgba 0x00 0x00 0x00 0.4)
+                    [ Background.color Color.transBlackLight
                     , Border.rounded 5
                     , padding 8
                     , width fill
@@ -242,16 +243,16 @@ viewResources resources =
                     , defaultFontSize
                     , case ( resource >= 70, resource > 20, isMoney ) of
                         ( True, _, False ) ->
-                            Font.color (rgb255 0x00 0xFF 0x00)
+                            Font.color Color.green
 
                         ( False, True, False ) ->
-                            Font.color (rgb255 0xFF 0xF0 0x00)
+                            Font.color Color.yellow
 
                         ( False, False, False ) ->
-                            Font.color (rgb255 0xFF 0x00 0x00)
+                            Font.color Color.red
 
                         ( _, _, True ) ->
-                            Font.color (rgb255 0xFF 0xFF 0xFF)
+                            Font.color Color.white
                     ]
                     [ wrapText
                         (String.fromInt resource
@@ -267,7 +268,7 @@ viewResources resources =
                 ]
     in
     el [ paddingXY 0 20, width fill ] <|
-        row [ Border.rounded 7, Border.width 3, Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, width (minimum 400 <| maximum 800 fill), centerX ]
+        row [ Border.rounded 7, Border.width 3, Border.color Color.black, Background.tiled "src/img/leather.jpg", spaceEvenly, width (minimum 400 <| maximum 800 fill), centerX ]
             [ resourceElement "src/img/resources/hunger.svg" resources.hunger False
             , resourceElement "src/img/resources/thirst.svg" resources.thirst False
             , resourceElement "src/img/resources/physicalHealth.svg" resources.physicalHealth False
@@ -278,24 +279,15 @@ viewResources resources =
 
 viewLocation : Location -> Element Msg
 viewLocation location =
-    el [ padding 5, width (minimum 400 (maximum 800 shrink)), centerX, Background.color (rgba 0x00 0x00 0x00 0.6), Font.color (rgb255 0xFF 0xFF 0xFF), Border.rounded 5 ] <|
+    el [ padding 5, width (minimum 400 (maximum 800 shrink)), centerX, Background.color Color.transBlack, Font.color Color.white, Border.rounded 5 ] <|
         wrapText ("You are currently in a " ++ Location.toText location)
 
 
 viewCard : Model -> Element Msg
 viewCard model =
-    let
-        score =
-            case model of
-                GameOver _ highscore ->
-                    highscore
-
-                Running _ _ highscore _ ->
-                    highscore
-    in
-    column [ centerX, centerY, Background.color (rgba 0xFF 0xFF 0xFF 0.8), width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ] <|
+    column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ] <|
         case model of
-            GameOver game highscore ->
+            GameOver game score ->
                 [ el [ width fill, padding 20 ] <|
                     wrapText
                         (if score <= 2500 then
@@ -393,8 +385,8 @@ choiceButton resources decision choice =
             }
 
     else
-        column [ alignLeft ]
-            [ paragraph [ width (minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
+        column [ alignLeft, width fill ]
+            [ paragraph [ width (minimum 100 fill), Font.center, Font.color Color.red ] [ wrapText "Not enough money! " ]
             , wrapText decision.choiceText
             ]
 
@@ -422,29 +414,29 @@ viewItems items =
                 , label =
                     wrappedRow [ centerX ]
                         [ image
-                            [ Background.color (rgba 0x00 0x00 0x00 0.4), Border.rounded 3, centerX ]
+                            [ Background.color Color.transBlackLight, Border.rounded 3, centerX ]
                             { src = Item.itemIdToImageUrl item
                             , description = ""
                             }
                         ]
                 }
     in
-    row [ Border.rounded 7, Border.width 3, Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, centerX, height (minimum 100 shrink), width (minimum 100 shrink) ] <|
+    row [ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color Color.black, centerX, height (minimum 100 shrink), width (minimum 100 shrink) ] <|
         portrayAllItems items
 
 
 viewItemDetail : Item -> Element Msg
 viewItemDetail item =
-    row [ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color (rgb255 0x00 0x00 0x00), centerX, height (minimum 100 shrink), width (minimum 400 fill), spacing 20 ]
+    row [ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color Color.black, centerX, height (minimum 100 shrink), width (minimum 400 (maximum 800 fill)), spacing 20 ]
         [ Input.button [ width fill, centerX ]
             { onPress = Just (ToggleItemDetails item.id)
             , label =
                 wrappedRow [ centerX, spacing 20, padding 5, width fill ]
                     [ el [ width (maximum 100 shrink) ] <|
-                        image [ Background.color (rgba 0x00 0x00 0x00 0.4), Border.rounded 3, centerX ]
+                        image [ Background.color Color.transBlackLight, Border.rounded 3, centerX ]
                             { src = Item.itemIdToImageUrl item.id, description = "" }
-                    , el [ Background.color (rgba 0xFF 0xFF 0xFF 0.6), Border.rounded 7, padding 5, height (minimum 50 shrink) ] <| el [ Font.center, defaultFont, defaultFontSize, centerX, centerY ] <| text item.name
-                    , el [ Background.color (rgba 0xFF 0xFF 0xFF 0.6), Border.rounded 7, padding 5, width fill, height (minimum 50 shrink) ] <| el [ centerX, centerY ] <| wrapText item.description
+                    , el [ Background.color Color.transWhite, Border.rounded 7, padding 5, height (minimum 50 shrink) ] <| el [ Font.center, defaultFont, defaultFontSize, centerX, centerY ] <| text item.name
+                    , el [ Background.color Color.transWhite, Border.rounded 7, padding 5, width fill, height (minimum 50 shrink) ] <| el [ centerX, centerY ] <| wrapText item.description
                     ]
             }
         ]

@@ -138,7 +138,7 @@
           "decision": {
             "choiceText":"D̴̪̑ò̴̼ ̴͉͒å̸̻ ̴̯͒t̷̹̽r̶̺̔i̶̦̿c̵̙͋ḵ̸̓",
             "pickedText":"On its own you body started to twist and turn into something far from human, losing consciousness in the process. You regained your consciousness looking human, yet different than before",
-            "resourceChange":  {"hunger":15, "thirst":10, "physicalHealth":-15, "mentalHealth":-15, "money":0},
+            "resourceChange":  {"hunger":15, "thirst":10, "physicalHealth":-10, "mentalHealth":-15, "money":0},
             "flags":[]
     }}}]
   }, {
@@ -166,7 +166,7 @@
     "decisionLeft" : {
       "choiceText":"Take the contents of the bag for yourself",
       "pickedText":"You opened the bag and found food, water, bandages and some money",
-      "resourceChange":  {"hunger":30, "thirst":30, "physicalHealth":30, "mentalHealth":0, "money": 20},
+      "resourceChange":  {"hunger":15, "thirst":10, "physicalHealth":0, "mentalHealth":0, "money": 15},
       "flags":[{"removeCards":[7]}]
     },
     "decisionRight" : {
@@ -186,7 +186,7 @@
     "decisionLeft" : {
       "choiceText":"Give him the bag you have found",
       "pickedText":"\"You found my stuff? I cannot thank you enough! Here, take some of it for yourself\"",
-      "resourceChange":  {"hunger":10, "thirst":20, "physicalHealth":15, "mentalHealth":30, "money": 10},
+      "resourceChange":  {"hunger":10, "thirst":10, "physicalHealth":10, "mentalHealth":20, "money": 10},
       "flags":[
         {"removeItem": 1},
         {"addCards":[9]},
@@ -195,7 +195,7 @@
     "decisionRight" : {
       "choiceText":"Walk past him",
       "pickedText":"You walk past the man who is probably the owner of the bag you found earlier. Thinking that you may never find the owner you decided to take the contents for yourself",
-      "resourceChange":  {"hunger":20, "thirst":20, "physicalHealth":20, "mentalHealth":-10, "money":20},
+      "resourceChange":  {"hunger":20, "thirst":15, "physicalHealth":15, "mentalHealth":-5, "money":20},
       "flags":[
         {"removeItem": 1},
         {"removeCards":[8]}]
@@ -208,14 +208,14 @@
     "decisionLeft" : {
       "choiceText":"Knock on the door",
       "pickedText":"A familiar face opens the door. The man whose bag you found invites you out of gratitude in to stay the night. You feel well rested",
-      "resourceChange":  {"hunger":30, "thirst":30, "physicalHealth":40, "mentalHealth":40, "money": 0},
+      "resourceChange":  {"hunger":20, "thirst":20, "physicalHealth":30, "mentalHealth":30, "money": 0},
       "flags":[
         {"removeCards":[9]}]
     },
     "decisionRight" : {
       "choiceText":"Walk past the house",
       "pickedText":"As soon as you walk past the house a familiar face slams open the door. The man whose bag you found invites you out of gratitude in to stay the night. You feel well rested",
-      "resourceChange":  {"hunger":30, "thirst":30, "physicalHealth":40, "mentalHealth":40, "money": 0},
+      "resourceChange":  {"hunger":20, "thirst":20, "physicalHealth":30, "mentalHealth":30, "money": 0},
       "flags":[{"removeCards":[9]}]
     }
   }, {
@@ -232,7 +232,7 @@
     "decisionRight" : {
       "choiceText":"Kick the tree",
       "pickedText":"You kicked the tree and took the fresh apples from the ground",
-      "resourceChange":  {"hunger":10, "thirst":5, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "resourceChange":  {"hunger":5, "thirst":5, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "flags":[]
     }
   }, {
@@ -260,7 +260,7 @@
     "decisionLeft" : {
       "choiceText":"Work for him",
       "pickedText":"You did some manual labor to earn yourself some money",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-10, "mentalHealth":0, "money": 10},
+      "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":-5, "mentalHealth":0, "money": 10},
       "flags":[]
     },
     "decisionRight" : {
