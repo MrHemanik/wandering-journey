@@ -7,6 +7,7 @@ import Card exposing (Card)
 import CardFlag exposing (CardFlag(..))
 import Condition exposing (Condition(..))
 import Data
+import Decision exposing (Decision)
 import DecodeHelper
 import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, clip, column, el, fill, height, image, layout, maximum, minimum, none, padding, paddingXY, paragraph, px, rgb255, rgba, row, shrink, spaceEvenly, spacing, text, width, wrappedRow)
 import Element.Background as Background
@@ -26,7 +27,6 @@ import Resources exposing (Resources)
 type Choice
     = Left
     | Right
-    | None
 
 
 type Key
@@ -42,7 +42,7 @@ type alias Highscore =
 
 type Model
     = GameOver Game Highscore
-    | Running Choice Game Highscore ShowItemDetail
+    | Running (Maybe Choice) Game Highscore ShowItemDetail
 
 
 
@@ -98,10 +98,6 @@ defaultFontSize =
 
 startingResources =
     { hunger = 70, thirst = 70, physicalHealth = 70, mentalHealth = 70, money = 70 }
-
-
-emptyResources =
-    { hunger = 0, thirst = 0, physicalHealth = 0, mentalHealth = 0, money = 0 }
 
 
 startingLocation =
@@ -288,83 +284,65 @@ viewLocation location =
 
 viewCard : Model -> Element Msg
 viewCard model =
-    el [ centerX, centerY ] <|
+    column [ centerX, centerY, Background.color (rgba 0xFF 0xFF 0xFF 0.8), width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ] <|
         case model of
             GameOver game highscore ->
-                column [ width (px 800), height (px 300), Background.color (rgba 0xFF 0xFF 0xFF 0.8), padding 20, Border.rounded 7, centerY ]
-                    [ el [ width fill, padding 20 ] <|
-                        wrapText (Resources.deathMessage game.resources)
-                    , el [ width fill, padding 20 ] <|
-                        wrapText ("Highscore:  " ++ String.fromInt highscore)
-                    , Input.button [ width (minimum 100 fill), alignBottom ]
-                        { onPress = Just (Key Restart)
-                        , label = wrapText "New Run"
-                        }
-                    ]
+                [ el [ width fill, padding 20 ] <|
+                    wrapText (Resources.deathMessage game.resources)
+                , el [ width fill, padding 20 ] <|
+                    wrapText ("Highscore:  " ++ String.fromInt highscore)
+                , Input.button [ width (minimum 100 fill), alignBottom ]
+                    { onPress = Just (Key Restart)
+                    , label = wrapText "New Run"
+                    }
+                ]
 
             Running choice game _ _ ->
-                column [ Background.color (rgba 0xFF 0xFF 0xFF 0.8), width (px 800), height (fill |> minimum 400), padding 20, Border.rounded 7 ]
-                    [ case game.card of
-                        Just c ->
-                            case choice of
-                                None ->
-                                    column [ width fill, height fill ]
-                                        [ column [ width fill, padding 20 ]
-                                            [ wrapText c.mainText
-                                            ]
-                                        , row [ width fill, alignBottom ]
-                                            [ column [ width fill, spaceEvenly, centerX, centerY ]
-                                                [ if isOptionAllowed game c.decisionLeft.resourceChange then
-                                                    Input.button [ width (minimum 100 fill) ]
-                                                        { onPress = Just (Key (ChoiceKey Left))
-                                                        , label =
-                                                            wrappedRow [ alignLeft ]
-                                                                [ image [ width (px 40), height (px 40) ]
-                                                                    { src = "src/img/arrowLeft.svg"
-                                                                    , description = ""
-                                                                    }
-                                                                , wrapText c.decisionLeft.choiceText
-                                                                ]
-                                                        }
-
-                                                  else
-                                                    column [ alignLeft ]
-                                                        [ paragraph [ width (minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
+                [ case game.card of
+                    Just c ->
+                        column [ width fill, height fill ]
+                            [ column [ width fill, padding 20 ]
+                                [ wrapText c.mainText
+                                ]
+                            , case choice of
+                                Nothing ->
+                                    row [ width fill, alignBottom ]
+                                        [ if isOptionAllowed game c.decisionLeft.resourceChange then
+                                            Input.button [ width (minimum 100 fill) ]
+                                                { onPress = Just (Key (ChoiceKey Left))
+                                                , label =
+                                                    wrappedRow [ alignLeft ]
+                                                        [ arrowLeft
                                                         , wrapText c.decisionLeft.choiceText
                                                         ]
-                                                ]
-                                            , column [ Border.width 1, height fill ] []
-                                            , column [ width fill, spaceEvenly, centerX, centerY ]
-                                                [ if isOptionAllowed game c.decisionRight.resourceChange then
-                                                    Input.button [ width (minimum 100 fill) ]
-                                                        { onPress = Just (Key (ChoiceKey Right))
-                                                        , label =
-                                                            wrappedRow [ alignRight ]
-                                                                [ wrapText c.decisionRight.choiceText
-                                                                , image [ width (px 40), height (px 40) ]
-                                                                    { src = "src/img/arrowRight.svg"
-                                                                    , description = ""
-                                                                    }
-                                                                ]
-                                                        }
+                                                }
 
-                                                  else
-                                                    column [ alignRight ]
-                                                        [ paragraph [ width (minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
-                                                        , wrapText c.decisionRight.choiceText
-                                                        ]
+                                          else
+                                            column [ alignLeft ]
+                                                [ paragraph [ width (minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
+                                                , wrapText c.decisionLeft.choiceText
                                                 ]
-                                            ]
+                                        , el [ Border.width 1, height fill ] <| none
+                                        , if isOptionAllowed game c.decisionRight.resourceChange then
+                                            Input.button [ width (minimum 100 fill) ]
+                                                { onPress = Just (Key (ChoiceKey Right))
+                                                , label =
+                                                    wrappedRow [ alignRight ]
+                                                        [ wrapText c.decisionRight.choiceText
+                                                        , arrowRight
+                                                        ]
+                                                }
+
+                                          else
+                                            column [ alignRight ]
+                                                [ paragraph [ width (minimum 100 fill), defaultFont, defaultFontSize, Font.color (rgb255 0xD0 0x31 0x2D) ] [ text "Not enough money! " ]
+                                                , wrapText c.decisionRight.choiceText
+                                                ]
                                         ]
 
-                                Left ->
+                                Just Left ->
                                     column [ width fill, height fill ]
-                                        [ column [ width fill, padding 20 ]
-                                            [ wrapText c.mainText
-                                            ]
-                                        , column [ width fill, padding 20 ]
-                                            [ wrapText c.decisionLeft.pickedText
-                                            ]
+                                        [ column [ width fill, padding 20 ] [ wrapText c.decisionLeft.pickedText ]
                                         , column [ width fill, alignBottom ]
                                             [ Input.button
                                                 [ defaultFontSize, defaultFont, width fill ]
@@ -396,12 +374,9 @@ viewCard model =
                                             ]
                                         ]
 
-                                Right ->
+                                Just Right ->
                                     column [ width fill, height fill ]
                                         [ column [ width fill, padding 20 ]
-                                            [ wrapText c.mainText
-                                            ]
-                                        , column [ width fill, padding 20 ]
                                             [ wrapText c.decisionRight.pickedText
                                             ]
                                         , column [ width fill, alignBottom ]
@@ -434,10 +409,26 @@ viewCard model =
                                                 }
                                             ]
                                         ]
+                            ]
 
-                        Nothing ->
-                            none
-                    ]
+                    Nothing ->
+                        none
+                ]
+
+
+choiceButton : Decision -> Choice -> Element Msg
+choiceButton decision choice =
+    text ""
+
+
+arrowLeft : Element Msg
+arrowLeft =
+    image [ width (px 40), height (px 40) ] { src = "src/img/arrowLeft.svg", description = "" }
+
+
+arrowRight : Element Msg
+arrowRight =
+    image [ width (px 40), height (px 40) ] { src = "src/img/arrowRight.svg", description = "" }
 
 
 viewItems : List Int -> Element Msg
@@ -503,14 +494,14 @@ update msg model =
                         ( GameOver game highscore, Cmd.none )
 
                     else
-                        ( Running None (processCardFlags { game | card = Card.getCardByIndex game.currentCards newCardIndex }) highscore show, Cmd.none )
+                        ( Running Nothing (processCardFlags { game | card = Card.getCardByIndex game.currentCards newCardIndex }) highscore show, Cmd.none )
 
                 LoadCard ->
                     if checkResourcesIsZero game.resources then
                         ( GameOver game highscore, Cmd.none )
 
                     else
-                        Debug.log "load" ( Running None (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) highscore show, Cmd.none )
+                        Debug.log "load" ( Running Nothing (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) highscore show, Cmd.none )
 
                 Key key ->
                     processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } highscore show)
@@ -540,7 +531,7 @@ processKey key model =
                     ( model, Cmd.none )
 
                 Running oldChoice game highscore show ->
-                    if oldChoice == None then
+                    if oldChoice == Nothing then
                         let
                             ( resource, flags ) =
                                 case ( choice, game.card ) of
@@ -557,7 +548,7 @@ processKey key model =
                                 processFlags flags game
                         in
                         if isOptionAllowed game resource then
-                            ( Running choice
+                            ( Running (Just choice)
                                 { fpg
                                     | resources = calculateResourcesOnChoice fpg.resources choice fpg.location fpg.card
                                     , currentCards = getCurrentlyPossibleCards fpg.allCards fpg.unlockedCardIndexes fpg.location
@@ -580,10 +571,10 @@ processKey key model =
                                     ( GameOver game highscore, Cmd.none )
 
                                 else
-                                    Debug.log "load" ( Running None (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) highscore show, Cmd.none )
+                                    Debug.log "load" ( Running Nothing (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) highscore show, Cmd.none )
 
         Restart ->
-            ( Running None
+            ( Running Nothing
                 { resources = startingResources
                 , allItems = gameData.allItems
                 , allCards = gameData.allCards
@@ -678,9 +669,6 @@ calculateResourcesOnChoice resources choice location maybeCard =
 
                         Right ->
                             card.decisionRight.resourceChange
-
-                        None ->
-                            emptyResources
             in
             Resources.combine resources calcResources
                 |> Resources.combine (Location.toResourceDrain location)
@@ -845,7 +833,7 @@ init flags =
                 currentCards =
                     getCurrentlyPossibleCards value.allCards value.startingCardIndexes startingLocation
             in
-            ( Running None
+            ( Running Nothing
                 { resources = startingResources
                 , allItems = value.items
                 , allCards = value.allCards
@@ -863,7 +851,7 @@ init flags =
             )
 
         _ ->
-            Debug.log "Failed to load Data" ( Running None { resources = startingResources, allCards = [], allItems = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing, nextCard = Nothing } 0 { showDetail = False, item = Nothing }, Cmd.none )
+            Debug.log "Failed to load Data" ( Running Nothing { resources = startingResources, allCards = [], allItems = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing, nextCard = Nothing } 0 { showDetail = False, item = Nothing }, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
