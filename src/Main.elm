@@ -1,5 +1,6 @@
 module Main exposing (main)
 
+import Array
 import Browser
 import Browser.Events
 import Card exposing (Card)
@@ -32,6 +33,7 @@ type Key
     = ChoiceKey Choice
     | Restart
     | UnknownKey
+    | NumberKey Int
 
 
 type alias Highscore =
@@ -123,6 +125,36 @@ keyDecoder =
 
                 "r" ->
                     Restart
+
+                "1" ->
+                    NumberKey 1
+
+                "2" ->
+                    NumberKey 2
+
+                "3" ->
+                    NumberKey 3
+
+                "4" ->
+                    NumberKey 4
+
+                "5" ->
+                    NumberKey 5
+
+                "6" ->
+                    NumberKey 6
+
+                "7" ->
+                    NumberKey 7
+
+                "8" ->
+                    NumberKey 8
+
+                "9" ->
+                    NumberKey 9
+
+                "0" ->
+                    NumberKey 0
 
                 _ ->
                     UnknownKey
@@ -568,6 +600,56 @@ processKey key model =
             , generateCard <| List.length gameData.currentCards
             )
 
+        NumberKey int ->
+            let
+                intToID indexList =
+                    Array.get
+                        (if int > 0 then
+                            int - 1
+
+                         else
+                            9
+                        )
+                        (Array.fromList indexList)
+
+                activeItemIndexesToItemList indexList allItems =
+                    case indexList of
+                        [] ->
+                            []
+
+                        x :: xs ->
+                            let
+                                item =
+                                    Item.idToItem x allItems
+                            in
+                            case item of
+                                Nothing ->
+                                    activeItemIndexesToItemList xs allItems
+
+                                Just i ->
+                                    i :: activeItemIndexesToItemList xs allItems
+            in
+            case model of
+                GameOver _ _ ->
+                    ( model, Cmd.none )
+
+                Running choice game highscore show ->
+                    ( Running choice
+                        game
+                        highscore
+                        { show
+                            | showDetail = not show.showDetail
+                            , item =
+                                case intToID game.activeItemsIndexes of
+                                    Just i ->
+                                        Item.idToItem i (activeItemIndexesToItemList game.activeItemsIndexes game.allItems)
+
+                                    Nothing ->
+                                        Nothing
+                        }
+                    , Cmd.none
+                    )
+
         UnknownKey ->
             ( model, Cmd.none )
 
@@ -769,7 +851,7 @@ init flags =
                 , allCards = value.allCards
                 , defaultCardIndexes = value.startingCardIndexes
                 , unlockedCardIndexes = value.startingCardIndexes
-                , activeItemsIndexes = [ 0, 1, 2, 3, 6 ]
+                , activeItemsIndexes = [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]
                 , currentCards = currentCards
                 , location = startingLocation
                 , card = Nothing
