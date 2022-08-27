@@ -301,7 +301,7 @@ viewCard model =
                         )
                 , wrapText (Resources.deathMessage game.resources)
                 , el [ width fill, padding 20 ] <|
-                    wrapText ("Distance traveled:  " ++ String.fromInt highscore ++ " meters")
+                    wrapText ("Distance traveled:  " ++ String.fromInt score ++ " meters")
                 , Input.button [ width (minimum 100 fill), alignBottom ]
                     { onPress = Just (Key Restart)
                     , label = wrapText "New Run"
