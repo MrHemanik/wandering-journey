@@ -341,7 +341,7 @@ viewCard model =
                                                             none
 
                                                         ( Just i, bool ) ->
-                                                            el [ Background.color Color.transBlackLight, Border.rounded 3, padding 10 ] <|
+                                                            el [ Background.color Color.transBlackLight, Border.rounded 3, padding 7 ] <|
                                                                 el [ Background.color Color.transBlackLight, Background.uncropped (Item.itemIdToImageUrl i.id), width (px 50), height (px 50), centerX ] <|
                                                                     image
                                                                         [ Background.color Color.transWhite, Border.glow Color.transWhite 3, Border.rounded 5, width (px 20), height (px 20), alignTop ]
