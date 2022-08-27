@@ -366,29 +366,31 @@ viewCard model =
 
 choiceButton : Resources -> Decision -> Choice -> Element Msg
 choiceButton resources decision choice =
-    if isOptionAllowed resources decision.resourceChange then
-        Input.button [ width (minimum 100 fill) ]
-            { onPress = Just (Key (ChoiceKey choice))
-            , label =
-                case choice of
-                    Left ->
-                        wrappedRow [ alignLeft ]
-                            [ arrowLeft
-                            , wrapText decision.choiceText
-                            ]
+    column [ width fill ] <|
+        (if isOptionAllowed resources decision.resourceChange then
+            [ Input.button [ width (minimum 100 fill) ]
+                { onPress = Just (Key (ChoiceKey choice))
+                , label =
+                    case choice of
+                        Left ->
+                            wrappedRow [ alignLeft ] [ arrowLeft, wrapText decision.choiceText ]
 
-                    Right ->
-                        wrappedRow [ alignRight ]
-                            [ wrapText decision.choiceText
-                            , arrowRight
-                            ]
-            }
+                        Right ->
+                            wrappedRow [ alignRight ] [ wrapText decision.choiceText, arrowRight ]
+                }
+            ]
 
-    else
-        column [ alignLeft, width fill ]
+         else
             [ paragraph [ width (minimum 100 fill), Font.center, Font.color Color.red ] [ wrapText "Not enough money! " ]
             , wrapText decision.choiceText
             ]
+        )
+            ++ (if decision.resourceChange.money < 0 then
+                    [ row [ Border.width 2, Border.color Color.black, Border.rounded 3, centerX, padding 4 ] [ wrapText <| String.fromInt decision.resourceChange.money ++ " coins" ] ]
+
+                else
+                    [ none ]
+               )
 
 
 arrowLeft : Element Msg

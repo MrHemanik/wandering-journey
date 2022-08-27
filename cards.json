@@ -21,7 +21,7 @@
     "id":1,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
-    "mainText":"A thief is ambushing you, wanting 15 coins",
+    "mainText":"A thief is ambushing you",
     "decisionLeft" : {
       "choiceText":"Give him your money",
       "pickedText":"You gave the thief some money",
@@ -602,16 +602,16 @@
     "id":30,
     "possibleLocation": ["Forest"],
     "interaction":"Action",
-    "mainText":"You see the ruin right in front of you. It seems to be some sort of crypt. A big stone door with a sigill portraying what looks like a shield with wings blocks your way",
+    "mainText":"You see the ruin right in front of you. It seems to be some sort of crypt. A big stone door with a sigill portraying what looks like a shield with wings and a socket for something right in the middle blocks your way, ",
     "decisionLeft" : {
       "choiceText":"Look around",
-      "pickedText":"You looked at the carvings on the walls, showing a stone radiating light with people worshiping it. Sadly you did not find an entry",
+      "pickedText":"You looked at the carvings on the walls, showing a stone radiating light with people worshiping it. Sadly you did not find another entry or way to open the door",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
-      "choiceText":"Try to break yourself in",
-      "pickedText":"You tried to destroy the door with your hands but were unable to do so",
+      "choiceText":"Try to destroy the door",
+      "pickedText":"You tried to break in using your hands but were unable to make a dent in the door",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
     },
@@ -623,8 +623,8 @@
           },
           "overwriteSide": false,
           "decision": {
-            "choiceText":"Go inside the ruin",
-            "pickedText":"You went inside the ruin",
+            "choiceText":"Put your red crystal in the socket",
+            "pickedText":"You put the red crystal in the socket, making the door open. You picked the crystal up again and went inside the ruin",
             "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
             "flags":[{"followUp": 31}]
           }}}]
