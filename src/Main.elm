@@ -166,9 +166,7 @@ view model =
     viewBackground game.location <|
         column [ width fill, height fill ]
             [ viewResources game.resources
-            , el [ centerX, width (px 800) ] <|
-                column [ padding 5, width (px 400), height fill, centerX, Background.color (rgba 0x00 0x00 0x00 0.6), Font.color (rgb255 0xFF 0xFF 0xFF), Border.rounded 5 ]
-                    [ wrapText ("You are currently in a " ++ Location.toText game.location) ]
+            , viewLocation game.location
             , el [ centerX, centerY ] <|
                 case model of
                     GameOver _ highscore ->
@@ -400,6 +398,12 @@ viewResources resources =
             , resourceElement "src/img/resources/mentalHealth.svg" resources.mentalHealth False
             , resourceElement "src/img/resources/money.svg" resources.money True
             ]
+
+
+viewLocation : Location -> Element Msg
+viewLocation location =
+    el [ padding 5, width (px 400), centerX, Background.color (rgba 0x00 0x00 0x00 0.6), Font.color (rgb255 0xFF 0xFF 0xFF), Border.rounded 5 ] <|
+        wrapText ("You are currently in a " ++ Location.toText location)
 
 
 viewItems : List Int -> Element Msg
