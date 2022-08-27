@@ -242,7 +242,7 @@
     "mainText":"While walking along the street a medical clinic catches your eye",
     "decisionLeft" : {
       "choiceText":"See a doctor",
-      "pickedText":"You went inside the clinic and let got a checkup. You feel better",
+      "pickedText":"You went inside the clinic and got a checkup. You feel better",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":0, "money": -5},
       "flags":[]
     },

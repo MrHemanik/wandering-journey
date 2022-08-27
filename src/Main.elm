@@ -10,7 +10,7 @@ import Condition exposing (Condition(..))
 import Data
 import Decision exposing (Decision)
 import DecodeHelper
-import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, clip, column, el, fill, height, image, layout, maximum, minimum, none, padding, paddingXY, paragraph, px, row, shrink, spaceEvenly, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerX, centerY, clip, column, el, fill, height, image, layout, maximum, minimum, none, padding, paddingXY, paragraph, px, row, shrink, spaceEvenly, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -331,8 +331,39 @@ viewCard model =
 
                                                         Right ->
                                                             c.decisionRight
+
+                                                itemsAddOrRemove itemList =
+                                                    row [ centerX, spacing 10 ] <| List.map itemElement itemList
+
+                                                itemElement item =
+                                                    case item of
+                                                        ( Nothing, _ ) ->
+                                                            none
+
+                                                        ( Just i, bool ) ->
+                                                            el [ Background.color Color.transBlackLight, Border.rounded 3, padding 10 ] <|
+                                                                el [ Background.color Color.transBlackLight, Background.uncropped (Item.itemIdToImageUrl i.id), width (px 50), height (px 50), centerX ] <|
+                                                                    image
+                                                                        [ Background.color Color.transWhite, Border.glow Color.transWhite 3, Border.rounded 5, width (px 20), height (px 20), alignTop ]
+                                                                        { src =
+                                                                            if bool == True then
+                                                                                "src/img/plus.png"
+
+                                                                            else
+                                                                                "src/img/minus.png"
+                                                                        , description = ""
+                                                                        }
                                             in
                                             [ row [ width fill, padding 20 ] [ wrapText decision.pickedText ]
+                                            , case viewItemChanges decision.flags game.allItems of
+                                                [] ->
+                                                    wrapText ""
+
+                                                ( Nothing, _ ) :: _ ->
+                                                    wrapText ""
+
+                                                list ->
+                                                    itemsAddOrRemove list
                                             , row [ width fill, alignBottom ]
                                                 [ Input.button [ width (minimum 100 fill) ]
                                                     { onPress =
@@ -362,6 +393,24 @@ viewCard model =
                     Nothing ->
                         none
                 ]
+
+
+viewItemChanges : List Flag -> List Item -> List ( Maybe Item, Bool )
+viewItemChanges flags items =
+    case flags of
+        [] ->
+            [ ( Nothing, False ) ]
+
+        x :: xs ->
+            case x of
+                AddItem id ->
+                    ( Item.idToItem id items, True ) :: viewItemChanges xs items
+
+                RemoveItem id ->
+                    ( Item.idToItem id items, False ) :: viewItemChanges xs items
+
+                _ ->
+                    viewItemChanges xs items
 
 
 choiceButton : Resources -> Decision -> Choice -> Element Msg
@@ -819,7 +868,7 @@ init flags =
                 , allCards = value.allCards
                 , defaultCardIndexes = value.startingCardIndexes
                 , unlockedCardIndexes = value.startingCardIndexes
-                , activeItemsIndexes = [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]
+                , activeItemsIndexes = []
                 , currentCards = currentCards
                 , location = startingLocation
                 , card = Nothing
