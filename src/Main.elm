@@ -352,12 +352,9 @@ viewBackground location content =
 viewResources : Resources -> Element Msg
 viewResources resources =
     let
-        columns src resource extraSign isMoney =
+        columns src resource isMoney =
             column
-                [ width fill
-                , padding 20
-                , spacing 20
-                ]
+                [ width fill, padding 20, spacing 20 ]
                 [ image [ Background.color (rgb255 0xFF 0xFF 0xFF), Element.Border.rounded 3, Element.Border.glow (rgb255 0xFF 0xFF 0xFF) 3, centerX, centerY ]
                     { src = src
                     , description = ""
@@ -369,27 +366,38 @@ viewResources resources =
                     , defaultFont
                     , defaultFontSize
                     , Font.center
-                    , if resource >= 70 && isMoney == False then
-                        Font.color (rgb255 0x00 0xFF 0x00)
+                    , case ( resource >= 70, resource > 20, isMoney ) of
+                        ( True, _, False ) ->
+                            Font.color (rgb255 0x00 0xFF 0x00)
 
-                      else if resource > 20 && resource < 70 && isMoney == False then
-                        Font.color (rgb255 0xFF 0xF0 0x00)
+                        ( False, True, False ) ->
+                            Font.color (rgb255 0xFF 0xF0 0x00)
 
-                      else if isMoney == False then
-                        Font.color (rgb255 0xFF 0x00 0x00)
+                        ( False, False, False ) ->
+                            Font.color (rgb255 0xFF 0x00 0x00)
 
-                      else
-                        Font.color (rgb255 0xFF 0xFF 0xFF)
+                        ( _, _, True ) ->
+                            Font.color (rgb255 0xFF 0xFF 0xFF)
                     ]
-                    [ text (String.fromInt resource ++ extraSign) ]
+                    [ text
+                        (String.fromInt resource
+                            ++ (case isMoney of
+                                    True ->
+                                        ""
+
+                                    False ->
+                                        "%"
+                               )
+                        )
+                    ]
                 ]
     in
-    row [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leder.jpg", spaceEvenly, width fill ]
-        [ columns "src/img/resources/hunger.svg" resources.hunger "%" False
-        , columns "src/img/resources/thirst.svg" resources.thirst "%" False
-        , columns "src/img/resources/physicalHealth.svg" resources.physicalHealth "%" False
-        , columns "src/img/resources/mentalHealth.svg" resources.mentalHealth "%" False
-        , columns "src/img/resources/money.svg" resources.money "" True
+    row [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, width fill ]
+        [ columns "src/img/resources/hunger.svg" resources.hunger False
+        , columns "src/img/resources/thirst.svg" resources.thirst False
+        , columns "src/img/resources/physicalHealth.svg" resources.physicalHealth False
+        , columns "src/img/resources/mentalHealth.svg" resources.mentalHealth False
+        , columns "src/img/resources/money.svg" resources.money True
         ]
 
 
@@ -421,12 +429,12 @@ viewItemBag items =
     in
     if length items > 0 then
         row
-            [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leder.jpg", spaceEvenly, height fill, centerX ]
+            [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, height fill, centerX ]
             [ columns items
             ]
 
     else
-        row [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leder.jpg", spaceEvenly, height (px 100), centerX, width (px 100) ] []
+        row [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, height (px 100), centerX, width (px 100) ] []
 
 
 viewItemDetail : Item -> Element Msg
