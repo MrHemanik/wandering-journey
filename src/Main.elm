@@ -7,7 +7,7 @@ import CardFlag exposing (CardFlag(..))
 import Condition exposing (Condition(..))
 import Data
 import DecodeHelper
-import Element exposing (Element, centerX, centerY, clip, column, el, fill, height, image, layout, minimum, padding, px, rgb255, rgba, row, spaceEvenly, spacing, text, width)
+import Element exposing (Element, centerX, centerY, clip, column, el, fill, height, image, layout, maximum, minimum, padding, paddingXY, px, rgb255, rgba, row, spaceEvenly, spacing, text, width)
 import Element.Background as Background
 import Element.Border
 import Element.Font as Font
@@ -165,7 +165,7 @@ view model =
     in
     viewBackground game.location <|
         column [ width fill, height fill ]
-            [ el [ centerX, width (px 800), padding 20 ] <| viewResources game.resources
+            [ viewResources game.resources
             , el [ centerX, width (px 800) ] <|
                 column [ padding 5, width (px 400), height fill, centerX, Background.color (rgba 0x00 0x00 0x00 0.6), Font.color (rgb255 0xFF 0xFF 0xFF), Element.Border.rounded 5 ]
                     [ wrapText ("You are currently in a " ++ Location.toText game.location) ]
@@ -352,20 +352,20 @@ viewBackground location content =
 viewResources : Resources -> Element Msg
 viewResources resources =
     let
-        columns src resource isMoney =
+        resourceElement src resource isMoney =
             column
-                [ width fill, padding 20, spacing 20 ]
+                [ width fill, paddingXY 5 20, spacing 20 ]
                 [ image [ Background.color (rgb255 0xFF 0xFF 0xFF), Element.Border.rounded 3, Element.Border.glow (rgb255 0xFF 0xFF 0xFF) 3, centerX, centerY ]
                     { src = src
                     , description = ""
                     }
-                , Element.paragraph
+                , Element.row
                     [ Background.color (rgba 0x00 0x00 0x00 0.4)
                     , Element.Border.rounded 5
                     , padding 8
+                    , width fill
                     , defaultFont
                     , defaultFontSize
-                    , Font.center
                     , case ( resource >= 70, resource > 20, isMoney ) of
                         ( True, _, False ) ->
                             Font.color (rgb255 0x00 0xFF 0x00)
@@ -379,7 +379,7 @@ viewResources resources =
                         ( _, _, True ) ->
                             Font.color (rgb255 0xFF 0xFF 0xFF)
                     ]
-                    [ text
+                    [ wrapText
                         (String.fromInt resource
                             ++ (case isMoney of
                                     True ->
@@ -392,13 +392,14 @@ viewResources resources =
                     ]
                 ]
     in
-    row [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, width fill ]
-        [ columns "src/img/resources/hunger.svg" resources.hunger False
-        , columns "src/img/resources/thirst.svg" resources.thirst False
-        , columns "src/img/resources/physicalHealth.svg" resources.physicalHealth False
-        , columns "src/img/resources/mentalHealth.svg" resources.mentalHealth False
-        , columns "src/img/resources/money.svg" resources.money True
-        ]
+    el [ paddingXY 0 20, width fill ] <|
+        row [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, width (minimum 400 <| maximum 800 fill), centerX ]
+            [ resourceElement "src/img/resources/hunger.svg" resources.hunger False
+            , resourceElement "src/img/resources/thirst.svg" resources.thirst False
+            , resourceElement "src/img/resources/physicalHealth.svg" resources.physicalHealth False
+            , resourceElement "src/img/resources/mentalHealth.svg" resources.mentalHealth False
+            , resourceElement "src/img/resources/money.svg" resources.money True
+            ]
 
 
 viewItemBag : List Int -> Element Msg
@@ -427,7 +428,7 @@ viewItemBag items =
                 [] ->
                     column [] []
     in
-    if length items > 0 then
+    if List.length items > 0 then
         row
             [ Element.Border.rounded 7, Element.Border.width 3, Element.Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, height fill, centerX ]
             [ columns items
@@ -796,7 +797,7 @@ init flags =
                 , allCards = value.allCards
                 , defaultCardIndexes = value.startingCardIndexes
                 , unlockedCardIndexes = value.startingCardIndexes
-                , activeItemsIndexes = []
+                , activeItemsIndexes = [ 0, 1, 2, 3 ]
                 , currentCards = currentCards
                 , location = startingLocation
                 , card = Nothing
