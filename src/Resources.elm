@@ -1,4 +1,4 @@
-module Resources exposing (Resources, capResources, combine, decoder)
+module Resources exposing (Resources, capResources, combine, deathMessage, decoder)
 
 import Json.Decode as Decode exposing (Decoder)
 
@@ -35,3 +35,21 @@ capResources rs =
     , mentalHealth = max 0 rs.mentalHealth |> min 100
     , money = max 0 rs.money
     }
+
+
+deathMessage : Resources -> String
+deathMessage resources =
+    if resources.hunger <= 0 then
+        "Died of starvation"
+
+    else if resources.thirst <= 0 then
+        "Died of thirst"
+
+    else if resources.physicalHealth <= 0 then
+        "Died due to injuries"
+
+    else if resources.mentalHealth <= 0 then
+        "Died due to mental health"
+
+    else
+        "Died of an unknown cause"

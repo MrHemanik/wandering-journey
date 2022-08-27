@@ -7,7 +7,7 @@ import CardFlag exposing (CardFlag(..))
 import Condition exposing (Condition(..))
 import Data
 import DecodeHelper
-import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, clip, column, el, fill, height, image, layout, maximum, minimum, none, padding, paddingXY, paragraph, px, rgb255, rgba, row, spaceEvenly, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, clip, column, el, fill, height, image, layout, maximum, minimum, none, padding, paddingXY, paragraph, px, rgb255, rgba, row, shrink, spaceEvenly, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -174,7 +174,7 @@ view model =
                     GameOver _ highscore ->
                         column [ width (px 800), height (px 300), Background.color (rgba 0xFF 0xFF 0xFF 0.8), padding 20, Border.rounded 7, centerY ]
                             [ column [ width fill, padding 20 ]
-                                [ wrapText (viewDeathMessage game.resources)
+                                [ wrapText (Resources.deathMessage game.resources)
                                 ]
                             , column [ width fill, padding 20 ]
                                 [ wrapText ("Highscore:  " ++ String.fromInt highscore) ]
@@ -322,16 +322,17 @@ view model =
                                 Nothing ->
                                     none
                             ]
-            , case showItemDetail.item of
-                Nothing ->
-                    el [ centerX, width (px 800), padding 20 ] <| viewItemBag game.activeItemsIndexes
+            , el [ centerX, width (px 800), paddingXY 0 20 ] <|
+                case showItemDetail.item of
+                    Nothing ->
+                        viewItems game.activeItemsIndexes
 
-                Just i ->
-                    if showItemDetail.showDetail then
-                        el [ centerX, width (px 800), padding 20 ] <| viewItemDetail i
+                    Just i ->
+                        if showItemDetail.showDetail then
+                            viewItemDetail i
 
-                    else
-                        el [ centerX, width (px 800), padding 20 ] <| viewItemBag game.activeItemsIndexes
+                        else
+                            viewItems game.activeItemsIndexes
             ]
 
 
@@ -343,7 +344,6 @@ viewBackground location content =
             , width fill
             , height fill
             , clip
-            , padding 20
             ]
         <|
             content
@@ -402,15 +402,15 @@ viewResources resources =
             ]
 
 
-viewItemBag : List Int -> Element Msg
-viewItemBag items =
+viewItems : List Int -> Element Msg
+viewItems items =
     let
         portrayAllItems itemList =
             -- text "" as first element because when clicking the first element is always highlighted, with this an empty element will be highlighted, bypassing the highlight
             [ text "" ] ++ List.map itemElement itemList
 
         itemElement item =
-            Input.button [ width (minimum 100 fill), centerX, padding 20 ]
+            Input.button [ width (minimum 100 fill), centerX ]
                 { onPress = Just (ToggleItemDetails item)
                 , label =
                     wrappedRow [ centerX ]
@@ -422,56 +422,25 @@ viewItemBag items =
                         ]
                 }
     in
-    row
-        ([ Border.rounded 7, Border.width 3, Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, centerX ]
-            ++ (if List.length items > 0 then
-                    [ height fill ]
-
-                else
-                    [ height (px 100), width (px 100) ]
-               )
-        )
-    <|
+    row [ Border.rounded 7, Border.width 3, Border.color (rgb255 0x00 0x00 0x00), Background.tiled "src/img/leather.jpg", spaceEvenly, centerX, height (minimum 100 shrink), width (minimum 100 shrink) ] <|
         portrayAllItems items
 
 
 viewItemDetail : Item -> Element Msg
 viewItemDetail item =
-    row [ Background.tiled "src/img/leather.jpg", Border.width 3, Border.color (rgb255 0x00 0x00 0x00), Border.rounded 3, centerX, width fill, height fill, spacing 20 ]
-        [ Input.button [ width (minimum 100 fill), centerX ]
+    row [ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color (rgb255 0x00 0x00 0x00), centerX, height (minimum 100 shrink), width (minimum 400 fill), spacing 20 ]
+        [ Input.button [ width fill, centerX ]
             { onPress = Just (ToggleItemDetails item.id)
             , label =
-                wrappedRow [ centerX, spacing 20, width fill ]
-                    [ column [ padding 20, Border.rounded 7 ]
-                        [ image
-                            [ Background.color (rgba 0x00 0x00 0x00 0.4), Border.rounded 3, centerX ]
-                            { src = Item.itemIdToImageUrl item.id
-                            , description = ""
-                            }
-                        ]
-                    , column [ Background.color (rgba 0xFF 0xFF 0xFF 0.6), Border.rounded 7, padding 20, width (maximum 250 fill) ] [ wrapText item.name ]
-                    , column [ Background.color (rgba 0xFF 0xFF 0xFF 0.6), Border.rounded 7, padding 20, width (maximum 350 fill) ] [ wrapText item.description ]
+                wrappedRow [ centerX, spacing 20, padding 5, width fill ]
+                    [ el [ width (maximum 100 shrink) ] <|
+                        image [ Background.color (rgba 0x00 0x00 0x00 0.4), Border.rounded 3, centerX ]
+                            { src = Item.itemIdToImageUrl item.id, description = "" }
+                    , el [ Background.color (rgba 0xFF 0xFF 0xFF 0.6), Border.rounded 7, padding 5, height (minimum 50 shrink) ] <| el [ Font.center, defaultFont, defaultFontSize, centerX, centerY ] <| text item.name
+                    , el [ Background.color (rgba 0xFF 0xFF 0xFF 0.6), Border.rounded 7, padding 5, width fill, height (minimum 50 shrink) ] <| el [ centerX, centerY ] <| wrapText item.description
                     ]
             }
         ]
-
-
-viewDeathMessage : Resources -> String
-viewDeathMessage resources =
-    if resources.hunger <= 0 then
-        "Died of starvation"
-
-    else if resources.thirst <= 0 then
-        "Died of thirst"
-
-    else if resources.physicalHealth <= 0 then
-        "Died due to injuries"
-
-    else if resources.mentalHealth <= 0 then
-        "Died due to mental health"
-
-    else
-        "Died of an unknown cause"
 
 
 
@@ -794,7 +763,7 @@ init flags =
                 , allCards = value.allCards
                 , defaultCardIndexes = value.startingCardIndexes
                 , unlockedCardIndexes = value.startingCardIndexes
-                , activeItemsIndexes = [ 0, 1, 2, 3 ]
+                , activeItemsIndexes = [ 0, 1, 2, 3, 6 ]
                 , currentCards = currentCards
                 , location = startingLocation
                 , card = Nothing

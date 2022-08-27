@@ -1,7 +1,7 @@
 {
   "items" : [{
     "id":0,
-    "name": "Red  crystal",
+    "name": "Red crystal",
     "description": "A mysterious crystal you bought from a strange merchant"
   }, {
     "id":1,
@@ -9,23 +9,23 @@
     "description": "A bag with a name tag, spelling [Pasmenik Friedner]"
   }, {
     "id":2,
-    "name": "Mutan pamphlet",
+    "name": "Mutan\npamphlet",
     "description": "A pamphlet for the Mutan Order"
   }, {
     "id":3,
-    "name": "Fortuna pamphlet",
+    "name": "Fortuna\npamphlet",
     "description": "A pamphlet for the Fortuna Order"
   }, {
     "id":4,
-    "name": "Mutan affiliation token",
+    "name": "Mutan\naffiliation token",
     "description": "A token symbolizing your affiliation with the Mutan Order"
   }, {
     "id":5,
-    "name": "Fortuna affiliation token",
+    "name": "Fortuna\naffiliation token",
     "description": "A token symbolizing your affiliation with the Fortuna Order"
   }, {
     "id":6,
-    "name": "Pulsating Mutan affiliation token",
+    "name": "Pulsating Mutan\naffiliation token",
     "description": "A token symbolizing your affiliation with the Mutan Order. It feels strangely alive"
   }, {
     "id":7,
