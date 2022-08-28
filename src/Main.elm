@@ -21,6 +21,7 @@ import Item exposing (Item)
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
 import List exposing (length)
+import ListHelper
 import Location exposing (Location)
 import Player exposing (Player)
 import Random
@@ -110,6 +111,30 @@ startingResources =
 
 startingLocation =
     Location.City
+
+
+
+-- Helper --
+
+
+modelToGame : Model -> Game
+modelToGame model =
+    case model of
+        Running _ game _ _ _ ->
+            game
+
+        GameOver game _ _ _ ->
+            game
+
+
+modelToPlayer : Model -> Player
+modelToPlayer model =
+    case model of
+        Running _ _ player _ _ ->
+            player
+
+        GameOver _ player _ _ ->
+            player
 
 
 
@@ -572,10 +597,10 @@ update msg model =
                 False ->
                     case msg of
                         NewCard newCardIndex ->
-                            ( Running Nothing (processCardFlags { game | card = Card.getCardByIndex game.currentCards newCardIndex }) player highscore viewState, Cmd.none )
+                            ( processCardFlags (Running Nothing { game | card = Card.getCardByIndex game.currentCards newCardIndex } player highscore viewState), Cmd.none )
 
                         LoadFollowUpCard ->
-                            ( Running Nothing (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) player highscore viewState, Cmd.none )
+                            ( processCardFlags (Running Nothing { game | card = game.nextCard, nextCard = Nothing } player highscore viewState), Cmd.none )
 
                         Key key ->
                             processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } player highscore viewState)
@@ -624,8 +649,13 @@ processKey key model =
                                     ( _, _ ) ->
                                         ( { hunger = -100, thirst = -100, physicalHealth = -100, mentalHealth = -100, money = -100 }, [] )
 
-                            fpg =
-                                processFlags flags game
+                            ( fpg, fpp ) =
+                                case processFlags flags model of
+                                    GameOver g p _ _ ->
+                                        ( g, p )
+
+                                    Running _ g p _ _ ->
+                                        ( g, p )
                         in
                         if isOptionAllowed game.resources resource then
                             ( Running (Just choice)
@@ -633,7 +663,7 @@ processKey key model =
                                     | resources = calculateResourcesOnChoice fpg.resources choice fpg.location fpg.card
                                     , currentCards = getCurrentlyPossibleCards fpg.allCards fpg.unlockedCardIndexes fpg.location
                                 }
-                                player
+                                fpp
                                 (highscore + 50)
                                 { showDetail = False, item = Nothing, showControls = False, showAchievement = False }
                             , savePlayerData <| Player.encoder player
@@ -755,86 +785,75 @@ calculateResourcesOnChoice resources choice location maybeCard =
                 |> Resources.capResources
 
 
-removeEntriesFromList : List a -> List a -> List a
-removeEntriesFromList list removeList =
-    List.filter (\a -> not (List.member a removeList)) list
-
-
-addEntriesToList : List comparable -> List comparable -> List comparable
-addEntriesToList list addList =
-    case addList of
-        [] ->
-            list
-
-        x :: xs ->
-            if List.member x list then
-                addEntriesToList list xs
-
-            else
-                addEntriesToList (List.sort (x :: list)) xs
-
-
-processFlags : List Flag -> Game -> Game
-processFlags flags game =
-    case flags of
-        [] ->
-            game
-
-        x :: xs ->
+processFlags : List Flag -> Model -> Model
+processFlags flags model =
+    case ( flags, model ) of
+        ( x :: xs, Running choice game player score vs ) ->
             case x of
                 AddItem id ->
-                    processFlags xs { game | activeItemsIndexes = addEntriesToList game.activeItemsIndexes [ id ] }
+                    processFlags xs <| Running choice { game | activeItemsIndexes = ListHelper.addEntriesToList game.activeItemsIndexes [ id ] } player score vs
 
                 RemoveItem id ->
-                    processFlags xs { game | activeItemsIndexes = removeEntriesFromList game.activeItemsIndexes [ id ] }
+                    processFlags xs <| Running choice { game | activeItemsIndexes = ListHelper.removeEntriesFromList game.activeItemsIndexes [ id ] } player score vs
 
                 AddCards list ->
-                    processFlags xs { game | unlockedCardIndexes = addEntriesToList game.unlockedCardIndexes list }
+                    processFlags xs <| Running choice { game | unlockedCardIndexes = ListHelper.addEntriesToList game.unlockedCardIndexes list } player score vs
 
                 RemoveCards list ->
-                    processFlags xs { game | unlockedCardIndexes = removeEntriesFromList game.unlockedCardIndexes list }
+                    processFlags xs <| Running choice { game | unlockedCardIndexes = ListHelper.removeEntriesFromList game.unlockedCardIndexes list } player score vs
 
                 ChangeLocation location ->
-                    processFlags xs { game | location = location }
+                    processFlags xs <| Running choice { game | location = location } player score vs
 
                 FollowUp id ->
-                    processFlags xs { game | nextCard = Card.getCardById game.allCards id }
+                    processFlags xs <| Running choice { game | nextCard = Card.getCardById game.allCards id } player score vs
+
+                UnlockAchievement id ->
+                    processFlags xs <| Running choice game (Player.unlockAchievement id player) score vs
 
                 _ ->
-                    Debug.log "Unknown Flag detected" processFlags xs game
+                    Debug.log "Unknown Flag detected" processFlags xs <| Running choice game player score vs
+
+        ( _, _ ) ->
+            model
 
 
-processCardFlags : Game -> Game
-processCardFlags inputGame =
+processCardFlags : Model -> Model
+processCardFlags inputModel =
     let
-        process flags game =
-            case flags of
-                [] ->
-                    game
-
-                x :: xs ->
+        process flags model =
+            case ( flags, model ) of
+                ( x :: xs, Running choice game player score vs ) ->
                     case x of
                         ConditionalDecision condition overwriteSide decision ->
                             process xs <|
-                                case ( isConditionTrue condition game, game.card, overwriteSide ) of
-                                    ( True, Just c, False ) ->
-                                        Debug.log "left" { game | card = Just { c | decisionLeft = decision } }
+                                Running choice
+                                    (case ( isConditionTrue condition game, game.card, overwriteSide ) of
+                                        ( True, Just c, False ) ->
+                                            { game | card = Just { c | decisionLeft = decision } }
 
-                                    ( True, Just c, True ) ->
-                                        Debug.log "right" { game | card = Just { c | decisionRight = decision } }
+                                        ( True, Just c, True ) ->
+                                            { game | card = Just { c | decisionRight = decision } }
 
-                                    _ ->
-                                        game
+                                        _ ->
+                                            game
+                                    )
+                                    player
+                                    score
+                                    vs
 
                         DefaultFlag flag ->
-                            process xs (processFlags [ flag ] game)
+                            process xs (processFlags [ flag ] model)
+
+                ( _, _ ) ->
+                    model
     in
-    case inputGame.card of
+    case (modelToGame inputModel).card of
         Nothing ->
-            Debug.log "No card to process cardFlags from" inputGame
+            Debug.log "No card to process cardFlags from" inputModel
 
         Just card ->
-            process card.flags inputGame
+            process card.flags inputModel
 
 
 isConditionTrue : Condition -> Game -> Bool
