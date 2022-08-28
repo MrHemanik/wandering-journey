@@ -377,9 +377,10 @@ viewControls showControls =
             ]
         , column [ width fill, paddingXY 0 25 ]
             [ textControls "Choose an Option: Click on the option or press [left/right arrow key]"
-            , textControls "Toggle Controls: Click on 'Controls' or press [C]"
-            , textControls "Toggle Achievements: Click on 'Achievements' or press [A]"
             , textControls "Toggle Item Details: Click on an Item or press [Number Key]"
+            , textControls "Toggle Achievements: Click on 'Achievements' or press [A]"
+            , textControls "Toggle Controls: Click on 'Controls' or press [C]"
+            , textControls "Restart Game: Press [R]"
             ]
         ]
 
