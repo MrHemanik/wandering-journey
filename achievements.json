@@ -1,0 +1,44 @@
+{
+  "achievement" : [
+    {
+      "id": 0,
+      "name": "An endless wake",
+      "description": "Die for the first time"
+    },{
+      "id": 1,
+      "name": "Walking menace",
+      "description": "Walk over 10km in a single run"
+    },{
+      "id": 2,
+      "name": "Unstoppable",
+      "description": "Walk over 100km in a single run"
+    },{
+      "id": 3,
+      "name": "May luck be on your side",
+      "description": "Join the Fortuna Order"
+    },{
+      "id": 4,
+      "name": "Mr.Stark, I don't feel so good",
+      "description": "Join the Mutan Order"
+    },{
+      "id": 5,
+      "name": "What a deal",
+      "description": "Buy the red crystal from the mysterious stranger"
+    },{
+      "id": 6,
+      "name": "IT'S OVER 9000!!!",
+      "description": "Activate the red crystal"
+    },{
+      "id": 7,
+      "name": "Loot > progress",
+      "description": "Loot the forest ruin instead of charging the red crystal"
+    },{
+      "id": 8,
+      "name": "And for my next trick...",
+      "description": "Make the bear cub \"go away\""
+    },{
+      "id": 9,
+      "name": "All things must pass",
+      "description": "Bless the lone soul"
+    }]
+}

@@ -1,8 +1,7 @@
-module Player exposing (Player, decoder, encoder, unlockAchievement)
+module Player exposing (Player, decoder, encoder)
 
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
-import ListHelper
 
 
 type alias Player =
@@ -10,10 +9,6 @@ type alias Player =
     , unlockedAchievements : List Int
     , highscore : Int
     }
-
-
-defaultPlayer =
-    { startingCards = [], unlockedAchievements = [], highscore = 0 }
 
 
 decoder : Decoder Player
@@ -31,8 +26,3 @@ encoder player =
         , ( "unlockedAchievements", Encode.list Encode.int player.unlockedAchievements )
         , ( "highscore", Encode.int player.highscore )
         ]
-
-
-unlockAchievement : Int -> Player -> Player
-unlockAchievement id player =
-    { player | unlockedAchievements = ListHelper.addEntriesToList player.unlockedAchievements [ id ] }

@@ -103,7 +103,8 @@
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":-30},
       "flags":[
         {"addItem": 0},
-        {"removeCards":[4]}]
+        {"removeCards":[4]},
+        {"unlockAchievement": 5}]
     },
     "decisionRight" : {
       "choiceText":"Try to get away",
@@ -322,7 +323,9 @@
         {"removeItem": 2},
         {"addItem": 4},
         {"addCards":[16]},
-        {"removeCards":[15]}]
+        {"removeCards":[15]},
+        {"unlockAchievement": 4}
+      ]
     },
     "decisionRight" : {
       "choiceText":"Ignore the church",
@@ -369,7 +372,9 @@
         {"removeItem": 3},
         {"addItem": 5},
         {"addCards":[7,19,20]},
-        {"removeCards":[17,1]}]
+        {"removeCards":[17,1]},
+        {"unlockAchievement": 3}
+      ]
     },
     "decisionRight" : {
       "choiceText":"Ignore the church",
@@ -640,13 +645,18 @@
       "flags":[
         {"removeItem": 0},
         {"addItem": 8},
-        {"removeCards": [29]}]
+        {"removeCards": [29]},
+        {"unlockAchievement": 6}
+      ]
     },
     "decisionRight" : {
       "choiceText":"Search for treasure",
       "pickedText":"You searched the room for treasure. Luckily you find a chest you can open. As soon as you opened the chest and grabbed a pile of coins the ground starts to tremble. You ran outside while the ruin collapsed, making its secrets lost forever",
       "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":-5, "mentalHealth": 0, "money": 40},
-      "flags":[{"removeCards": [29]}]
+      "flags":[
+        {"removeCards": [29]},
+        {"unlockAchievement": 7}
+      ]
     }
   }, {
     "id":32,
@@ -709,7 +719,7 @@
               "choiceText":"Pray for him",
               "pickedText":"You gave a prayer to Fortuna wishing this unlucky being better luck in their next life",
               "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":15, "money":0},
-              "flags":[]
+              "flags": [{"unlockAchievement": 9}]
           }}}]
   }, {
     "id":35,
@@ -738,7 +748,7 @@
           "choiceText":"P̵̛̣͖̀e̵̻̕ť̴̮͘ ̷̭̑ẗ̸͎͔h̴͈̓͜ẽ̵̺̱̂ ̷̩̆͌b̷̠̎e̴̬̎̈́ă̸͚̠r̷̤̩͂̌ ̶̛̦̟̿c̸͓̞̐̽ũ̸̫̘b̴̜̮̒̒",
           "pickedText":"As you got closer to the \"juicy\" little bear cup, its very angry mother came charging at you from a nearby bush. But before she can reached you felt an intense headache and fell unconscious. As you came back to your senses, you only saw the huge bear running away in fear. You wonder what scared her away",
           "resourceChange":  {"hunger":10, "thirst":5, "physicalHealth":0, "mentalHealth":-10, "money":0},
-          "flags":[]
+          "flags":[{"unlockAchievement": 8}]
         }}}]
   }, {
     "id":36,

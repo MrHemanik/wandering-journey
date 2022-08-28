@@ -1,5 +1,6 @@
 port module Main exposing (main)
 
+import Achievement exposing (Achievement)
 import Array
 import Browser
 import Browser.Events
@@ -71,7 +72,7 @@ type alias Game =
 
 
 type alias ViewState =
-    { item : Maybe Item, showControls : Bool, showAchievement : Bool }
+    { item : Maybe Item, showControls : Bool, showAchievement : Bool, newAchievement : Maybe Achievement, selectedAchievement : Maybe Achievement }
 
 
 type alias JsonData =
@@ -554,10 +555,13 @@ update msg model =
             case isGameOver game.resources of
                 True ->
                     let
-                        newPlayer =
-                            { player | highscore = max player.highscore highscore }
+                        updatedPlayer =
+                            Achievement.checkDistance highscore { player | highscore = max player.highscore highscore }
+
+                        newlyUnlockedAchievements =
+                            Debug.log "newlyUnlocked" (ListHelper.removeEntriesFromList updatedPlayer.unlockedAchievements player.unlockedAchievements)
                     in
-                    ( GameOver game newPlayer highscore viewState, savePlayerData <| Player.encoder newPlayer )
+                    ( GameOver game updatedPlayer highscore viewState, savePlayerData <| Player.encoder updatedPlayer )
 
                 False ->
                     case msg of
@@ -639,7 +643,7 @@ processKey key model =
                                 }
                                 fpp
                                 (highscore + 50)
-                                { item = Nothing, showControls = False, showAchievement = False }
+                                { item = Nothing, showControls = False, showAchievement = False, newAchievement = Nothing, selectedAchievement = Nothing }
                             , savePlayerData <| Player.encoder player
                             )
 
@@ -670,7 +674,7 @@ processKey key model =
                 }
                 playerData
                 0
-                { item = Nothing, showControls = False, showAchievement = False }
+                { item = Nothing, showControls = False, showAchievement = False, newAchievement = Nothing, selectedAchievement = Nothing }
             , generateCard <| List.length gameData.currentCards
             )
 
@@ -815,7 +819,7 @@ processFlags flags model =
                         { game | nextCard = Card.getCardById game.allCards id } |> (\g -> Running choice g player score vs)
 
                     UnlockAchievement id ->
-                        Player.unlockAchievement id player |> (\p -> Running choice game p score vs)
+                        Achievement.unlockAchievement id player |> (\p -> Running choice game p score vs)
 
                     TakeMoney sum ->
                         { game | resources = { resources | money = max 0 (resources.money - sum) } } |> (\g -> Running choice g player score vs)
@@ -964,7 +968,7 @@ init flags =
                     Data.Failure _ ->
                         { startingCards = game.defaultCardIndexes, unlockedAchievements = [], highscore = 0 }
     in
-    ( Running Nothing game player 0 { item = Nothing, showControls = False, showAchievement = False }
+    ( Running Nothing game player 0 { item = Nothing, showControls = False, showAchievement = False, newAchievement = Nothing, selectedAchievement = Nothing }
     , generateCard <| List.length game.currentCards
     )
 
