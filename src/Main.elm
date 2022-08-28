@@ -5,6 +5,7 @@ import Browser
 import Browser.Events
 import Card exposing (Card)
 import CardFlag exposing (CardFlag(..))
+import Choice exposing (Choice(..))
 import Color
 import Condition exposing (Condition(..))
 import Data
@@ -20,6 +21,7 @@ import Html exposing (Html)
 import Item exposing (Item)
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
+import Key exposing (Key(..))
 import List exposing (length)
 import ListHelper
 import Location exposing (Location)
@@ -28,18 +30,11 @@ import Random
 import Resources exposing (Resources)
 
 
-type Choice
-    = Left
-    | Right
+port savePlayerData : Encode.Value -> Cmd msg
 
 
-type Key
-    = ChoiceKey Choice
-    | Restart
-    | UnknownKey
-    | NumberKey Int
-    | Controls
-    | Achievements
+
+---- Data Types
 
 
 type alias Highscore =
@@ -51,10 +46,6 @@ type Model
     | Running (Maybe Choice) Game Player Highscore ViewState
 
 
-
--- Resources you need to manage.
-
-
 type Msg
     = Key Key
     | NewCard Int
@@ -63,9 +54,6 @@ type Msg
     | ToggleItemDetails Int
     | ShowControl Bool
     | ShowAchievement Bool
-
-
-port savePlayerData : Encode.Value -> Cmd msg
 
 
 type alias Game =
@@ -83,7 +71,7 @@ type alias Game =
 
 
 type alias ViewState =
-    { showDetail : Bool, item : Maybe Item, showControls : Bool, showAchievement : Bool }
+    { item : Maybe Item, showControls : Bool, showAchievement : Bool }
 
 
 type alias JsonData =
@@ -91,7 +79,7 @@ type alias JsonData =
 
 
 
----- Preset Variables ----
+---- Preset constants ----
 
 
 defaultFont =
@@ -143,62 +131,6 @@ modelToPlayer model =
 ---- Decoder ----
 
 
-keyDecoder : Decoder Key
-keyDecoder =
-    let
-        toKey string =
-            case string of
-                "ArrowLeft" ->
-                    ChoiceKey Left
-
-                "ArrowRight" ->
-                    ChoiceKey Right
-
-                "r" ->
-                    Restart
-
-                "1" ->
-                    NumberKey 1
-
-                "2" ->
-                    NumberKey 2
-
-                "3" ->
-                    NumberKey 3
-
-                "4" ->
-                    NumberKey 4
-
-                "5" ->
-                    NumberKey 5
-
-                "6" ->
-                    NumberKey 6
-
-                "7" ->
-                    NumberKey 7
-
-                "8" ->
-                    NumberKey 8
-
-                "9" ->
-                    NumberKey 9
-
-                "0" ->
-                    NumberKey 0
-
-                "c" ->
-                    Controls
-
-                "a" ->
-                    Achievements
-
-                _ ->
-                    UnknownKey
-    in
-    Decode.map toKey (Decode.field "key" Decode.string)
-
-
 gameDataDecoder : Decoder JsonData
 gameDataDecoder =
     Decode.succeed JsonData
@@ -208,8 +140,6 @@ gameDataDecoder =
 
 
 
--- TODO Everything below
--- TODO: read json into elm https://gist.github.com/benkoshy/d0dcd2b09f8fcc65a90b56a33dcf1465
 ---- Visuals ----
 
 
@@ -217,12 +147,7 @@ view : Model -> Html Msg
 view model =
     let
         game =
-            case model of
-                GameOver gameState _ _ _ ->
-                    gameState
-
-                Running _ gameState _ _ _ ->
-                    gameState
+            modelToGame model
 
         viewState =
             case model of
@@ -254,11 +179,7 @@ view model =
                                     viewItems game.activeItemsIndexes
 
                                 Just i ->
-                                    if viewState.showDetail then
-                                        viewItemDetail i
-
-                                    else
-                                        viewItems game.activeItemsIndexes
+                                    viewItemDetail i
                             ]
                 , achievementButton viewState.showAchievement
                 ]
@@ -618,7 +539,7 @@ update msg model =
                     ( model, Cmd.none )
 
         Running choice game player highscore viewState ->
-            case checkResourcesIsZero game.resources of
+            case isGameOver game.resources of
                 True ->
                     let
                         newPlayer =
@@ -641,7 +562,18 @@ update msg model =
                             ( model, generateCard <| List.length game.currentCards )
 
                         ToggleItemDetails id ->
-                            ( Running choice game player highscore { viewState | showDetail = not viewState.showDetail, item = Item.idToItem id game.allItems }, Cmd.none )
+                            ( Running choice game player highscore <|
+                                { viewState
+                                    | item =
+                                        case viewState.item of
+                                            Nothing ->
+                                                Item.idToItem id game.allItems
+
+                                            Just _ ->
+                                                Nothing
+                                }
+                            , Cmd.none
+                            )
 
                         ShowControl bool ->
                             ( Running choice game player highscore { viewState | showControls = bool }, Cmd.none )
@@ -653,13 +585,11 @@ update msg model =
 processKey : Key -> Model -> ( Model, Cmd Msg )
 processKey key model =
     let
-        ( gameData, playerData ) =
-            case model of
-                GameOver gameState playerState _ _ ->
-                    ( gameState, playerState )
+        gameData =
+            modelToGame model
 
-                Running _ gameState playerState _ _ ->
-                    ( gameState, playerState )
+        playerData =
+            modelToPlayer model
     in
     case key of
         ChoiceKey choice ->
@@ -697,7 +627,7 @@ processKey key model =
                                 }
                                 fpp
                                 (highscore + 50)
-                                { showDetail = False, item = Nothing, showControls = False, showAchievement = False }
+                                { item = Nothing, showControls = False, showAchievement = False }
                             , savePlayerData <| Player.encoder player
                             )
 
@@ -728,7 +658,7 @@ processKey key model =
                 }
                 playerData
                 0
-                { showDetail = False, item = Nothing, showControls = False, showAchievement = False }
+                { item = Nothing, showControls = False, showAchievement = False }
             , generateCard <| List.length gameData.currentCards
             )
 
@@ -771,13 +701,12 @@ processKey key model =
                         player
                         highscore
                         { viewState
-                            | showDetail = not viewState.showDetail
-                            , item =
-                                case intToID game.activeItemsIndexes of
-                                    Just i ->
+                            | item =
+                                case ( viewState.item, intToID game.activeItemsIndexes ) of
+                                    ( Nothing, Just i ) ->
                                         Item.idToItem i (activeItemIndexesToItemList game.activeItemsIndexes game.allItems)
 
-                                    Nothing ->
+                                    ( _, _ ) ->
                                         Nothing
                         }
                     , Cmd.none
@@ -815,8 +744,8 @@ processKey key model =
                     )
 
 
-checkResourcesIsZero : Resources -> Bool
-checkResourcesIsZero resources =
+isGameOver : Resources -> Bool
+isGameOver resources =
     if resources.hunger == 0 || resources.thirst == 0 || resources.physicalHealth == 0 || resources.mentalHealth == 0 then
         True
 
@@ -853,33 +782,34 @@ processFlags flags model =
                 resources =
                     game.resources
             in
-            case x of
-                AddItem id ->
-                    processFlags xs <| Running choice { game | activeItemsIndexes = ListHelper.addEntriesToList game.activeItemsIndexes [ id ] } player score vs
+            processFlags xs <|
+                case x of
+                    AddItem id ->
+                        { game | activeItemsIndexes = ListHelper.addEntriesToList game.activeItemsIndexes [ id ] } |> (\g -> Running choice g player score vs)
 
-                RemoveItem id ->
-                    processFlags xs <| Running choice { game | activeItemsIndexes = ListHelper.removeEntriesFromList game.activeItemsIndexes [ id ] } player score vs
+                    RemoveItem id ->
+                        { game | activeItemsIndexes = ListHelper.removeEntriesFromList game.activeItemsIndexes [ id ] } |> (\g -> Running choice g player score vs)
 
-                AddCards list ->
-                    processFlags xs <| Running choice { game | unlockedCardIndexes = ListHelper.addEntriesToList game.unlockedCardIndexes list } player score vs
+                    AddCards list ->
+                        { game | unlockedCardIndexes = ListHelper.addEntriesToList game.unlockedCardIndexes list } |> (\g -> Running choice g player score vs)
 
-                RemoveCards list ->
-                    processFlags xs <| Running choice { game | unlockedCardIndexes = ListHelper.removeEntriesFromList game.unlockedCardIndexes list } player score vs
+                    RemoveCards list ->
+                        { game | unlockedCardIndexes = ListHelper.removeEntriesFromList game.unlockedCardIndexes list } |> (\g -> Running choice g player score vs)
 
-                ChangeLocation location ->
-                    processFlags xs <| Running choice { game | location = location } player score vs
+                    ChangeLocation location ->
+                        { game | location = location } |> (\g -> Running choice g player score vs)
 
-                FollowUp id ->
-                    processFlags xs <| Running choice { game | nextCard = Card.getCardById game.allCards id } player score vs
+                    FollowUp id ->
+                        { game | nextCard = Card.getCardById game.allCards id } |> (\g -> Running choice g player score vs)
 
-                UnlockAchievement id ->
-                    processFlags xs <| Running choice game (Player.unlockAchievement id player) score vs
+                    UnlockAchievement id ->
+                        Player.unlockAchievement id player |> (\p -> Running choice game p score vs)
 
-                TakeMoney sum ->
-                    processFlags xs <| Running choice { game | resources = { resources | money = max 0 (resources.money - sum) } } player score vs
+                    TakeMoney sum ->
+                        { game | resources = { resources | money = max 0 (resources.money - sum) } } |> (\g -> Running choice g player score vs)
 
-                _ ->
-                    Debug.log "Unknown Flag detected" processFlags xs <| Running choice game player score vs
+                    _ ->
+                        Running choice game player score vs
 
         ( _, _ ) ->
             model
@@ -894,8 +824,8 @@ processCardFlags inputModel =
                     case x of
                         ConditionalDecision condition overwriteSide decision ->
                             process xs <|
-                                Running choice
-                                    (case ( isConditionTrue condition game, game.card, overwriteSide ) of
+                                (\g -> Running choice g player score vs) <|
+                                    case ( isCondition condition game, game.card, overwriteSide ) of
                                         ( True, Just c, False ) ->
                                             { game | card = Just { c | decisionLeft = decision } }
 
@@ -904,10 +834,6 @@ processCardFlags inputModel =
 
                                         _ ->
                                             game
-                                    )
-                                    player
-                                    score
-                                    vs
 
                         DefaultFlag flag ->
                             process xs (processFlags [ flag ] model)
@@ -917,14 +843,14 @@ processCardFlags inputModel =
     in
     case (modelToGame inputModel).card of
         Nothing ->
-            Debug.log "No card to process cardFlags from" inputModel
+            inputModel
 
         Just card ->
             process card.flags inputModel
 
 
-isConditionTrue : Condition -> Game -> Bool
-isConditionTrue condition game =
+isCondition : Condition -> Game -> Bool
+isCondition condition game =
     case condition of
         OwnItem id ->
             List.member id game.activeItemsIndexes
@@ -1026,14 +952,14 @@ init flags =
                     Data.Failure _ ->
                         { startingCards = game.defaultCardIndexes, unlockedAchievements = [], highscore = 0 }
     in
-    ( Running Nothing game player 0 { showDetail = False, item = Nothing, showControls = False, showAchievement = False }
+    ( Running Nothing game player 0 { item = Nothing, showControls = False, showAchievement = False }
     , generateCard <| List.length game.currentCards
     )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.map Key (Browser.Events.onKeyDown keyDecoder)
+    Sub.map Key (Browser.Events.onKeyDown Key.decoder)
 
 
 main : Program ( String, String ) Model Msg
