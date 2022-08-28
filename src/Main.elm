@@ -555,13 +555,13 @@ update msg model =
             case isGameOver game.resources of
                 True ->
                     let
-                        updatedPlayer =
-                            Achievement.checkDistance highscore { player | highscore = max player.highscore highscore }
-
                         newlyUnlockedAchievements =
-                            ListHelper.removeEntriesFromList updatedPlayer.unlockedAchievements player.unlockedAchievements
+                            ListHelper.removeEntriesFromList (Achievement.checkDistance highscore) player.unlockedAchievements
+
+                        updatedPlayer =
+                            { player | highscore = max player.highscore highscore, unlockedAchievements = ListHelper.addEntriesToList player.unlockedAchievements newlyUnlockedAchievements }
                     in
-                    ( GameOver game updatedPlayer highscore { viewState | newAchievements = Debug.log "newAch" viewState.newAchievements ++ newlyUnlockedAchievements }, savePlayerData <| Player.encoder updatedPlayer )
+                    ( GameOver game updatedPlayer highscore { viewState | newAchievements = Debug.log "newnew" (ListHelper.addEntriesToList viewState.newAchievements newlyUnlockedAchievements) }, savePlayerData <| Player.encoder updatedPlayer )
 
                 False ->
                     case msg of
@@ -819,15 +819,7 @@ processFlags flags ( model, cmd ) =
                         { game | nextCard = Card.getCardById game.allCards id } |> (\g -> ( Running choice g player score viewState, cmd ))
 
                     UnlockAchievement id ->
-                        if List.member id player.unlockedAchievements then
-                            ( model, cmd )
-
-                        else
-                            let
-                                updatedPlayer =
-                                    Achievement.unlockAchievement id player
-                            in
-                            { viewState | newAchievements = Debug.log "a" (ListHelper.addEntriesToList [ id ] viewState.newAchievements) } |> (\vs -> ( Running choice game updatedPlayer score vs, savePlayerData <| Player.encoder updatedPlayer ))
+                        checkIfIdUnlocksAchievement id player viewState |> (\( p, vs, command ) -> ( Running choice game p score vs, command ))
 
                     TakeMoney sum ->
                         { game | resources = { resources | money = max 0 (resources.money - sum) } } |> (\g -> ( Running choice g player score viewState, cmd ))
@@ -881,6 +873,20 @@ isCondition condition game =
 
         Condition.Unknown ->
             False
+
+
+checkIfIdUnlocksAchievement : Int -> Player -> ViewState -> ( Player, ViewState, Cmd Msg )
+checkIfIdUnlocksAchievement id player vs =
+    let
+        updatedPlayer =
+            Achievement.unlockAchievement id player
+    in
+    case List.member id player.unlockedAchievements of
+        True ->
+            ( player, vs, Cmd.none )
+
+        False ->
+            ( updatedPlayer, { vs | newAchievements = ListHelper.addEntriesToList [ id ] vs.newAchievements }, savePlayerData <| Player.encoder updatedPlayer )
 
 
 

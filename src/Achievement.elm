@@ -11,21 +11,18 @@ type alias Achievement =
     }
 
 
-checkDistance : Int -> Player -> Player
-checkDistance score pl =
-    List.foldl (\id player -> unlockAchievement id player)
-        pl
-        ([ 0 ]
-            ++ (if score >= 100000 then
-                    [ 1, 2 ]
+checkDistance : Int -> List Int
+checkDistance score =
+    [ 0 ]
+        ++ (if score >= 100000 then
+                [ 1, 2 ]
 
-                else if score >= 10000 then
-                    [ 1 ]
+            else if score >= 10000 then
+                [ 1 ]
 
-                else
-                    []
-               )
-        )
+            else
+                []
+           )
 
 
 unlockAchievement : Int -> Player -> Player
