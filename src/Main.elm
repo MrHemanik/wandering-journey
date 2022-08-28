@@ -454,6 +454,12 @@ viewControls showControls =
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
                 }
             ]
+        , column [ width fill, paddingXY 0 25 ]
+            [ textControls "Choose an Option: Click on the option or press [left/right arrow key]"
+            , textControls "Toggle Controls: Click on 'Controls' or press [C]"
+            , textControls "Toggle Achievements: Click on 'Achievements' or press [A]"
+            , textControls "Toggle Item Details: Click on an Item or press [Number Key]"
+            ]
         ]
 
 
@@ -965,6 +971,11 @@ isOptionAllowed gameResources choiceResources =
 wrapText : String -> Element Msg
 wrapText text =
     paragraph [ Font.center, defaultFont, defaultFontSize ] [ Element.text text ]
+
+
+textControls : String -> Element Msg
+textControls text =
+    paragraph [ Font.alignLeft, defaultFont, defaultFontSize, paddingXY 5 10 ] [ Element.text text ]
 
 
 
