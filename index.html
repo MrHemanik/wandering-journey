@@ -22,6 +22,10 @@
                 flags: [JSON.stringify(cardJson).slice(0,-1)+","+JSON.stringify(itemJson).substr(1),storageData],  //guide.elm-lang.org/interop/flags.html, also added both jsons into one
                 node: document.getElementById('elm-app-is-loaded-here')
             });
+            app.ports.savePlayerData.subscribe(function(value) {
+                console.log("Thing to save:" +JSON.stringify(value))
+                localStorage.setItem(storageKey, JSON.stringify(value));
+            });
         })
     })
 

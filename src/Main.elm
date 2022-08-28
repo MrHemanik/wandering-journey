@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Array
 import Browser
@@ -19,6 +19,7 @@ import Flag exposing (Flag(..))
 import Html exposing (Html)
 import Item exposing (Item)
 import Json.Decode as Decode exposing (Decoder)
+import Json.Encode as Encode
 import List exposing (length)
 import Location exposing (Location)
 import Player exposing (Player)
@@ -55,8 +56,11 @@ type Msg
     = Key Key
     | NewCard Int
     | GenerateNewCard
-    | LoadCard
+    | LoadFollowUpCard
     | ToggleItemDetails Int
+
+
+port savePlayerData : Encode.Value -> Cmd msg
 
 
 type alias Game =
@@ -232,41 +236,32 @@ viewResources resources =
             column
                 [ width fill, paddingXY 5 20, spacing 20 ]
                 [ image [ Background.color Color.white, Border.rounded 3, Border.glow Color.white 3, centerX, centerY ]
-                    { src = src
-                    , description = ""
-                    }
-                , row
-                    [ Background.color Color.transBlackLight
-                    , Border.rounded 5
-                    , padding 8
-                    , width fill
-                    , defaultFont
-                    , defaultFontSize
-                    , case ( resource >= 70, resource > 20, isMoney ) of
-                        ( True, _, False ) ->
-                            Font.color Color.green
-
-                        ( False, True, False ) ->
-                            Font.color Color.yellow
-
-                        ( False, False, False ) ->
-                            Font.color Color.red
-
-                        ( _, _, True ) ->
-                            Font.color Color.white
-                    ]
-                    [ wrapText
-                        (String.fromInt resource
-                            ++ (case isMoney of
-                                    True ->
-                                        ""
-
-                                    False ->
-                                        "%"
-                               )
-                        )
-                    ]
+                    { src = src, description = "" }
+                , row [ Background.color Color.transBlackLight, Border.rounded 5, padding 8, width fill, defaultFont, defaultFontSize, fontColor resource isMoney ]
+                    [ wrapText <| String.fromInt resource ++ extraSign isMoney ]
                 ]
+
+        fontColor resource isMoney =
+            case ( resource >= 70, resource > 20, isMoney ) of
+                ( True, _, False ) ->
+                    Font.color Color.green
+
+                ( False, True, False ) ->
+                    Font.color Color.yellow
+
+                ( False, False, False ) ->
+                    Font.color Color.red
+
+                ( _, _, True ) ->
+                    Font.color Color.white
+
+        extraSign isMoney =
+            case isMoney of
+                True ->
+                    ""
+
+                False ->
+                    "%"
     in
     el [ paddingXY 0 20, width fill ] <|
         row [ Border.rounded 7, Border.width 3, Border.color Color.black, Background.tiled "src/img/leather.jpg", spaceEvenly, width (minimum 400 <| maximum 800 fill), centerX ]
@@ -286,20 +281,22 @@ viewLocation location =
 
 viewCard : Model -> Element Msg
 viewCard model =
+    let
+        journeyLengthText score =
+            if score <= 2500 then
+                "Your short Journey ends here."
+
+            else if score <= 7500 then
+                "Your Journey ends here."
+
+            else
+                "Your long Journey ends here."
+    in
     column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ] <|
         case model of
             GameOver game _ score ->
                 [ el [ width fill, padding 20 ] <|
-                    wrapText
-                        (if score <= 2500 then
-                            "Your short Journey ends here."
-
-                         else if score <= 7500 then
-                            "Your Journey ends here."
-
-                         else
-                            "Your long Journey ends here."
-                        )
+                    wrapText (journeyLengthText score)
                 , wrapText (Resources.deathMessage game.resources)
                 , el [ width fill, padding 20 ] <|
                     wrapText ("Distance traveled:  " ++ String.fromInt score ++ " meters")
@@ -358,10 +355,10 @@ viewCard model =
                                             [ row [ width fill, padding 20 ] [ wrapText decision.pickedText ]
                                             , case viewItemChanges decision.flags game.allItems of
                                                 [] ->
-                                                    wrapText ""
+                                                    none
 
                                                 ( Nothing, _ ) :: _ ->
-                                                    wrapText ""
+                                                    none
 
                                                 list ->
                                                     itemsAddOrRemove list
@@ -373,7 +370,7 @@ viewCard model =
                                                                 Just GenerateNewCard
 
                                                             Just _ ->
-                                                                Just LoadCard
+                                                                Just LoadFollowUpCard
                                                     , label =
                                                         wrappedRow [ centerX, centerY ]
                                                             [ arrowLeft
@@ -517,30 +514,31 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        Running choice game player highscore show ->
-            case msg of
-                NewCard newCardIndex ->
-                    if checkResourcesIsZero game.resources then
-                        ( GameOver game player highscore, Cmd.none )
+        Running choice game player highscore showItemDetail ->
+            case checkResourcesIsZero game.resources of
+                True ->
+                    let
+                        newPlayer =
+                            { player | highscore = max player.highscore highscore }
+                    in
+                    ( GameOver game newPlayer highscore, savePlayerData <| Player.encoder newPlayer )
 
-                    else
-                        ( Running Nothing (processCardFlags { game | card = Card.getCardByIndex game.currentCards newCardIndex }) player highscore show, Cmd.none )
+                False ->
+                    case msg of
+                        NewCard newCardIndex ->
+                            ( Running Nothing (processCardFlags { game | card = Card.getCardByIndex game.currentCards newCardIndex }) player highscore showItemDetail, Cmd.none )
 
-                LoadCard ->
-                    if checkResourcesIsZero game.resources then
-                        ( GameOver game player highscore, Cmd.none )
+                        LoadFollowUpCard ->
+                            ( Running Nothing (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) player highscore showItemDetail, Cmd.none )
 
-                    else
-                        Debug.log "load" ( Running Nothing (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) player highscore show, Cmd.none )
+                        Key key ->
+                            processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } player highscore showItemDetail)
 
-                Key key ->
-                    processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } player highscore show)
+                        GenerateNewCard ->
+                            ( model, generateCard <| List.length game.currentCards )
 
-                GenerateNewCard ->
-                    ( model, generateCard <| List.length game.currentCards )
-
-                ToggleItemDetails id ->
-                    ( Running choice game player highscore { show | showDetail = not show.showDetail, item = Item.idToItem id game.allItems }, Cmd.none )
+                        ToggleItemDetails id ->
+                            ( Running choice game player highscore { showItemDetail | showDetail = not showItemDetail.showDetail, item = Item.idToItem id game.allItems }, Cmd.none )
 
 
 processKey : Key -> Model -> ( Model, Cmd Msg )
@@ -560,7 +558,7 @@ processKey key model =
                 GameOver _ _ _ ->
                     ( model, Cmd.none )
 
-                Running oldChoice game player highscore show ->
+                Running oldChoice game player highscore _ ->
                     if oldChoice == Nothing then
                         let
                             ( resource, flags ) =
@@ -586,7 +584,7 @@ processKey key model =
                                 player
                                 (highscore + 50)
                                 { showDetail = False, item = Nothing }
-                            , Cmd.none
+                            , savePlayerData <| Player.encoder player
                             )
 
                         else
@@ -598,11 +596,8 @@ processKey key model =
                                 ( model, generateCard <| List.length game.currentCards )
 
                             Just _ ->
-                                if checkResourcesIsZero game.resources then
-                                    ( GameOver game player highscore, Cmd.none )
-
-                                else
-                                    Debug.log "load" ( Running Nothing (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) player highscore show, Cmd.none )
+                                -- Unsure if this is "clean" but feels unnecessary to define the same thing twice (and outsourcing in extra function makes it confusing)
+                                update LoadFollowUpCard model
 
         Restart ->
             ( Running Nothing
