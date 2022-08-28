@@ -1,5 +1,5 @@
 {
-  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29],
+  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,39],
   "cards" : [{
     "id":0,
     "possibleLocation": ["City"],
@@ -21,16 +21,16 @@
     "id":1,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
-    "mainText":"A thief is ambushing you",
+    "mainText":"As you walk through an alleyway a novice thief holding a knife pops up from behind a crate, threatening you. He demands your money",
     "decisionLeft" : {
-      "choiceText":"Give him your money",
-      "pickedText":"You gave the thief some money",
+      "choiceText":"Give him what he asks for",
+      "pickedText":"You gave the thief some money and rushed away as soon as you could",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-5, "money":-15},
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Fight back",
-      "pickedText":"You tried to fight back but failed",
+      "pickedText":"You tried to fight back but failed to do so, getting cut by the knife in the process. Luckily for you the thief ran away after hurting you",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-15, "mentalHealth":5, "money":0},
       "flags":[]
     },
@@ -41,7 +41,7 @@
         },
         "overwriteSide": false,
         "decision": {
-          "choiceText":"Give him your money",
+          "choiceText":"Give him what he asks for",
           "pickedText":"You reluctantly gave the thief your coins, wanting to punch him in the process",
           "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-10, "money":-15},
           "flags":[]
@@ -53,7 +53,7 @@
         "overwriteSide": true,
         "decision": {
           "choiceText":"Fight back",
-          "pickedText":"You fought back, almost killing him in the process. You took the coins he left behind",
+          "pickedText":"You fought back, almost killing him in the process. While he stumbled away you took the coins he left behind",
           "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money":10},
           "flags":[]
         }
@@ -70,25 +70,25 @@
       "flags":[]
     },
     "decisionRight" : {
-      "choiceText":"Ignore her",
+      "choiceText":"Let her be",
       "pickedText":"You ignored the struggles of the old lady and strode onwards",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-10, "money":0},
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-5, "money":0},
       "flags":[]
     }
   }, {
     "id":3,
     "possibleLocation": ["City"],
     "interaction":"Action",
-    "mainText":"There is an inn in the distance",
+    "mainText":"Walking along the street you come upon an inn. As you enter the inn you the burly man working the counter notices you. \"Need a place to sleep? A room for the night costs 5 coins\"",
     "decisionLeft" : {
-      "choiceText":"Rest for a bit",
+      "choiceText":"Rent a room for the night",
       "pickedText":"You bought yourself a room and got some rest",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":15, "money":-5},
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Move on",
-      "pickedText":"You walked onwards, dismissing a safe place to rest",
+      "pickedText":"You felt like you did not need a rest just yet and left the inn as quickly as you entered.",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
       "flags":[]
     }
@@ -115,7 +115,7 @@
     "id":5,
     "possibleLocation": ["City"],
     "interaction":"Conversation",
-    "mainText":"Three Children are playing with each other. As they notice you one of them runs towards you. \"Hey! Do a trick!\"",
+    "mainText":"Three Children are playing games with each other. As they notice you one of them runs towards you. \"Hey! Do a trick!\"",
     "decisionLeft" : {
       "choiceText":"Do a trick",
       "pickedText":"They give you some apples to juggle with and you try your best. They walked away unimpressed.",
@@ -647,6 +647,178 @@
       "pickedText":"You searched the room for treasure. Luckily you find a chest you can open. As soon as you opened the chest and grabbed a pile of coins the ground starts to tremble. You ran outside while the ruin collapsed, making its secrets lost forever",
       "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":-5, "mentalHealth": 0, "money": 40},
       "flags":[{"removeCards": [29]}]
-    }}
+    }
+  }, {
+    "id":32,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"Walking through the forest you notice a bunch of pale blue mushrooms growing at the side of a nearby tree. They seem edible",
+    "decisionLeft" : {
+      "choiceText":"Eat the Mushrooms",
+      "pickedText":"The moment you swallowed the first mushroom you immediately felt sick and vomited it back up",
+      "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":-10, "mentalHealth":-10, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Leave the Mushrooms",
+      "pickedText":"You do not think eating some random mushrooms in the forest is a good idea, so you left them there",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  }, {
+      "id":33,
+      "possibleLocation": ["Forest"],
+      "interaction":"Action",
+      "mainText":"Walking through the forest you notice a bunch of bright red mushrooms growing at the side of a nearby tree. They seem edible",
+      "decisionLeft" : {
+        "choiceText":"Eat the mushrooms",
+        "pickedText":"The mushrooms were a bit dry but otherwise tasted quite decent. You feel refreshed and continue through the forest",
+        "resourceChange":  {"hunger":10, "thirst":0, "physicalHealth":5, "mentalHealth":0, "money": 0},
+        "flags":[]
+      },
+      "decisionRight" : {
+        "choiceText":"Leave the mushrooms",
+        "pickedText":"You did not think eating some random mushrooms in the forest is a good idea, so you left them there",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+        "flags":[]
+      }
+  }, {
+      "id":34,
+      "possibleLocation": ["Forest"],
+      "interaction":"Action",
+      "mainText":"As you wander through the thicket of the deeper parts of the forest you notice the decaying corpse of a brigant. An arrow pokes out of the chest and must have been the reason for their untimely demise",
+      "decisionLeft" : {
+        "choiceText":"Pillage the corpse",
+        "pickedText":"Pillaging through the clothes of the deceased brigant you found a small coin pouch still filled with some money",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":-10, "money": 10},
+        "flags":[]
+      },
+      "decisionRight" : {
+        "choiceText":"Leave the corpse alone",
+        "pickedText":"You did not want to disturb the dead and left him be",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+        "flags":[]
+      },
+      "flags": [{
+          "conditionalDecision": {
+            "condition": {
+              "ownItem": 5
+            },
+            "overwriteSide": true,
+            "decision": {
+              "choiceText":"Pray for him",
+              "pickedText":"You gave a prayer to Fortuna wishing this unlucky being better luck in their next life",
+              "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":15, "money":0},
+              "flags":[]
+          }}}]
+  }, {
+    "id":35,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"You stumble upon an adorable bear cub. It waddles towards you on its stumpy little legs",
+    "decisionLeft" : {
+      "choiceText":"Try to pet the bear cub",
+      "pickedText":"As you reached down with your hand to pet this most precious little forest critter you failed to notice the very angry bear mother charging at you. You barely escaped with your life and a decent amount of scars",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-10, "mentalHealth":-5, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Leave the bear cup alone",
+      "pickedText":"Realizing the danger of the situation you carefully backed away from the cup. This proves to be the right decision as you saw the cups mother quickly approaching you. You turned around quickly and made it out unscathed",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    },
+    "flags": [{
+      "conditionalDecision": {
+        "condition": {
+          "ownItem": 6
+        },
+        "overwriteSide": false,
+        "decision": {
+          "choiceText":"P̵̛̣͖̀e̵̻̕ť̴̮͘ ̷̭̑ẗ̸͎͔h̴͈̓͜ẽ̵̺̱̂ ̷̩̆͌b̷̠̎e̴̬̎̈́ă̸͚̠r̷̤̩͂̌ ̶̛̦̟̿c̸͓̞̐̽ũ̸̫̘b̴̜̮̒̒",
+          "pickedText":"As you got closer to the \"juicy\" little bear cup, its very angry mother came charging at you from a nearby bush. But before she can reached you felt an intense headache and fell unconscious. As you came back to your senses, you only saw the huge bear running away in fear. You wonder what scared her away",
+          "resourceChange":  {"hunger":10, "thirst":5, "physicalHealth":0, "mentalHealth":-10, "money":0},
+          "flags":[]
+        }}}]
+  }, {
+    "id":36,
+    "possibleLocation": ["Desert"],
+    "interaction":"Action",
+    "mainText":"You hear a caravan approaching, heading towards a city. A sign on their caravan says they take passengers for a measly 10 coins",
+    "decisionLeft" : {
+      "choiceText":"Ask to join the caravan",
+      "pickedText":"You gave the leader of the caravan 10 coins and sit down in the back of wagon. After a days journey you reach the city",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": -10},
+      "flags":[{"changeLocation": "City"}]
+    },
+    "decisionRight" : {
+      "choiceText":"Let the caravan pass",
+      "pickedText":"You let the caravan pass",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  }, {
+    "id":37,
+    "possibleLocation": ["City"],
+    "interaction":"Action",
+    "mainText":"As you walk through the market a masked person bumps into you. You fall to the ground and see them making a run for it. As you get up you notice that one of your coin bags is missing",
+    "decisionLeft" : {
+      "choiceText":"Pursue the thief",
+      "pickedText":"You were able to catch up to the thief after an rather exhaustive pursuit. The thief, not expecting to be caught, quickly threw your coin purse away and made a run for it in the other direction. You are were to get your money back and feel satisfied with yourself",
+      "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":0, "mentalHealth":5, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":" Give up on your coin bag",
+      "pickedText":"Thinking it is not worth the hassle to run after the thief so you continued through the city without the coin bag and its content",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[{"takeMoney": 15}]
+    },
+    "flags": [{
+      "conditionalDecision": {
+        "condition": {
+          "ownItem": 5
+        },
+        "overwriteSide": false,
+        "decision": {
+          "choiceText":"Pursue the thief",
+          "pickedText":"As you started running after the thief you see a man catching him. The man gave you your money back and you thanked him",
+          "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
+          "flags":[]
+        }}}]
+  }, {
+    "id":38,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"Hunter",
+    "decisionLeft" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  }, {
+      "id":39,
+      "possibleLocation": ["Forest"],
+      "interaction":"Action",
+      "mainText":"",
+      "decisionLeft" : {
+        "choiceText":"",
+        "pickedText":"",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+        "flags":[]
+      },
+      "decisionRight" : {
+        "choiceText":"",
+        "pickedText":"",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+        "flags":[]
+      }}
   ]
 }

@@ -19,6 +19,7 @@ type Flag
     | ChangeLocation Location
     | FollowUp Int
     | UnlockAchievement Int
+    | TakeMoney Int
     | Unknown
 
 
@@ -32,5 +33,6 @@ decoder =
         , Decode.map ChangeLocation (Decode.field "changeLocation" Location.decoder)
         , Decode.map FollowUp (Decode.field "followUp" Decode.int)
         , Decode.map UnlockAchievement (Decode.field "unlockAchievement" Decode.int)
+        , Decode.map TakeMoney (Decode.field "takeMoney" Decode.int)
         , Decode.succeed Unknown
         ]

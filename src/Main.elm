@@ -112,7 +112,7 @@ startingResources =
 
 
 startingLocation =
-    Location.City
+    Location.Desert
 
 
 
@@ -849,6 +849,10 @@ processFlags : List Flag -> Model -> Model
 processFlags flags model =
     case ( flags, model ) of
         ( x :: xs, Running choice game player score vs ) ->
+            let
+                resources =
+                    game.resources
+            in
             case x of
                 AddItem id ->
                     processFlags xs <| Running choice { game | activeItemsIndexes = ListHelper.addEntriesToList game.activeItemsIndexes [ id ] } player score vs
@@ -870,6 +874,9 @@ processFlags flags model =
 
                 UnlockAchievement id ->
                     processFlags xs <| Running choice game (Player.unlockAchievement id player) score vs
+
+                TakeMoney sum ->
+                    processFlags xs <| Running choice { game | resources = { resources | money = max 0 (resources.money - sum) } } player score vs
 
                 _ ->
                     Debug.log "Unknown Flag detected" processFlags xs <| Running choice game player score vs
