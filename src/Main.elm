@@ -44,8 +44,8 @@ type alias Highscore =
 
 
 type Model
-    = GameOver Game Player Highscore
-    | Running (Maybe Choice) Game Player Highscore ShowItemDetail
+    = GameOver Game Player Highscore ViewState
+    | Running (Maybe Choice) Game Player Highscore ViewState
 
 
 
@@ -58,6 +58,8 @@ type Msg
     | GenerateNewCard
     | LoadFollowUpCard
     | ToggleItemDetails Int
+    | ShowControl Bool
+    | ShowAchievement Bool
 
 
 port savePlayerData : Encode.Value -> Cmd msg
@@ -77,8 +79,8 @@ type alias Game =
     }
 
 
-type alias ShowItemDetail =
-    { showDetail : Bool, item : Maybe Item }
+type alias ViewState =
+    { showDetail : Bool, item : Maybe Item, showControls : Bool, showAchievement : Bool }
 
 
 type alias JsonData =
@@ -183,36 +185,47 @@ view model =
     let
         game =
             case model of
-                GameOver gameState _ _ ->
+                GameOver gameState _ _ _ ->
                     gameState
 
                 Running _ gameState _ _ _ ->
                     gameState
 
-        showItemDetail =
+        viewState =
             case model of
-                GameOver _ _ _ ->
-                    { showDetail = False, item = Nothing }
+                GameOver _ _ _ state ->
+                    state
 
-                Running _ _ _ _ showDetail ->
-                    showDetail
+                Running _ _ _ _ state ->
+                    state
     in
     viewBackground game.location <|
         column [ width fill, height fill ]
             [ viewResources game.resources
             , viewLocation game.location
-            , viewCard model
-            , el [ centerX, width (px 800), paddingXY 0 20 ] <|
-                case showItemDetail.item of
-                    Nothing ->
-                        viewItems game.activeItemsIndexes
+            , if viewState.showControls then
+                viewControls
 
-                    Just i ->
-                        if showItemDetail.showDetail then
-                            viewItemDetail i
+              else if viewState.showAchievement then
+                viewAchievements
 
-                        else
+              else
+                viewCard model
+            , row [ width fill ]
+                [ controlsButton viewState.showControls
+                , el [ centerX, width (px 800), paddingXY 0 20 ] <|
+                    case viewState.item of
+                        Nothing ->
                             viewItems game.activeItemsIndexes
+
+                        Just i ->
+                            if viewState.showDetail then
+                                viewItemDetail i
+
+                            else
+                                viewItems game.activeItemsIndexes
+                , achievementButton viewState.showAchievement
+                ]
             ]
 
 
@@ -294,7 +307,7 @@ viewCard model =
     in
     column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ] <|
         case model of
-            GameOver game _ score ->
+            GameOver game _ score _ ->
                 [ el [ width fill, padding 20 ] <|
                     wrapText (journeyLengthText score)
                 , wrapText (Resources.deathMessage game.resources)
@@ -393,6 +406,18 @@ viewCard model =
                 ]
 
 
+viewControls : Element Msg
+viewControls =
+    column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ]
+        [ wrapText "Controls" ]
+
+
+viewAchievements : Element Msg
+viewAchievements =
+    column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ]
+        [ wrapText "Achievements" ]
+
+
 viewItemChanges : List Flag -> List Item -> List ( Maybe Item, Bool )
 viewItemChanges flags items =
     case flags of
@@ -409,6 +434,24 @@ viewItemChanges flags items =
 
                 _ ->
                     viewItemChanges xs items
+
+
+controlsButton : Bool -> Element Msg
+controlsButton showControls =
+    el [ padding 5, alignBottom, width (px 160) ] <|
+        Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
+            { onPress = Just (ShowControl (not showControls))
+            , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/controls.svg", description = "" }, wrapText "Controls" ]
+            }
+
+
+achievementButton : Bool -> Element Msg
+achievementButton showAchievement =
+    el [ padding 5, alignBottom, width (px 160) ] <|
+        Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
+            { onPress = Just (ShowAchievement (not showAchievement))
+            , label = wrappedRow [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/achievements.svg", description = "" }, wrapText "Achievements" ]
+            }
 
 
 choiceButton : Resources -> Decision -> Choice -> Element Msg
@@ -506,7 +549,7 @@ viewItemDetail item =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case model of
-        GameOver _ _ _ ->
+        GameOver _ _ _ _ ->
             case msg of
                 Key Restart ->
                     processKey Restart model
@@ -514,31 +557,37 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        Running choice game player highscore showItemDetail ->
+        Running choice game player highscore viewState ->
             case checkResourcesIsZero game.resources of
                 True ->
                     let
                         newPlayer =
                             { player | highscore = max player.highscore highscore }
                     in
-                    ( GameOver game newPlayer highscore, savePlayerData <| Player.encoder newPlayer )
+                    ( GameOver game newPlayer highscore viewState, savePlayerData <| Player.encoder newPlayer )
 
                 False ->
                     case msg of
                         NewCard newCardIndex ->
-                            ( Running Nothing (processCardFlags { game | card = Card.getCardByIndex game.currentCards newCardIndex }) player highscore showItemDetail, Cmd.none )
+                            ( Running Nothing (processCardFlags { game | card = Card.getCardByIndex game.currentCards newCardIndex }) player highscore viewState, Cmd.none )
 
                         LoadFollowUpCard ->
-                            ( Running Nothing (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) player highscore showItemDetail, Cmd.none )
+                            ( Running Nothing (processCardFlags { game | card = game.nextCard, nextCard = Nothing }) player highscore viewState, Cmd.none )
 
                         Key key ->
-                            processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } player highscore showItemDetail)
+                            processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } player highscore viewState)
 
                         GenerateNewCard ->
                             ( model, generateCard <| List.length game.currentCards )
 
                         ToggleItemDetails id ->
-                            ( Running choice game player highscore { showItemDetail | showDetail = not showItemDetail.showDetail, item = Item.idToItem id game.allItems }, Cmd.none )
+                            ( Running choice game player highscore { viewState | showDetail = not viewState.showDetail, item = Item.idToItem id game.allItems }, Cmd.none )
+
+                        ShowControl bool ->
+                            ( Running choice game player highscore { viewState | showControls = bool }, Cmd.none )
+
+                        ShowAchievement bool ->
+                            ( Running choice game player highscore { viewState | showAchievement = bool }, Cmd.none )
 
 
 processKey : Key -> Model -> ( Model, Cmd Msg )
@@ -546,7 +595,7 @@ processKey key model =
     let
         ( gameData, playerData ) =
             case model of
-                GameOver gameState playerState _ ->
+                GameOver gameState playerState _ _ ->
                     ( gameState, playerState )
 
                 Running _ gameState playerState _ _ ->
@@ -555,7 +604,7 @@ processKey key model =
     case key of
         ChoiceKey choice ->
             case model of
-                GameOver _ _ _ ->
+                GameOver _ _ _ _ ->
                     ( model, Cmd.none )
 
                 Running oldChoice game player highscore _ ->
@@ -583,7 +632,7 @@ processKey key model =
                                 }
                                 player
                                 (highscore + 50)
-                                { showDetail = False, item = Nothing }
+                                { showDetail = False, item = Nothing, showControls = False, showAchievement = False }
                             , savePlayerData <| Player.encoder player
                             )
 
@@ -614,7 +663,7 @@ processKey key model =
                 }
                 playerData
                 0
-                { showDetail = False, item = Nothing }
+                { showDetail = False, item = Nothing, showControls = False, showAchievement = False }
             , generateCard <| List.length gameData.currentCards
             )
 
@@ -648,16 +697,16 @@ processKey key model =
                                     i :: activeItemIndexesToItemList xs allItems
             in
             case model of
-                GameOver _ _ _ ->
+                GameOver _ _ _ _ ->
                     ( model, Cmd.none )
 
-                Running choice game player highscore show ->
+                Running choice game player highscore viewState ->
                     ( Running choice
                         game
                         player
                         highscore
-                        { show
-                            | showDetail = not show.showDetail
+                        { viewState
+                            | showDetail = not viewState.showDetail
                             , item =
                                 case intToID game.activeItemsIndexes of
                                     Just i ->
@@ -883,7 +932,7 @@ init flags =
                     Data.Failure _ ->
                         { startingCards = game.defaultCardIndexes, unlockedAchievements = [], highscore = 0 }
     in
-    ( Running Nothing game player 0 { showDetail = False, item = Nothing }
+    ( Running Nothing game player 0 { showDetail = False, item = Nothing, showControls = False, showAchievement = False }
     , generateCard <| List.length game.currentCards
     )
 
