@@ -421,10 +421,10 @@ viewItemChanges flags items =
         x :: xs ->
             case x of
                 AddItem id ->
-                    ( Item.idToItem id items, True ) :: viewItemChanges xs items
+                    ( ListHelper.idToObject id items, True ) :: viewItemChanges xs items
 
                 RemoveItem id ->
-                    ( Item.idToItem id items, False ) :: viewItemChanges xs items
+                    ( ListHelper.idToObject id items, False ) :: viewItemChanges xs items
 
                 _ ->
                     viewItemChanges xs items
@@ -583,7 +583,7 @@ update msg model =
                                     | item =
                                         case viewState.item of
                                             Nothing ->
-                                                Item.idToItem id game.allItems
+                                                ListHelper.idToObject id game.allItems
 
                                             Just _ ->
                                                 Nothing
@@ -698,7 +698,7 @@ processKey key model =
                         x :: xs ->
                             let
                                 item =
-                                    Item.idToItem x allItems
+                                    ListHelper.idToObject x allItems
                             in
                             case item of
                                 Nothing ->
@@ -720,7 +720,7 @@ processKey key model =
                             | item =
                                 case ( viewState.item, intToID game.activeItemsIndexes ) of
                                     ( Nothing, Just i ) ->
-                                        Item.idToItem i (activeItemIndexesToItemList game.activeItemsIndexes game.allItems)
+                                        ListHelper.idToObject i (activeItemIndexesToItemList game.activeItemsIndexes game.allItems)
 
                                     ( _, _ ) ->
                                         Nothing

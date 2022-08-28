@@ -1,4 +1,4 @@
-module Item exposing (Item, decoder, idToItem, itemIdToImageUrl)
+module Item exposing (Item, decoder, itemIdToImageUrl)
 
 import DecodeHelper
 import Json.Decode as Decode exposing (Decoder)
@@ -22,17 +22,3 @@ decoder =
 itemIdToImageUrl : Int -> String
 itemIdToImageUrl id =
     "src/img/items/" ++ String.fromInt id ++ ".png"
-
-
-idToItem : Int -> List Item -> Maybe Item
-idToItem id itemList =
-    case itemList of
-        [] ->
-            Nothing
-
-        x :: xs ->
-            if id == x.id then
-                Just x
-
-            else
-                idToItem id xs
