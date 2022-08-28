@@ -37,6 +37,8 @@ type Key
     | Restart
     | UnknownKey
     | NumberKey Int
+    | Controls
+    | Achievements
 
 
 type alias Highscore =
@@ -160,6 +162,12 @@ keyDecoder =
                 "0" ->
                     NumberKey 0
 
+                "c" ->
+                    Controls
+
+                "a" ->
+                    Achievements
+
                 _ ->
                     UnknownKey
     in
@@ -204,10 +212,10 @@ view model =
             [ viewResources game.resources
             , viewLocation game.location
             , if viewState.showControls then
-                viewControls
+                viewControls viewState.showControls
 
               else if viewState.showAchievement then
-                viewAchievements
+                viewAchievements viewState.showAchievement
 
               else
                 viewCard model
@@ -409,16 +417,34 @@ viewCard model =
                 ]
 
 
-viewControls : Element Msg
-viewControls =
+viewControls : Bool -> Element Msg
+viewControls showControls =
     column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ]
-        [ wrapText "Controls" ]
+        [ row [ width fill ]
+            [ el [ width (px 40) ] <| none
+            , column [ centerX, width fill ]
+                [ wrapText "Controls" ]
+            , Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
+                { onPress = Just (ShowControl (not showControls))
+                , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
+                }
+            ]
+        ]
 
 
-viewAchievements : Element Msg
-viewAchievements =
+viewAchievements : Bool -> Element Msg
+viewAchievements showAchievements =
     column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ]
-        [ wrapText "Achievements" ]
+        [ row [ width fill ]
+            [ el [ width (px 40) ] <| none
+            , column [ centerX, width fill ]
+                [ wrapText "Achievements" ]
+            , Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
+                { onPress = Just (ShowControl (not showAchievements))
+                , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
+                }
+            ]
+        ]
 
 
 viewItemChanges : List Flag -> List Item -> List ( Maybe Item, Bool )
@@ -723,6 +749,34 @@ processKey key model =
 
         UnknownKey ->
             ( model, Cmd.none )
+
+        Controls ->
+            case model of
+                GameOver _ _ _ _ ->
+                    ( model, Cmd.none )
+
+                Running choice game player highscore viewState ->
+                    ( Running choice
+                        game
+                        player
+                        highscore
+                        { viewState | showControls = not viewState.showControls }
+                    , Cmd.none
+                    )
+
+        Achievements ->
+            case model of
+                GameOver _ _ _ _ ->
+                    ( model, Cmd.none )
+
+                Running choice game player highscore viewState ->
+                    ( Running choice
+                        game
+                        player
+                        highscore
+                        { viewState | showAchievement = not viewState.showAchievement }
+                    , Cmd.none
+                    )
 
 
 checkResourcesIsZero : Resources -> Bool
