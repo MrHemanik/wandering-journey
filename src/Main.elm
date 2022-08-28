@@ -172,8 +172,19 @@ view model =
             , row [ width fill ]
                 [ controlsButton viewState.showControls
                 , el [ centerX, paddingXY 0 20 ] <|
-                    el [ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color Color.black, scrollbarX, centerX, width (minimum 100 (maximum 800 fill)) ] <|
+                    el
+                        ([ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color Color.black, centerX, width (minimum 100 (maximum 800 fill)) ]
+                            ++ (case viewState.item of
+                                    Nothing ->
+                                        [ scrollbarX ]
+
+                                    Just _ ->
+                                        []
+                               )
+                        )
+                    <|
                         column []
+                            -- column is important, without it the scroll bar doesn't work right (not showing every item)
                             [ case viewState.item of
                                 Nothing ->
                                     viewItems game.activeItemsIndexes
@@ -420,7 +431,7 @@ viewItemChanges flags items =
 
 controlsButton : Bool -> Element Msg
 controlsButton showControls =
-    el [ padding 5, alignBottom, width (px 160) ] <|
+    el [ padding 5, alignBottom, width (px 170) ] <|
         Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
             { onPress = Just (ShowControl (not showControls))
             , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/controls.svg", description = "" }, wrapText "Controls" ]
@@ -429,10 +440,10 @@ controlsButton showControls =
 
 achievementButton : Bool -> Element Msg
 achievementButton showAchievement =
-    el [ padding 5, alignBottom, width (px 160) ] <|
-        Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
+    el [ padding 5, alignBottom, width (px 170) ] <|
+        Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5, alignRight ]
             { onPress = Just (ShowAchievement (not showAchievement))
-            , label = wrappedRow [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/achievements.svg", description = "" }, wrapText "Achievements" ]
+            , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/achievements.svg", description = "" }, wrapText "Achievements" ]
             }
 
 
@@ -509,7 +520,7 @@ viewItems items =
 
 viewItemDetail : Item -> Element Msg
 viewItemDetail item =
-    row [ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color Color.black, centerX, height (minimum 100 shrink), width (minimum 400 (maximum 800 fill)), spacing 20 ]
+    row [ centerX, height (minimum 100 shrink), width (minimum 400 (maximum 800 fill)), spacing 20 ]
         [ Input.button [ width fill, centerX ]
             { onPress = Just (ToggleItemDetails item.id)
             , label =
