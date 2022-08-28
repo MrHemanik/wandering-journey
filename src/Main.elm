@@ -10,7 +10,7 @@ import Condition exposing (Condition(..))
 import Data
 import Decision exposing (Decision)
 import DecodeHelper
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerX, centerY, clip, column, el, fill, height, image, layout, maximum, minimum, none, padding, paddingXY, paragraph, px, row, shrink, spaceEvenly, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerX, centerY, clip, column, el, fill, height, image, layout, maximum, minimum, none, padding, paddingXY, paragraph, px, row, scrollbarX, shrink, spaceEvenly, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -213,17 +213,20 @@ view model =
                 viewCard model
             , row [ width fill ]
                 [ controlsButton viewState.showControls
-                , el [ centerX, width (px 800), paddingXY 0 20 ] <|
-                    case viewState.item of
-                        Nothing ->
-                            viewItems game.activeItemsIndexes
+                , el [ centerX, paddingXY 0 20 ] <|
+                    el [ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color Color.black, scrollbarX, centerX, width (minimum 100 (maximum 800 fill)) ] <|
+                        column []
+                            [ case viewState.item of
+                                Nothing ->
+                                    viewItems game.activeItemsIndexes
 
-                        Just i ->
-                            if viewState.showDetail then
-                                viewItemDetail i
+                                Just i ->
+                                    if viewState.showDetail then
+                                        viewItemDetail i
 
-                            else
-                                viewItems game.activeItemsIndexes
+                                    else
+                                        viewItems game.activeItemsIndexes
+                            ]
                 , achievementButton viewState.showAchievement
                 ]
             ]
@@ -521,7 +524,7 @@ viewItems items =
                         ]
                 }
     in
-    row [ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color Color.black, centerX, height (minimum 100 shrink), width (minimum 100 shrink) ] <|
+    row [ centerX, height (minimum 100 shrink), width (minimum 100 shrink) ] <|
         portrayAllItems items
 
 
