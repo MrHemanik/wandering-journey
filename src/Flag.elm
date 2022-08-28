@@ -18,6 +18,7 @@ type Flag
     | RemoveCards (List Int)
     | ChangeLocation Location
     | FollowUp Int
+    | UnlockAchievement Int
     | Unknown
 
 
@@ -30,5 +31,6 @@ decoder =
         , Decode.map RemoveCards (Decode.field "removeCards" (Decode.list Decode.int))
         , Decode.map ChangeLocation (Decode.field "changeLocation" Location.decoder)
         , Decode.map FollowUp (Decode.field "followUp" Decode.int)
+        , Decode.map UnlockAchievement (Decode.field "unlockAchievement" Decode.int)
         , Decode.succeed Unknown
         ]
