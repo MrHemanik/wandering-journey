@@ -72,7 +72,7 @@ type alias Game =
 
 
 type alias ViewState =
-    { item : Maybe Item, showControls : Bool, showAchievement : Bool, newAchievement : Maybe Achievement, selectedAchievement : Maybe Achievement }
+    { item : Maybe Item, showControls : Bool, showAchievement : Bool, newAchievements : List Int, selectedAchievement : Maybe Achievement }
 
 
 type alias JsonData =
@@ -559,20 +559,20 @@ update msg model =
                             Achievement.checkDistance highscore { player | highscore = max player.highscore highscore }
 
                         newlyUnlockedAchievements =
-                            Debug.log "newlyUnlocked" (ListHelper.removeEntriesFromList updatedPlayer.unlockedAchievements player.unlockedAchievements)
+                            ListHelper.removeEntriesFromList updatedPlayer.unlockedAchievements player.unlockedAchievements
                     in
-                    ( GameOver game updatedPlayer highscore viewState, savePlayerData <| Player.encoder updatedPlayer )
+                    ( GameOver game updatedPlayer highscore { viewState | newAchievements = Debug.log "newAch" viewState.newAchievements ++ newlyUnlockedAchievements }, savePlayerData <| Player.encoder updatedPlayer )
 
                 False ->
                     case msg of
                         NewCard newCardIndex ->
-                            ( processCardFlags (Running Nothing { game | card = Card.getCardByIndex game.currentCards newCardIndex } player highscore viewState), Cmd.none )
+                            processCardFlags (Running Nothing { game | card = Card.getCardByIndex game.currentCards newCardIndex } player highscore viewState)
 
                         LoadFollowUpCard ->
-                            ( processCardFlags (Running Nothing { game | card = game.nextCard, nextCard = Nothing } player highscore viewState), Cmd.none )
+                            processCardFlags (Running Nothing { game | card = game.nextCard, nextCard = Nothing } player highscore viewState)
 
                         Key key ->
-                            processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } player highscore viewState)
+                            processKey key (Running choice { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } player highscore { viewState | newAchievements = Debug.log "new achievements: " viewState.newAchievements })
 
                         GenerateNewCard ->
                             ( model, generateCard <| List.length game.currentCards )
@@ -613,7 +613,7 @@ processKey key model =
                 GameOver _ _ _ _ ->
                     ( model, Cmd.none )
 
-                Running oldChoice game player highscore _ ->
+                Running oldChoice game _ highscore _ ->
                     if oldChoice == Nothing then
                         let
                             ( resource, flags ) =
@@ -627,13 +627,13 @@ processKey key model =
                                     ( _, _ ) ->
                                         ( { hunger = -100, thirst = -100, physicalHealth = -100, mentalHealth = -100, money = -100 }, [] )
 
-                            ( fpg, fpp ) =
-                                case processFlags flags model of
-                                    GameOver g p _ _ ->
-                                        ( g, p )
+                            ( ( fpg, fpp ), ( fpv, flagProcessedCommand ) ) =
+                                case processFlags flags ( model, Cmd.none ) of
+                                    ( GameOver g p _ v, cmd ) ->
+                                        ( ( g, p ), ( v, cmd ) )
 
-                                    Running _ g p _ _ ->
-                                        ( g, p )
+                                    ( Running _ g p _ v, cmd ) ->
+                                        ( ( g, p ), ( v, cmd ) )
                         in
                         if isOptionAllowed game.resources resource then
                             ( Running (Just choice)
@@ -643,8 +643,8 @@ processKey key model =
                                 }
                                 fpp
                                 (highscore + 50)
-                                { item = Nothing, showControls = False, showAchievement = False, newAchievement = Nothing, selectedAchievement = Nothing }
-                            , savePlayerData <| Player.encoder player
+                                { fpv | item = Nothing, showControls = False, showAchievement = False }
+                            , flagProcessedCommand
                             )
 
                         else
@@ -674,7 +674,7 @@ processKey key model =
                 }
                 playerData
                 0
-                { item = Nothing, showControls = False, showAchievement = False, newAchievement = Nothing, selectedAchievement = Nothing }
+                { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], selectedAchievement = Nothing }
             , generateCard <| List.length gameData.currentCards
             )
 
@@ -790,10 +790,10 @@ calculateResourcesOnChoice resources choice location maybeCard =
                 |> Resources.capResources
 
 
-processFlags : List Flag -> Model -> Model
-processFlags flags model =
+processFlags : List Flag -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+processFlags flags ( model, cmd ) =
     case ( flags, model ) of
-        ( x :: xs, Running choice game player score vs ) ->
+        ( x :: xs, Running choice game player score viewState ) ->
             let
                 resources =
                     game.resources
@@ -801,46 +801,54 @@ processFlags flags model =
             processFlags xs <|
                 case x of
                     AddItem id ->
-                        { game | activeItemsIndexes = ListHelper.addEntriesToList game.activeItemsIndexes [ id ] } |> (\g -> Running choice g player score vs)
+                        { game | activeItemsIndexes = ListHelper.addEntriesToList game.activeItemsIndexes [ id ] } |> (\g -> ( Running choice g player score viewState, cmd ))
 
                     RemoveItem id ->
-                        { game | activeItemsIndexes = ListHelper.removeEntriesFromList game.activeItemsIndexes [ id ] } |> (\g -> Running choice g player score vs)
+                        { game | activeItemsIndexes = ListHelper.removeEntriesFromList game.activeItemsIndexes [ id ] } |> (\g -> ( Running choice g player score viewState, cmd ))
 
                     AddCards list ->
-                        { game | unlockedCardIndexes = ListHelper.addEntriesToList game.unlockedCardIndexes list } |> (\g -> Running choice g player score vs)
+                        { game | unlockedCardIndexes = ListHelper.addEntriesToList game.unlockedCardIndexes list } |> (\g -> ( Running choice g player score viewState, cmd ))
 
                     RemoveCards list ->
-                        { game | unlockedCardIndexes = ListHelper.removeEntriesFromList game.unlockedCardIndexes list } |> (\g -> Running choice g player score vs)
+                        { game | unlockedCardIndexes = ListHelper.removeEntriesFromList game.unlockedCardIndexes list } |> (\g -> ( Running choice g player score viewState, cmd ))
 
                     ChangeLocation location ->
-                        { game | location = location } |> (\g -> Running choice g player score vs)
+                        { game | location = location } |> (\g -> ( Running choice g player score viewState, cmd ))
 
                     FollowUp id ->
-                        { game | nextCard = Card.getCardById game.allCards id } |> (\g -> Running choice g player score vs)
+                        { game | nextCard = Card.getCardById game.allCards id } |> (\g -> ( Running choice g player score viewState, cmd ))
 
                     UnlockAchievement id ->
-                        Achievement.unlockAchievement id player |> (\p -> Running choice game p score vs)
+                        if List.member id player.unlockedAchievements then
+                            ( model, cmd )
+
+                        else
+                            let
+                                updatedPlayer =
+                                    Achievement.unlockAchievement id player
+                            in
+                            { viewState | newAchievements = Debug.log "a" (ListHelper.addEntriesToList [ id ] viewState.newAchievements) } |> (\vs -> ( Running choice game updatedPlayer score vs, savePlayerData <| Player.encoder updatedPlayer ))
 
                     TakeMoney sum ->
-                        { game | resources = { resources | money = max 0 (resources.money - sum) } } |> (\g -> Running choice g player score vs)
+                        { game | resources = { resources | money = max 0 (resources.money - sum) } } |> (\g -> ( Running choice g player score viewState, cmd ))
 
                     _ ->
-                        Running choice game player score vs
+                        ( model, cmd )
 
         ( _, _ ) ->
-            model
+            ( model, cmd )
 
 
-processCardFlags : Model -> Model
+processCardFlags : Model -> ( Model, Cmd Msg )
 processCardFlags inputModel =
     let
-        process flags model =
+        process flags ( model, cmd ) =
             case ( flags, model ) of
-                ( x :: xs, Running choice game player score vs ) ->
+                ( x :: xs, Running choice game player score viewState ) ->
                     case x of
                         ConditionalDecision condition overwriteSide decision ->
                             process xs <|
-                                (\g -> Running choice g player score vs) <|
+                                (\g -> ( Running choice g player score viewState, cmd )) <|
                                     case ( isCondition condition game, game.card, overwriteSide ) of
                                         ( True, Just c, False ) ->
                                             { game | card = Just { c | decisionLeft = decision } }
@@ -852,17 +860,17 @@ processCardFlags inputModel =
                                             game
 
                         DefaultFlag flag ->
-                            process xs (processFlags [ flag ] model)
+                            process xs (processFlags [ flag ] ( model, Cmd.none ))
 
                 ( _, _ ) ->
-                    model
+                    ( model, Cmd.none )
     in
     case (modelToGame inputModel).card of
         Nothing ->
-            inputModel
+            ( inputModel, Cmd.none )
 
         Just card ->
-            process card.flags inputModel
+            process card.flags ( inputModel, Cmd.none )
 
 
 isCondition : Condition -> Game -> Bool
@@ -968,7 +976,7 @@ init flags =
                     Data.Failure _ ->
                         { startingCards = game.defaultCardIndexes, unlockedAchievements = [], highscore = 0 }
     in
-    ( Running Nothing game player 0 { item = Nothing, showControls = False, showAchievement = False, newAchievement = Nothing, selectedAchievement = Nothing }
+    ( Running Nothing game player 0 { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], selectedAchievement = Nothing }
     , generateCard <| List.length game.currentCards
     )
 

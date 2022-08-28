@@ -14,6 +14,7 @@
     //Local Storage info: https://stackoverflow.com/questions/33697444/local-storage-or-other-data-persistence-in-elm
     let storageKey = "wanderingJourneyPlayerData"
     var storageData = localStorage.getItem(storageKey)
+    localStorage.setItem(storageKey, "cleanse")
     if(storageData == null) storageData = "" //If there is null data, turn it to an empty string
     $.getJSON('cards.json').done(function(cardJson){
         console.log(cardJson);
