@@ -1,9 +1,8 @@
 {
-  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,41],
+  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,41,42,43,44,45,46,47],
   "cards" : [{
     "id":0,
     "possibleLocation": ["City"],
-    "interaction":"Conversation",
     "mainText":"There is a merchant offering you food for a price",
     "decisionLeft" : {
       "choiceText":"Buy some food",
@@ -20,7 +19,6 @@
   }, {
     "id":1,
     "possibleLocation": ["City"],
-    "interaction":"Conversation",
     "mainText":"As you walk through an alleyway a novice thief holding a knife pops up from behind a crate, threatening you. He demands your money",
     "decisionLeft" : {
       "choiceText":"Give him what he asks for",
@@ -61,7 +59,6 @@
   }, {
     "id":2,
     "possibleLocation": ["City"],
-    "interaction":"Conversation",
     "mainText":"On the streets you see an old lady trying to carry several bags of apples",
     "decisionLeft" : {
       "choiceText":"Help her carry the bags",
@@ -78,7 +75,6 @@
   }, {
     "id":3,
     "possibleLocation": ["City"],
-    "interaction":"Action",
     "mainText":"Walking along the street you come upon an inn. As you enter the inn you the burly man working the counter notices you. \"Need a place to sleep? A room for the night costs 5 coins\"",
     "decisionLeft" : {
       "choiceText":"Rent a room for the night",
@@ -95,7 +91,6 @@
   }, {
     "id":4,
     "possibleLocation": ["City"],
-    "interaction":"Mysterious",
     "mainText":"A shady figure approaches you.\"I have what you seek, a quest to lead you to your destiny! But only if you are willing to pay\"",
     "decisionLeft" : {
       "choiceText":"Give him money",
@@ -115,7 +110,6 @@
   }, {
     "id":5,
     "possibleLocation": ["City"],
-    "interaction":"Conversation",
     "mainText":"Three Children are playing games with each other. As they notice you one of them runs towards you. \"Hey! Do a trick!\"",
     "decisionLeft" : {
       "choiceText":"Do a trick",
@@ -145,7 +139,6 @@
   }, {
     "id":6,
     "possibleLocation": ["City"],
-    "interaction":"Action",
     "mainText":"You see a water fountain",
     "decisionLeft" : {
       "choiceText":"Drink from it",
@@ -162,7 +155,6 @@
   }, {
     "id":7,
     "possibleLocation": ["City","Forest","Desert"],
-    "interaction":"Action",
     "mainText":"In front of you lies a bag with a name tag",
     "decisionLeft" : {
       "choiceText":"Take the contents of the bag for yourself",
@@ -182,7 +174,6 @@
   }, {
     "id":8,
     "possibleLocation": ["City","Forest","Desert"],
-    "interaction":"Conversation",
     "mainText":"You walk past a man down on his luck, claiming he lost all his stuff",
     "decisionLeft" : {
       "choiceText":"Give him the bag you have found",
@@ -204,7 +195,6 @@
   }, {
     "id":9,
     "possibleLocation": ["City","Forest","Desert"],
-    "interaction":"Action",
     "mainText":"You see a house with a familiar name",
     "decisionLeft" : {
       "choiceText":"Knock on the door",
@@ -222,7 +212,6 @@
   }, {
     "id":10,
     "possibleLocation": ["City, Forest"],
-    "interaction":"Action",
     "mainText":"You see a tree with apples on it",
     "decisionLeft" : {
       "choiceText":"Pick up the apples from the ground",
@@ -239,7 +228,6 @@
   }, {
     "id":11,
     "possibleLocation": ["City"],
-    "interaction":"Action",
     "mainText":"While walking along the street a medical clinic catches your eye",
     "decisionLeft" : {
       "choiceText":"See a doctor",
@@ -256,7 +244,6 @@
   }, {
     "id":12,
     "possibleLocation": ["City"],
-    "interaction":"Action",
     "mainText":"In the middle of the market you see a man looking for people willing to do day labor",
     "decisionLeft" : {
       "choiceText":"Work for him",
@@ -273,7 +260,6 @@
   }, {
     "id":13,
     "possibleLocation": ["City"],
-    "interaction":"Conversation",
     "mainText":"A devote believer in red robes approaches you, wanting to talk about their deity",
     "decisionLeft" : {
       "choiceText":"Listen to them",
@@ -293,7 +279,6 @@
   }, {
     "id":14,
     "possibleLocation": ["City"],
-    "interaction":"Conversation",
     "mainText":"A devote believer in green robes approaches you, wanting to talk about their deity",
     "decisionLeft" : {
       "choiceText":"Listen to them",
@@ -313,7 +298,6 @@
   }, {
     "id":15,
     "possibleLocation": ["City"],
-    "interaction":"Action",
     "mainText":"On your left you see a church of the Mutan Order",
     "decisionLeft" : {
       "choiceText":"Join the Mutan Order",
@@ -339,7 +323,6 @@
   }, {
     "id":16,
     "possibleLocation": ["City", "Forest", "Desert"],
-    "interaction":"Action",
     "mainText":"An agonizing pain overwhelms your entire body, feeling like your body turns inside out. You collapse on the ground",
     "decisionLeft" : {
       "choiceText":"?̶̢̙̱̂̂͜͠?̴̲͇̲̯͚̰͕̆̒̉͌?̴̯̱̹͓̲̝̓̄̈̎",
@@ -362,7 +345,6 @@
   }, {
     "id":17,
     "possibleLocation": ["City"],
-    "interaction":"Action",
     "mainText":"On your left you see a church of the Fortuna Order",
     "decisionLeft" : {
       "choiceText":"Join the Fortuna Order",
@@ -388,7 +370,6 @@
   }, {
     "id":18,
     "possibleLocation": ["City"],
-    "interaction":"Conversation",
     "mainText":"You see a child selling some picked flowers",
     "decisionLeft" : {
       "choiceText":"Buy some flowers from the child",
@@ -416,7 +397,6 @@
   }, {
     "id":19,
     "possibleLocation": ["City","Forest","Desert"],
-    "interaction":"Conversation",
     "mainText":"A smiling man approaches you. \"Ah, a fellow follower of the Fortuna Order! You look like you need some help. What can I do for you?\"",
     "decisionLeft" : {
       "choiceText":"Ask for food and water",
@@ -433,7 +413,6 @@
   }, {
     "id":20,
     "possibleLocation": ["City"],
-    "interaction":"Conversation",
     "mainText":"You find a piece of jewelery on the ground. Shortly after a woman approaches you, claiming that she has lost her earring somewhere and asks you to help her find it",
     "decisionLeft" : {
       "choiceText":"Give her the jewelery",
@@ -450,7 +429,6 @@
   }, {
     "id":21,
     "possibleLocation": ["City"],
-    "interaction":"Conversation",
     "mainText":"You see a man trying to sell medicine. \"Buy it! Buy it! The new Inutilis medicine against every pain you have!\"",
     "decisionLeft" : {
       "choiceText":"Buy some Inutilis",
@@ -469,7 +447,6 @@
   }, {
     "id":22,
     "possibleLocation": ["City"],
-    "interaction":"Conversation",
     "mainText":"You see a man trying to sell medicine. \"Buy it! Buy it! The new Inutilis medicine against every pain you have!\"",
     "decisionLeft" : {
       "choiceText":"Demand a refund",
@@ -487,7 +464,6 @@
   }, {
     "id":23,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"There is a camp in the distance",
     "decisionLeft" : {
       "choiceText":"Walk towards the camp",
@@ -504,7 +480,6 @@
   }, {
     "id":24,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"While walking through the forest you feel watched. Suddenly a Tiger cub jumps out of a bush and attacks you",
     "decisionLeft" : {
       "choiceText":"Defend yourself",
@@ -521,7 +496,6 @@
   }, {
     "id":25,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"You see a bunny, not noticing your presence",
     "decisionLeft" : {
       "choiceText":"Hunt the bunny",
@@ -538,7 +512,6 @@
   },{
     "id":26,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"A flock of birds sit on trees and chirp in harmony",
     "decisionLeft" : {
       "choiceText":"Listen to the birdsong",
@@ -555,7 +528,6 @@
   },{
     "id":27,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"You hear a river near you",
     "decisionLeft" : {
       "choiceText":"Walk towards the river",
@@ -572,7 +544,6 @@
   },{
     "id":28,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"You arrived at the river you heard. It seems to be flowing fast",
     "decisionLeft" : {
       "choiceText":"Drink out of the river",
@@ -589,7 +560,6 @@
   },{
     "id":29,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"You see a stone ruin on your way",
     "decisionLeft" : {
       "choiceText":"Walk towards the ruin",
@@ -606,7 +576,6 @@
   },{
     "id":30,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"You see the ruin right in front of you. It seems to be some sort of crypt. A big stone door with a sigill portraying what looks like a shield with wings and a socket for something right in the middle blocks your way, ",
     "decisionLeft" : {
       "choiceText":"Look around",
@@ -636,7 +605,6 @@
   }, {
     "id":31,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"Inside of there ruin is big room with a stone pedestal right in the middle. The whole room is decorated in elaborate patterns. Your red crystal seems to be reacting to it",
     "decisionLeft" : {
       "choiceText":"Place your red crystal on the pedestal",
@@ -661,7 +629,6 @@
   }, {
     "id":32,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"Walking through the forest you notice a bunch of pale blue mushrooms growing at the side of a nearby tree. They seem edible",
     "decisionLeft" : {
       "choiceText":"Eat the Mushrooms",
@@ -678,7 +645,7 @@
   }, {
       "id":33,
       "possibleLocation": ["Forest"],
-      "interaction":"Action",
+  
       "mainText":"Walking through the forest you notice a bunch of bright red mushrooms growing at the side of a nearby tree. They seem edible",
       "decisionLeft" : {
         "choiceText":"Eat the mushrooms",
@@ -695,7 +662,6 @@
   }, {
       "id":34,
       "possibleLocation": ["Forest"],
-      "interaction":"Action",
       "mainText":"As you wander through the thicket of the deeper parts of the forest you notice the decaying corpse of a brigant. An arrow pokes out of the chest and must have been the reason for their untimely demise",
       "decisionLeft" : {
         "choiceText":"Pillage the corpse",
@@ -724,7 +690,6 @@
   }, {
     "id":35,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"You stumble upon an adorable bear cub. It waddles towards you on its stumpy little legs",
     "decisionLeft" : {
       "choiceText":"Try to pet the bear cub",
@@ -753,7 +718,6 @@
   }, {
     "id":36,
     "possibleLocation": ["Desert"],
-    "interaction":"Action",
     "mainText":"You hear a caravan approaching, heading towards a city. A sign on their caravan says they take passengers for a measly 10 coins",
     "decisionLeft" : {
       "choiceText":"Ask to join the caravan",
@@ -770,7 +734,6 @@
   }, {
     "id":37,
     "possibleLocation": ["City"],
-    "interaction":"Action",
     "mainText":"As you walk through the market a masked person bumps into you. You fall to the ground and see them making a run for it. As you get up you notice that one of your coin bags is missing",
     "decisionLeft" : {
       "choiceText":"Pursue the thief",
@@ -799,7 +762,6 @@
   }, {
     "id":38,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"As you walk through the forest a lone hunter catches your eye, looking rather concentrated",
     "decisionLeft" : {
       "choiceText":"Approach him",
@@ -816,7 +778,6 @@
   }, {
       "id":39,
       "possibleLocation": ["Forest"],
-      "interaction":"Action",
       "mainText":"\"I almost had him, what do you want?\". The hunter is annoyed with you",
       "decisionLeft" : {
         "choiceText":"Ask for the nearest city",
@@ -833,7 +794,6 @@
   }, {
     "id":40,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"The hunter offered you to guide you for the nearest city but only if you compensate him",
     "decisionLeft" : {
       "choiceText":"Pay him",
@@ -850,75 +810,130 @@
   }, {
     "id":41,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"As you walk you notice smoke rising in the distance. In need for some company you wander towards it. Arriving there you notice a few traveller making camp",
     "decisionLeft" : {
       "choiceText":"Ask if you can rest with them",
-      "pickedText":"",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "pickedText":"You set yourself at the campfire with them and shared stories. You went to sleep when it was your turn. After getting some rest you woke up, noticing they prepare to set out. You thanked them and went your way",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":10, "mentalHealth":10, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Ask if you can do some work for them",
-      "pickedText":"You asked for work in exchange for money",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "pickedText":"You asked for work in exchange for money. You refilled their water bottles at the nearest river an got some for yourself as well. They thanked you and gave you some compensation",
+      "resourceChange":  {"hunger":0, "thirst":5, "physicalHealth":0, "mentalHealth": 0, "money": 10},
       "flags":[]
     }
   }, {
     "id":42,
-    "possibleLocation": ["Forest"],
-    "interaction":"Action",
-    "mainText":"",
+    "possibleLocation": ["Desert"],
+    "mainText":"Walking along the deserts main road you meet a wandering trader who is currently taking a break from the sweltering heat. \"Greetings, fellow traveler! can I interest you in some cactus juice. Just 5 coins its a local speciality!\"",
     "decisionLeft" : {
-      "choiceText":"",
-      "pickedText":"",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "choiceText":"Buy cactus juice",
+      "pickedText":"Drinking the cactus juice you felt refreshed and ready to continue through the desert",
+      "resourceChange":  {"hunger":0, "thirst":10, "physicalHealth":0, "mentalHealth":0, "money": -5},
       "flags":[]
     },
     "decisionRight" : {
-      "choiceText":"",
-      "pickedText":"",
+      "choiceText":"Continue your journey",
+      "pickedText":"Not trusting the trader in the middle of the desert you moved on with out buying anything",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
     }
   }, {
     "id":43,
-    "possibleLocation": ["Forest"],
-    "interaction":"Action",
-    "mainText":"",
+    "possibleLocation": ["Desert"],
+    "mainText":"As you continue your journey through the desert you see a sandstorm quickly approaching on the horizon",
     "decisionLeft" : {
-      "choiceText":"",
-      "pickedText":"",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "choiceText":"Take cover at the nearest hill",
+      "pickedText":"Not waiting around you dropped face down into the sand. The sandstorm passes relatively quickly and your come out of it with barely a scratch",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-5, "mentalHealth":-5, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
-      "choiceText":"",
-      "pickedText":"",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "choiceText":"Search for better cover",
+      "pickedText":"While you futilely searched for cover, you were surprised by the faster-approaching-than-thought sandstorm. You twirled around in the storm, not getting a hold of anything but sand in your eyes. After a while the storm passed, leaving you exhausted on the floor",
+      "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":-10, "mentalHealth": -10, "money": 0},
       "flags":[]
     }
   }, {
     "id":44,
-    "possibleLocation": ["Forest"],
-    "interaction":"Action",
-    "mainText":"",
+    "possibleLocation": ["Desert"],
+    "mainText":"Walking through the blistering heat you notice an oasis in the blurry horizon",
     "decisionLeft" : {
-      "choiceText":"",
-      "pickedText":"",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "choiceText":"Run towards it",
+      "pickedText":"You ran towards the oasis jumping into its cool waters. As you felt towards - what you believed to be refreshing water - you realized it was just a mirage, mixed with a wishful figment of your imagination. You dropped head first into a pile, not trusting yourself anymore",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-5, "mentalHealth":-15, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
-      "choiceText":"",
-      "pickedText":"",
+      "choiceText":"Continue with your journey",
+      "pickedText":"Not falling for the illusions of the desert you continued trotting through the heat",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
     }
   }, {
     "id":45,
+    "possibleLocation": ["Desert"],
+    "mainText":"Walking through the blistering heat you notice an oasis in the horizon",
+    "decisionLeft" : {
+      "choiceText":"Run towards it",
+      "pickedText":"You ran towards the oasis jumping into its cool waters. You felt refreshed and more than ready to continue.",
+      "resourceChange":  {"hunger":0, "thirst":15, "physicalHealth":10, "mentalHealth":10, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Continue with your journey",
+      "pickedText":"Not falling for the illusions of the desert you continued trotting through the heat",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  }, {
+    "id":46,
+    "possibleLocation": ["Desert"],
+    "mainText":"In front of you is an empty desert, nothing to see and nothing to do except moving on",
+    "decisionLeft" : {
+      "choiceText":"Move on",
+      "pickedText":"You moved on walking through the desert",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Move on",
+      "pickedText":"You moved on walking through the desert",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+      }
+  }, {
+    "id":47,
+    "possibleLocation": ["Desert"],
+    "mainText":"As you walk through the endless sandy hills you notice a small tilted wooden cross, signaling a burial, in the ground",
+    "decisionLeft" : {
+      "choiceText":"Pay your respect",
+      "pickedText":"You tried to pay your respect but did not know what to do, so you just straightened the cross",
+      "resourceChange":  {"hunger":-2, "thirst":-2, "physicalHealth":0, "mentalHealth":5, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Let it be",
+      "pickedText":"People dying on their journeys is quite common, so you just moved on and hoped that you will not be one of them",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    },
+    "flags": [{
+      "conditionalDecision": {
+        "condition": {
+          "ownItem": 7
+        },
+        "overwriteSide": false,
+        "decision": {
+          "choiceText":"Lay your flowers to the cross",
+          "pickedText":"You made some space in the sand and placed your flowers to the cross. While doing so however you noticed a small box buried as well.",
+          "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":0},
+          "flags":[{"removeItem": 7}]
+        }}}]
+  }, {
+    "id":48,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"",
     "decisionLeft" : {
       "choiceText":"",
@@ -933,9 +948,8 @@
       "flags":[]
     }
   }, {
-    "id":46,
+    "id":49,
     "possibleLocation": ["Forest"],
-    "interaction":"Action",
     "mainText":"",
     "decisionLeft" : {
       "choiceText":"",
@@ -948,6 +962,23 @@
       "pickedText":"",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
-      }}
+    }
+  }, {
+    "id":50,
+    "possibleLocation": ["Forest"],
+    "mainText":"",
+    "decisionLeft" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  }
   ]
 }
