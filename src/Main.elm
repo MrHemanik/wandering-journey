@@ -334,7 +334,7 @@ viewCard model =
                                                             c.decisionRight
 
                                                 itemsAddOrRemove itemList =
-                                                    row [ centerX, spacing 10 ] <| List.map itemElement itemList
+                                                    List.map itemElement itemList
 
                                                 itemElement item =
                                                     case item of
@@ -369,7 +369,7 @@ viewCard model =
                                                         ListHelper.idListToObjectList achievementList gameData.achievements
 
                                                 achievementElement achievement =
-                                                    el [ Background.color Color.transBlackLight, Border.rounded 3, padding 7 ] <|
+                                                    el [ Background.color Color.transWhite, Border.glow Color.green 2, Border.rounded 3, padding 7 ] <|
                                                         el [ Background.color Color.transBlackLight, Background.uncropped (Achievement.achievementIdToAchievementUrl achievement.id), width (px 50), height (px 50), centerX ] <|
                                                             image
                                                                 [ Background.color Color.transWhite, Border.glow Color.transWhite 3, Border.rounded 5, width (px 20), height (px 20), alignTop ]
@@ -378,21 +378,26 @@ viewCard model =
                                                                 }
                                             in
                                             [ row [ width fill, padding 20 ] [ wrapText decision.pickedText ]
-                                            , case viewItemChanges decision.flags gameData.items of
-                                                [] ->
-                                                    none
+                                            , row [ width fill ]
+                                                [ case viewItemChanges decision.flags gameData.items of
+                                                    [] ->
+                                                        none
 
-                                                ( Nothing, _ ) :: _ ->
-                                                    none
+                                                    ( Nothing, _ ) :: _ ->
+                                                        none
 
-                                                list ->
-                                                    itemsAddOrRemove list
-                                            , case viewState.newAchievements of
-                                                [] ->
-                                                    none
+                                                    itemList ->
+                                                        row [ centerX, spacing 10, padding 10 ]
+                                                            (itemsAddOrRemove itemList
+                                                                ++ (case viewState.newAchievements of
+                                                                        [] ->
+                                                                            []
 
-                                                list ->
-                                                    column [] <| achievements list
+                                                                        achievementsList ->
+                                                                            achievements achievementsList
+                                                                   )
+                                                            )
+                                                ]
                                             , row [ width fill, alignBottom ]
                                                 [ Input.button [ width (minimum 100 fill) ]
                                                     { onPress =
