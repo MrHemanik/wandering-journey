@@ -61,10 +61,6 @@ type Msg
 
 type alias Game =
     { resources : Resources
-    , allCards : List Card
-    , allItems : List Item
-    , allAchievements : List Achievement
-    , defaultCardIndexes : List Int
     , unlockedCardIndexes : List Int
     , activeItemsIndexes : List Int
     , currentCards : List Card
@@ -316,7 +312,7 @@ viewCard model =
                     }
                 ]
 
-            Running _ game _ maybeChoice _ _ ->
+            Running gameData game _ maybeChoice _ _ ->
                 [ case game.card of
                     Just c ->
                         column [ width fill, height fill ]
@@ -363,7 +359,7 @@ viewCard model =
                                                                         }
                                             in
                                             [ row [ width fill, padding 20 ] [ wrapText decision.pickedText ]
-                                            , case viewItemChanges decision.flags game.allItems of
+                                            , case viewItemChanges decision.flags gameData.items of
                                                 [] ->
                                                     none
 
@@ -655,7 +651,7 @@ update msg model =
                                     | item =
                                         case viewState.item of
                                             Nothing ->
-                                                ListHelper.idToObject id game.allItems
+                                                ListHelper.idToObject id gameData.items
 
                                             Just _ ->
                                                 Nothing
@@ -672,11 +668,7 @@ update msg model =
                         DeletePlayerData ->
                             ( Running gameData
                                 { resources = startingResources
-                                , allItems = game.allItems
-                                , allCards = game.allCards
-                                , allAchievements = game.allAchievements
-                                , defaultCardIndexes = game.defaultCardIndexes
-                                , unlockedCardIndexes = game.defaultCardIndexes
+                                , unlockedCardIndexes = gameData.startingCardIndexes
                                 , activeItemsIndexes = []
                                 , currentCards = game.currentCards
                                 , location = startingLocation
@@ -687,7 +679,7 @@ update msg model =
                                 choice
                                 0
                                 { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], selectedAchievement = Nothing }
-                            , Cmd.batch [ savePlayerData <| Player.encoder { startingCards = game.defaultCardIndexes, unlockedAchievements = [], highscore = 0 }, generateCard <| List.length game.currentCards ]
+                            , Cmd.batch [ savePlayerData <| Player.encoder { startingCards = gameData.startingCardIndexes, unlockedAchievements = [], highscore = 0 }, generateCard <| List.length game.currentCards ]
                             )
 
                         DeactivateAchievementHighlighting int ->
@@ -738,7 +730,7 @@ processKey key model =
                             ( Running gameData
                                 { fpg
                                     | resources = calculateResourcesOnChoice fpg.resources choice fpg.location fpg.card
-                                    , currentCards = getCurrentlyPossibleCards fpg.allCards fpg.unlockedCardIndexes fpg.location
+                                    , currentCards = getCurrentlyPossibleCards gameData.cards fpg.unlockedCardIndexes fpg.location
                                 }
                                 fpp
                                 (Just choice)
@@ -762,11 +754,7 @@ processKey key model =
         Restart ->
             ( Running gameData
                 { resources = startingResources
-                , allItems = game.allItems
-                , allCards = game.allCards
-                , allAchievements = game.allAchievements
-                , defaultCardIndexes = game.defaultCardIndexes
-                , unlockedCardIndexes = game.defaultCardIndexes
+                , unlockedCardIndexes = gameData.startingCardIndexes
                 , activeItemsIndexes = []
                 , currentCards = game.currentCards
                 , location = startingLocation
@@ -823,7 +811,7 @@ processKey key model =
                             | item =
                                 case ( viewState.item, intToID game.activeItemsIndexes ) of
                                     ( Nothing, Just i ) ->
-                                        ListHelper.idToObject i (activeItemIndexesToItemList game.activeItemsIndexes game.allItems)
+                                        ListHelper.idToObject i (activeItemIndexesToItemList game.activeItemsIndexes gameData.items)
 
                                     ( _, _ ) ->
                                         Nothing
@@ -921,7 +909,7 @@ processFlags flags ( model, cmd ) =
                         { game | location = location } |> (\g -> ( Running gameData g player choice score viewState, cmd ))
 
                     FollowUp id ->
-                        { game | nextCard = Card.getCardById game.allCards id } |> (\g -> ( Running gameData g player choice score viewState, cmd ))
+                        { game | nextCard = Card.getCardById gameData.cards id } |> (\g -> ( Running gameData g player choice score viewState, cmd ))
 
                     UnlockAchievement id ->
                         checkIfIdUnlocksAchievement id player viewState |> (\( p, vs, command ) -> ( Running gameData game p choice score vs, command ))
@@ -1065,10 +1053,6 @@ init flags =
                     in
                     ( value
                     , { resources = startingResources
-                      , allItems = value.items
-                      , allCards = value.cards
-                      , allAchievements = Debug.log "achievements" value.achievements
-                      , defaultCardIndexes = value.startingCardIndexes
                       , unlockedCardIndexes = value.startingCardIndexes
                       , activeItemsIndexes = []
                       , currentCards = currentCards
@@ -1080,7 +1064,7 @@ init flags =
 
                 Data.Failure _ ->
                     ( { items = [], cards = [], startingCardIndexes = [], achievements = [] }
-                    , { resources = startingResources, allCards = [], allItems = [], allAchievements = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing, nextCard = Nothing }
+                    , { resources = startingResources, unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing, nextCard = Nothing }
                     )
 
         player =
@@ -1090,7 +1074,7 @@ init flags =
                         pl
 
                     Data.Failure _ ->
-                        { startingCards = game.defaultCardIndexes, unlockedAchievements = [], highscore = 0 }
+                        { startingCards = gameData.startingCardIndexes, unlockedAchievements = [], highscore = 0 }
     in
     ( Running gameData game player Nothing 0 { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], selectedAchievement = Nothing }
     , generateCard <| List.length game.currentCards
