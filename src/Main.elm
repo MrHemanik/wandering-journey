@@ -550,7 +550,7 @@ controlsButton showControls =
 
 
 achievementButton : Bool -> ViewState -> Element Msg
-achievementButton showAchievement viewState =
+achievementButton showAch viewState =
     el [ padding 5, alignBottom, width (px 170) ] <|
         Input.button
             ([ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5, alignRight ]
@@ -562,7 +562,7 @@ achievementButton showAchievement viewState =
                             []
                    )
             )
-            { onPress = Just (ShowAchievement (not showAchievement))
+            { onPress = Just (ShowAchievement (not showAch))
             , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/achievements.svg", description = "" }, wrapText "Achievements" ]
             }
 
@@ -661,94 +661,67 @@ viewItemDetail item =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case model of
-        GameOver _ _ _ _ ->
-            case msg of
-                Key Restart ->
-                    processKey Restart model
+    case ( model, isGameOver (modelToGame model).resources ) of
+        ( Running gameData game player _ viewState, True ) ->
+            let
+                newlyUnlockedAchievements =
+                    ListHelper.removeEntriesFromList (Achievement.checkDistance game.score) player.unlockedAchievements
 
-                _ ->
+                updatedPlayer =
+                    { player | highscore = max player.highscore game.score, unlockedAchievements = ListHelper.addEntriesToList player.unlockedAchievements newlyUnlockedAchievements }
+            in
+            ( GameOver gameData game updatedPlayer { viewState | newAchievements = newlyUnlockedAchievements, highlightedAchievements = Debug.log "newnew" (ListHelper.addEntriesToList viewState.highlightedAchievements newlyUnlockedAchievements) }, savePlayerData <| Player.encoder updatedPlayer )
+
+        ( _, _ ) ->
+            case ( model, msg ) of
+                ( Running _ game _ _ _, NewCard newCardIndex ) ->
+                    loadCard model <| Card.getCardByIndex game.currentCards newCardIndex
+
+                ( Running _ game _ _ _, LoadFollowUpCard ) ->
+                    loadCard model game.nextCard
+
+                ( _, Key key ) ->
+                    processKey key model
+
+                ( _, GenerateNewCard ) ->
+                    generatePossibleCard model
+
+                ( Running gameData game player choice viewState, ToggleItemDetails id ) ->
+                    ( Running gameData game player choice (toggleItemDetails id viewState gameData), Cmd.none )
+
+                ( GameOver gameData game player viewState, ToggleItemDetails id ) ->
+                    ( GameOver gameData game player (toggleItemDetails id viewState gameData), Cmd.none )
+
+                ( Running gameData game player choice viewState, ShowControl bool ) ->
+                    ( Running gameData game player choice { viewState | showControls = bool }, Cmd.none )
+
+                ( GameOver gameData game player viewState, ShowControl bool ) ->
+                    ( GameOver gameData game player { viewState | showControls = bool }, Cmd.none )
+
+                ( Running gameData game player choice viewState, ShowAchievement showAch ) ->
+                    ( Running gameData game player choice (showAchievement showAch viewState), Cmd.none )
+
+                ( GameOver gameData game player viewState, ShowAchievement showAch ) ->
+                    ( GameOver gameData game player (showAchievement showAch viewState), Cmd.none )
+
+                ( Running gameData game player _ _, DeletePlayerData ) ->
+                    deletePlayerData gameData game player
+
+                ( GameOver gameData game player _, DeletePlayerData ) ->
+                    deletePlayerData gameData game player
+
+                ( Running gameData game player choice viewState, DeactivateAchievementHighlighting id ) ->
+                    ( Running gameData game player choice (deactivateAchievementHighlighting id viewState), Cmd.none )
+
+                ( GameOver gameData game player viewState, DeactivateAchievementHighlighting id ) ->
+                    ( GameOver gameData game player (deactivateAchievementHighlighting id viewState), Cmd.none )
+
+                ( _, _ ) ->
                     ( model, Cmd.none )
 
-        Running gameData game player choice viewState ->
-            case isGameOver game.resources of
-                True ->
-                    let
-                        newlyUnlockedAchievements =
-                            ListHelper.removeEntriesFromList (Achievement.checkDistance game.score) player.unlockedAchievements
 
-                        updatedPlayer =
-                            { player | highscore = max player.highscore game.score, unlockedAchievements = ListHelper.addEntriesToList player.unlockedAchievements newlyUnlockedAchievements }
-                    in
-                    ( GameOver gameData game updatedPlayer { viewState | newAchievements = newlyUnlockedAchievements, highlightedAchievements = Debug.log "newnew" (ListHelper.addEntriesToList viewState.highlightedAchievements newlyUnlockedAchievements) }, savePlayerData <| Player.encoder updatedPlayer )
 
-                False ->
-                    case msg of
-                        NewCard newCardIndex ->
-                            loadCard model <| Card.getCardByIndex game.currentCards newCardIndex
-
-                        LoadFollowUpCard ->
-                            loadCard model game.nextCard
-
-                        Key key ->
-                            processKey key model
-
-                        GenerateNewCard ->
-                            ( model, generateCard <| List.length game.currentCards )
-
-                        ToggleItemDetails id ->
-                            ( Running gameData game player choice <|
-                                { viewState
-                                    | item =
-                                        case viewState.item of
-                                            Nothing ->
-                                                ListHelper.idToObject id gameData.items
-
-                                            Just _ ->
-                                                Nothing
-                                }
-                            , Cmd.none
-                            )
-
-                        ShowControl bool ->
-                            ( Running gameData game player choice { viewState | showControls = bool }, Cmd.none )
-
-                        ShowAchievement showAch ->
-                            ( Running gameData
-                                game
-                                player
-                                choice
-                                { viewState
-                                    | showAchievement = showAch
-                                    , highlightedAchievements =
-                                        if showAch then
-                                            viewState.highlightedAchievements
-
-                                        else
-                                            []
-                                }
-                            , Cmd.none
-                            )
-
-                        DeletePlayerData ->
-                            ( Running gameData
-                                { resources = startingResources
-                                , unlockedCardIndexes = gameData.startingCardIndexes
-                                , activeItemsIndexes = []
-                                , currentCards = game.currentCards
-                                , location = startingLocation
-                                , card = Nothing
-                                , nextCard = Nothing
-                                , score = 0
-                                }
-                                player
-                                choice
-                                { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
-                            , Cmd.batch [ savePlayerData <| Player.encoder { startingCards = gameData.startingCardIndexes, unlockedAchievements = [], highscore = 0 }, generateCard <| List.length game.currentCards ]
-                            )
-
-                        DeactivateAchievementHighlighting int ->
-                            ( Running gameData game player choice { viewState | highlightedAchievements = ListHelper.removeEntriesFromList viewState.highlightedAchievements [ int ] }, Cmd.none )
+---- update extra functions that can be used by buttons too ----
 
 
 loadCard : Model -> Maybe Card -> ( Model, Cmd Msg )
@@ -763,6 +736,66 @@ loadCard model cardToLoad =
                     ( ( gd, g ), ( p, vs ) )
     in
     processCardFlags (Running gameData { game | card = cardToLoad, nextCard = Nothing } player Nothing { viewState | newAchievements = [] })
+
+
+generatePossibleCard : Model -> ( Model, Cmd Msg )
+generatePossibleCard model =
+    ( model, generateCard <| List.length (modelToGame model).currentCards )
+
+
+toggleItemDetails : Int -> ViewState -> GameData -> ViewState
+toggleItemDetails id viewState gameData =
+    { viewState
+        | item =
+            case viewState.item of
+                Nothing ->
+                    ListHelper.idToObject id gameData.items
+
+                Just _ ->
+                    Nothing
+    }
+
+
+showAchievement : Bool -> ViewState -> ViewState
+showAchievement showAch viewState =
+    { viewState
+        | showAchievement = showAch
+        , highlightedAchievements =
+            if showAch then
+                viewState.highlightedAchievements
+
+            else
+                []
+    }
+
+
+deletePlayerData : GameData -> Game -> Player -> ( Model, Cmd Msg )
+deletePlayerData gameData game player =
+    --TODO: Game shouldn't be used here! game.currentCards is wrong, should be calculated new
+    ( Running gameData
+        { resources = startingResources
+        , unlockedCardIndexes = gameData.startingCardIndexes
+        , activeItemsIndexes = []
+        , currentCards = game.currentCards
+        , location = startingLocation
+        , card = Nothing
+        , nextCard = Nothing
+        , score = 0
+        }
+        player
+        Nothing
+        { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
+    , Cmd.batch [ savePlayerData <| Player.encoder { startingCards = gameData.startingCardIndexes, unlockedAchievements = [], highscore = 0 }, generateCard <| List.length game.currentCards ]
+    )
+
+
+deactivateAchievementHighlighting : Int -> ViewState -> ViewState
+deactivateAchievementHighlighting id viewState =
+    { viewState | highlightedAchievements = ListHelper.removeEntriesFromList viewState.highlightedAchievements [ id ] }
+
+
+
+---- process functions ----
 
 
 processKey : Key -> Model -> ( Model, Cmd Msg )
