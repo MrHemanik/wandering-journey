@@ -35,5 +35,29 @@
     "id":8,
     "name": "Activated\nred crystal",
     "description": "A mysterious crystal you bought from a strange merchant. It emits bright red light"
+  }, {
+    "id":9,
+    "name": "Green crystal",
+    "description": ""
+  }, {
+    "id":10,
+    "name": "Activated green crystal",
+    "description": ""
+  }, {
+    "id":11,
+    "name": "Blue crystal",
+    "description": ""
+  }, {
+    "id":11,
+    "name": "Activated blue crystal",
+    "description": ""
+  }, {
+    "id":11,
+    "name": "Yellow crystal",
+    "description": ""
+  }, {
+    "id":11,
+    "name": "Activated yellow crystal",
+    "description": ""
   }]
 }

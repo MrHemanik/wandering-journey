@@ -16,20 +16,37 @@
     var storageData = localStorage.getItem(storageKey)
     localStorage.setItem(storageKey, "cleanse")
     if(storageData == null) storageData = "" //If there is null data, turn it to an empty string
+
+    let data = [null, null, null]
+
     $.getJSON('cards.json').done(function(cardJson){
-        console.log(cardJson);
-        $.getJSON('items.json').done(function(itemJson){
-            console.log(itemJson);
+        data[0] = cardJson
+        checkIfReceivedAll()
+
+    })
+    $.getJSON('items.json').done(function(itemJson){
+        data[1] = itemJson
+        checkIfReceivedAll()
+    })
+    $.getJSON('achievements.json').done(function(achievementJson){
+        data[2] = achievementJson
+        checkIfReceivedAll()
+    })
+    function checkIfReceivedAll(){
+        if (data.filter(e => e != null).length >= 3){
+            console.log(data[0])
+            console.log(data[1])
+            console.log(data[2])
             var app = Elm.Main.init({
-                flags: [JSON.stringify(cardJson).slice(0,-1)+","+JSON.stringify(itemJson).substr(1),storageData],  //guide.elm-lang.org/interop/flags.html, also added both jsons into one
+                flags: [JSON.stringify(data[0]).slice(0,-1)+","+JSON.stringify(data[1]).substr(1).slice(0,-1)+","+JSON.stringify(data[2]).substr(1),storageData],  //guide.elm-lang.org/interop/flags.html, also added both jsons into one
                 node: document.getElementById('elm-app-is-loaded-here')
             });
             app.ports.savePlayerData.subscribe(function(value) {
                 console.log("Thing to save:" +JSON.stringify(value))
                 localStorage.setItem(storageKey, JSON.stringify(value));
             });
-        })
-    })
+        }
+    }
 
 </script>
 </body>

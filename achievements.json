@@ -1,5 +1,5 @@
 {
-  "achievement" : [
+  "achievements" : [
     {
       "id": 0,
       "name": "An endless wake",
@@ -27,7 +27,7 @@
     },{
       "id": 6,
       "name": "IT'S OVER 9000!!!",
-      "description": "Activate the red crystal"
+      "description": "Activate the red crystal, unleashing its destructive power"
     },{
       "id": 7,
       "name": "Loot > progress",

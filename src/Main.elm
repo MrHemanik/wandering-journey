@@ -62,6 +62,7 @@ type alias Game =
     { resources : Resources
     , allCards : List Card
     , allItems : List Item
+    , allAchievements : List Achievement
     , defaultCardIndexes : List Int
     , unlockedCardIndexes : List Int
     , activeItemsIndexes : List Int
@@ -77,7 +78,7 @@ type alias ViewState =
 
 
 type alias JsonData =
-    { items : List Item, allCards : List Card, startingCardIndexes : List Int }
+    { items : List Item, allCards : List Card, startingCardIndexes : List Int, achievements : List Achievement }
 
 
 
@@ -139,6 +140,7 @@ gameDataDecoder =
         |> DecodeHelper.apply (Decode.field "items" (Decode.list Item.decoder))
         |> DecodeHelper.apply (Decode.field "cards" (Decode.list Card.decoder))
         |> DecodeHelper.apply (Decode.field "startingCards" (Decode.list Decode.int))
+        |> DecodeHelper.apply (Decode.field "achievements" (Decode.list Achievement.decoder))
 
 
 
@@ -649,6 +651,7 @@ update msg model =
                                 { resources = startingResources
                                 , allItems = game.allItems
                                 , allCards = game.allCards
+                                , allAchievements = game.allAchievements
                                 , defaultCardIndexes = game.defaultCardIndexes
                                 , unlockedCardIndexes = game.defaultCardIndexes
                                 , activeItemsIndexes = []
@@ -730,6 +733,7 @@ processKey key model =
                 { resources = startingResources
                 , allItems = gameData.allItems
                 , allCards = gameData.allCards
+                , allAchievements = gameData.allAchievements
                 , defaultCardIndexes = gameData.defaultCardIndexes
                 , unlockedCardIndexes = gameData.defaultCardIndexes
                 , activeItemsIndexes = []
@@ -1027,6 +1031,7 @@ init flags =
                     { resources = startingResources
                     , allItems = value.items
                     , allCards = value.allCards
+                    , allAchievements = Debug.log "achievements" value.achievements
                     , defaultCardIndexes = value.startingCardIndexes
                     , unlockedCardIndexes = value.startingCardIndexes
                     , activeItemsIndexes = []
@@ -1037,7 +1042,7 @@ init flags =
                     }
 
                 Data.Failure _ ->
-                    { resources = startingResources, allCards = [], allItems = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing, nextCard = Nothing }
+                    { resources = startingResources, allCards = [], allItems = [], allAchievements = [], defaultCardIndexes = [], unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing, nextCard = Nothing }
 
         player =
             Debug.log "player" <|

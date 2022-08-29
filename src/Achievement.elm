@@ -1,5 +1,6 @@
-module Achievement exposing (Achievement, achievementIdToAchievementUrl, checkDistance, unlockAchievement)
+module Achievement exposing (Achievement, achievementIdToAchievementUrl, checkDistance, decoder, unlockAchievement)
 
+import Json.Decode as Decode exposing (Decoder)
 import ListHelper
 import Player exposing (Player)
 
@@ -9,6 +10,14 @@ type alias Achievement =
     , name : String
     , description : String
     }
+
+
+decoder : Decoder Achievement
+decoder =
+    Decode.map3 Achievement
+        (Decode.field "id" Decode.int)
+        (Decode.field "name" Decode.string)
+        (Decode.field "description" Decode.string)
 
 
 checkDistance : Int -> List Int
