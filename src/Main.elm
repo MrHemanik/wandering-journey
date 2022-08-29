@@ -180,7 +180,7 @@ view model =
 
                 else
                     [ el [ centerX, height fill, paddingXY 0 20 ] <|
-                        viewAchievements (modelToGameData model) viewState
+                        viewAchievements (modelToGameData model) viewState (modelToPlayer model)
                     ]
             , row [ width fill ]
                 [ controlsButton viewState.showControls
@@ -189,7 +189,7 @@ view model =
 
                   else
                     el [ width fill ] <| none
-                , achievementButton viewState.showAchievement
+                , achievementButton viewState.showAchievement viewState
                 ]
             ]
 
@@ -418,11 +418,11 @@ viewControls showControls =
         ]
 
 
-viewAchievements : GameData -> ViewState -> Element Msg
-viewAchievements gameData viewState =
+viewAchievements : GameData -> ViewState -> Player -> Element Msg
+viewAchievements gameData viewState player =
     let
         portrayAllAchievements achievementList =
-            [ text "" ] ++ List.map achievementElement achievementList
+            List.map achievementElement achievementList
 
         achievementElement achievement =
             el [ padding 5, width fill ] <|
@@ -440,15 +440,37 @@ viewAchievements gameData viewState =
                     , label =
                         row [ centerX, width fill ]
                             [ column [ width (maximum 100 shrink) ]
-                                [ image
-                                    [ Background.color Color.transBlackLight, Border.rounded 3, centerX ]
-                                    { src = Achievement.achievementIdToAchievementUrl achievement.id
-                                    , description = ""
-                                    }
+                                [ el [ Background.color Color.transBlackLight, Border.rounded 3, padding 7 ] <|
+                                    el [ Background.uncropped (Achievement.achievementIdToAchievementUrl achievement.id), centerX ] <|
+                                        image
+                                            [ Background.color Color.transWhite, width (px 64), height (px 64), Border.rounded 5, alignTop ]
+                                            { src =
+                                                if not (List.member achievement.id player.unlockedAchievements) then
+                                                    "src/img/lock.png"
+
+                                                else
+                                                    Achievement.achievementIdToAchievementUrl achievement.id
+                                            , description = ""
+                                            }
                                 ]
                             , column [ width fill ]
-                                [ el [ padding 5, width fill ] <| column [ Font.center, defaultFont, defaultFontSize, centerX, centerY ] [ el [ paddingXY 20 3 ] <| wrapText achievement.name, el [ Border.width 1, Border.color Color.transBlackLight, centerX, width (maximum 600 fill) ] <| none ]
-                                , el [ padding 5, width fill, height (minimum 50 shrink) ] <| el [ centerX, centerY ] <| wrapText achievement.description
+                                [ el [ padding 5, width fill ] <|
+                                    column [ Font.center, defaultFont, defaultFontSize, centerX, centerY, width fill ]
+                                        [ el [ paddingXY 20 3, width fill ] <|
+                                            if List.member achievement.id player.unlockedAchievements then
+                                                wrapText achievement.name
+
+                                            else
+                                                wrapText "???"
+                                        , el [ Border.width 1, Border.color Color.transBlackLight, centerX, width (maximum 600 fill) ] <| none
+                                        ]
+                                , el [ padding 5, width fill, height (minimum 50 shrink) ] <|
+                                    el [ centerX, centerY, width fill ] <|
+                                        if List.member achievement.id player.unlockedAchievements then
+                                            wrapText achievement.description
+
+                                        else
+                                            wrapText "???"
                                 ]
                             ]
                     }
@@ -465,7 +487,7 @@ viewAchievements gameData viewState =
             ]
         , row [ width fill, height fill ]
             [ el [ scrollbarY, centerX, width fill, height (maximum 600 fill) ] <|
-                column [] <|
+                column [ width fill ] <|
                     portrayAllAchievements gameData.achievements
             ]
         , row [ width fill ]
@@ -504,10 +526,19 @@ controlsButton showControls =
             }
 
 
-achievementButton : Bool -> Element Msg
-achievementButton showAchievement =
+achievementButton : Bool -> ViewState -> Element Msg
+achievementButton showAchievement viewState =
     el [ padding 5, alignBottom, width (px 170) ] <|
-        Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5, alignRight ]
+        Input.button
+            ([ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5, alignRight ]
+                ++ (case length viewState.newAchievements > 0 of
+                        True ->
+                            [ Border.glow Color.red 2 ]
+
+                        False ->
+                            []
+                   )
+            )
             { onPress = Just (ShowAchievement (not showAchievement))
             , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/achievements.svg", description = "" }, wrapText "Achievements" ]
             }
@@ -660,7 +691,21 @@ update msg model =
                             ( Running gameData game player choice { viewState | showControls = bool }, Cmd.none )
 
                         ShowAchievement bool ->
-                            ( Running gameData game player choice { viewState | showAchievement = bool }, Cmd.none )
+                            ( Running gameData
+                                game
+                                player
+                                choice
+                                { viewState
+                                    | showAchievement = bool
+                                    , newAchievements =
+                                        if not bool then
+                                            []
+
+                                        else
+                                            viewState.newAchievements
+                                }
+                            , Cmd.none
+                            )
 
                         DeletePlayerData ->
                             ( Running gameData
@@ -842,7 +887,15 @@ processKey key model =
                         game
                         player
                         choice
-                        { viewState | showAchievement = not viewState.showAchievement }
+                        { viewState
+                            | showAchievement = not viewState.showAchievement
+                            , newAchievements =
+                                if viewState.showAchievement then
+                                    []
+
+                                else
+                                    viewState.newAchievements
+                        }
                     , Cmd.none
                     )
 
