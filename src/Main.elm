@@ -35,7 +35,7 @@ port savePlayerData : Encode.Value -> Cmd msg
 
 
 
----- Data Types
+---- Data Types ----
 
 
 type Model
@@ -79,6 +79,30 @@ type alias GameData =
 ---- Preset constants ----
 
 
+emptyGameData =
+    { items = [], cards = [], startingCardIndexes = [], achievements = [] }
+
+
+emptyViewState =
+    { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
+
+
+defaultGame gameData =
+    { resources = startingResources
+    , unlockedCardIndexes = gameData.startingCardIndexes
+    , activeItemsIndexes = []
+    , currentCards = getCurrentlyPossibleCards gameData.cards gameData.startingCardIndexes startingLocation
+    , location = startingLocation
+    , card = Nothing
+    , nextCard = Nothing
+    , score = 0
+    }
+
+
+defaultPlayer gameData =
+    { startingCards = gameData.startingCardIndexes, unlockedAchievements = [], highscore = 0 }
+
+
 defaultFont =
     Font.family
         [ Font.external
@@ -101,7 +125,7 @@ startingLocation =
 
 
 
--- Helper --
+---- Model Helper ----
 
 
 modelToGameData : Model -> GameData
@@ -134,6 +158,16 @@ modelToPlayer model =
             player
 
 
+modelToViewState : Model -> ViewState
+modelToViewState model =
+    case model of
+        GameOver _ _ _ state ->
+            state
+
+        Running _ _ _ _ state ->
+            state
+
+
 
 ---- Decoder ----
 
@@ -158,12 +192,7 @@ view model =
             modelToGame model
 
         viewState =
-            case model of
-                GameOver _ _ _ state ->
-                    state
-
-                Running _ _ _ _ state ->
-                    state
+            modelToViewState model
     in
     viewBackground game.location <|
         column [ width fill, height fill ]
@@ -400,17 +429,8 @@ viewCard model =
 viewControls : Element Msg
 viewControls =
     let
-        keyRow text1 text2 key1 key2 =
-            row []
-                [ textControls text1
-                , column [ Background.uncropped "src/img/key.svg", width (px 50), height (px 50) ] [ el [ centerX, centerY, width fill, Font.center, defaultFont, Font.size 20 ] <| text key1 ]
-                , column [] [ wrapText text2 ]
-                , if key2 == "" then
-                    none
-
-                  else
-                    column [ Background.uncropped "src/img/key.svg", width (px 50), height (px 50) ] [ el [ centerX, centerY, width fill, Font.center, defaultFont, Font.size 20 ] <| text key2 ]
-                ]
+        keyIcon keyText =
+            el [ Background.uncropped "src/img/key.svg", width (px 50), height (px 50) ] <| el [ centerX, centerY, width fill, Font.center, defaultFont, Font.size 20 ] <| text keyText
     in
     column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ]
         [ row [ width fill ]
@@ -422,13 +442,11 @@ viewControls =
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
                 }
             ]
-        , column [ width fill, paddingXY 0 25 ]
-            [ keyRow "Choose an Option: Click on the option or press" "" "<-" "->"
-            , keyRow "Toggle Item Details: Click on an Item or press" "to" "1" "0"
-            , keyRow "Toggle Achievements: Click on 'Achievements' or press" "" "A" ""
-            , keyRow "Toggle Controls: Click on 'Controls' or press" "" "C" ""
-            , keyRow "Restart Game: Press" "" "R" ""
-            ]
+        , wrappedRow [] [ styledText "Choose an Option: Click on the option or press", keyIcon "<-", keyIcon "->" ]
+        , wrappedRow [] [ styledText "Toggle Item Details: Click on an Item or press", keyIcon "1", styledText "to", keyIcon "0" ]
+        , wrappedRow [] [ styledText "Toggle Achievements: Click on 'Achievements' or press", keyIcon "A" ]
+        , wrappedRow [] [ styledText "Toggle Controls: Click on 'Controls' or press", keyIcon "C" ]
+        , wrappedRow [] [ styledText "Restart Game: Press", keyIcon "R" ]
         ]
 
 
@@ -704,11 +722,11 @@ update msg model =
                 ( GameOver gameData game player viewState, ShowAchievement ) ->
                     ( GameOver gameData game player (showAchievement viewState), Cmd.none )
 
-                ( Running gameData _ player _ _, DeletePlayerData ) ->
-                    deletePlayerData gameData player
+                ( Running gameData _ _ _ _, DeletePlayerData ) ->
+                    deletePlayerData gameData
 
-                ( GameOver gameData _ player _, DeletePlayerData ) ->
-                    deletePlayerData gameData player
+                ( GameOver gameData _ _ _, DeletePlayerData ) ->
+                    deletePlayerData gameData
 
                 ( Running gameData game player choice viewState, DeactivateAchievementHighlighting id ) ->
                     ( Running gameData game player choice (deactivateAchievementHighlighting id viewState), Cmd.none )
@@ -721,7 +739,7 @@ update msg model =
 
 
 
----- update extra functions part 1: Normal functions ----
+---- Update extra functions part 1: Normal functions ----
 
 
 isGameOver : Resources -> Bool
@@ -730,7 +748,7 @@ isGameOver resources =
 
 
 
----- update extra functions part 2: Msg functions ----
+---- Update extra functions part 2: Msg functions ----
 
 
 loadCard : Model -> Maybe Card -> ( Model, Cmd Msg )
@@ -783,26 +801,14 @@ showAchievement viewState =
     }
 
 
-deletePlayerData : GameData -> Player -> ( Model, Cmd Msg )
-deletePlayerData gameData player =
+deletePlayerData : GameData -> ( Model, Cmd Msg )
+deletePlayerData gameData =
     let
         currentCards =
             getCurrentlyPossibleCards gameData.cards gameData.startingCardIndexes startingLocation
     in
-    ( Running gameData
-        { resources = startingResources
-        , unlockedCardIndexes = gameData.startingCardIndexes
-        , activeItemsIndexes = []
-        , currentCards = currentCards
-        , location = startingLocation
-        , card = Nothing
-        , nextCard = Nothing
-        , score = 0
-        }
-        player
-        Nothing
-        { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
-    , Cmd.batch [ savePlayerData <| Player.encoder { startingCards = gameData.startingCardIndexes, unlockedAchievements = [], highscore = 0 }, generateCard <| List.length currentCards ]
+    ( Running gameData (defaultGame gameData) (defaultPlayer gameData) Nothing emptyViewState
+    , Cmd.batch [ savePlayerData <| Player.encoder (defaultPlayer gameData), generateCard <| List.length currentCards ]
     )
 
 
@@ -812,7 +818,7 @@ deactivateAchievementHighlighting id viewState =
 
 
 
----- process functions ----
+---- Process Functions ----
 
 
 processKey : Key -> Model -> ( Model, Cmd Msg )
@@ -864,22 +870,8 @@ processKey key model =
                     Just _ ->
                         loadCard model game.nextCard
 
-        ( GameOver gameData game player _, Restart ) ->
-            ( Running gameData
-                { resources = startingResources
-                , unlockedCardIndexes = gameData.startingCardIndexes
-                , activeItemsIndexes = []
-                , currentCards = game.currentCards
-                , location = startingLocation
-                , card = Nothing
-                , nextCard = Nothing
-                , score = 0
-                }
-                player
-                Nothing
-                { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
-            , generateCard <| List.length game.currentCards
-            )
+        ( GameOver gameData _ player _, Restart ) ->
+            Running gameData (defaultGame gameData) player Nothing emptyViewState |> generatePossibleCard
 
         ( _, NumberKey pressedNumber ) ->
             let
@@ -1060,7 +1052,7 @@ generateCard length =
 
 
 
----- Normal functions ----
+---- Normal Functions ----
 
 
 {-| Creates a new List of Cards containing every card that is unlocked and from the current location
@@ -1093,9 +1085,9 @@ wrapText text =
     paragraph [ Font.center, defaultFont, defaultFontSize ] [ Element.text text ]
 
 
-textControls : String -> Element Msg
-textControls text =
-    paragraph [ Font.alignLeft, defaultFont, defaultFontSize, paddingXY 5 10 ] [ Element.text text ]
+styledText : String -> Element Msg
+styledText text =
+    el [ Font.center, defaultFont, defaultFontSize ] <| Element.text text
 
 
 
@@ -1108,25 +1100,13 @@ init flags =
         ( loadedData, playerData ) =
             flags
 
-        ( gameData, game ) =
+        gameData =
             case Data.fromResult <| Decode.decodeString gameDataDecoder loadedData of
                 Data.Success value ->
-                    ( value
-                    , { resources = startingResources
-                      , unlockedCardIndexes = value.startingCardIndexes
-                      , activeItemsIndexes = []
-                      , currentCards = getCurrentlyPossibleCards value.cards value.startingCardIndexes startingLocation
-                      , location = startingLocation
-                      , card = Nothing
-                      , nextCard = Nothing
-                      , score = 0
-                      }
-                    )
+                    value
 
                 Data.Failure _ ->
-                    ( { items = [], cards = [], startingCardIndexes = [], achievements = [] }
-                    , { resources = startingResources, unlockedCardIndexes = [], activeItemsIndexes = [], currentCards = [], location = startingLocation, card = Nothing, nextCard = Nothing, score = 0 }
-                    )
+                    emptyGameData
 
         player =
             Debug.log "player" <|
@@ -1135,11 +1115,10 @@ init flags =
                         pl
 
                     Data.Failure _ ->
-                        { startingCards = gameData.startingCardIndexes, unlockedAchievements = [], highscore = 0 }
+                        defaultPlayer gameData
     in
-    ( Running gameData game player Nothing { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
-    , generateCard <| List.length game.currentCards
-    )
+    Running gameData (defaultGame gameData) player Nothing emptyViewState
+        |> generatePossibleCard
 
 
 subscriptions : Model -> Sub Msg
