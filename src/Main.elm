@@ -176,7 +176,7 @@ view model =
 
                 else
                     [ el [ centerX, height fill, paddingXY 0 20 ] <|
-                        viewAchievements (modelToPlayer model) viewState.showAchievement
+                        viewAchievements (modelToGame model) (modelToPlayer model) viewState.showAchievement
                     ]
             , row [ width fill ]
                 [ controlsButton viewState.showControls
@@ -414,26 +414,29 @@ viewControls showControls =
         ]
 
 
-viewAchievements : Player -> Bool -> Element Msg
-viewAchievements player showAchievements =
+viewAchievements : Game -> Player -> Bool -> Element Msg
+viewAchievements game player showAchievements =
     let
         portrayAllAchievements achievementList =
             [ text "" ] ++ List.map achievementElement achievementList
 
         achievementElement achievement =
-            el [ padding 5 ] <|
-                Input.button [ width (minimum 100 fill), centerX, padding 10 ]
+            el [ padding 5, width fill ] <|
+                Input.button [ width fill, centerX, padding 10 ]
                     { onPress = Nothing
                     , label =
-                        wrappedRow [ centerX, width fill ]
-                            [ el [ width (maximum 100 shrink) ] <|
-                                image
+                        row [ centerX, width fill ]
+                            [ column [ width (maximum 100 shrink) ]
+                                [ image
                                     [ Background.color Color.transBlackLight, Border.rounded 3, centerX ]
-                                    { src = Achievement.achievementIdToAchievementUrl achievement
+                                    { src = Achievement.achievementIdToAchievementUrl achievement.id
                                     , description = ""
                                     }
-                            , el [ padding 5, height (minimum 50 shrink) ] <| el [ Font.center, defaultFont, defaultFontSize, centerX, centerY ] <| wrapText "Name"
-                            , el [ padding 5, width fill, height (minimum 50 shrink) ] <| el [ centerX, centerY ] <| wrapText "Description dddddddddddddddddddddddddddddddd dddddddddddddddddddddddddddddddddddd ddddddddddddd"
+                                ]
+                            , column [ width fill ]
+                                [ el [ padding 5, width fill ] <| el [ Font.center, defaultFont, defaultFontSize, centerX, centerY ] <| wrapText achievement.name
+                                , el [ padding 5, width fill, height (minimum 50 shrink) ] <| el [ centerX, centerY ] <| wrapText achievement.description
+                                ]
                             ]
                     }
     in
@@ -450,7 +453,7 @@ viewAchievements player showAchievements =
         , row [ width fill, height fill ]
             [ el [ scrollbarY, centerX, width fill, height (maximum 600 fill) ] <|
                 column [] <|
-                    portrayAllAchievements player.unlockedAchievements
+                    portrayAllAchievements game.allAchievements
             ]
         , row [ width fill ]
             [ Input.button [ Background.color Color.transRedHeavy, Font.color Color.white, Border.rounded 5, padding 5, width fill ]
