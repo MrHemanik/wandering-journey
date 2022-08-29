@@ -49,8 +49,8 @@ type Msg
     | GenerateNewCard
     | LoadFollowUpCard
     | ToggleItemDetails Int
-    | ShowControl Bool
-    | ShowAchievement Bool
+    | ShowControl
+    | ShowAchievement
     | DeletePlayerData
     | DeactivateAchievementHighlighting Int
 
@@ -172,7 +172,7 @@ view model =
                     [ viewResources game.resources
                     , viewLocation game.location
                     , if viewState.showControls then
-                        viewControls viewState.showControls
+                        viewControls
 
                       else
                         viewCard model
@@ -183,13 +183,13 @@ view model =
                         viewAchievements (modelToGameData model) viewState (modelToPlayer model)
                     ]
             , row [ width fill ]
-                [ controlsButton viewState.showControls
+                [ controlsButton
                 , if not viewState.showAchievement then
                     viewBag viewState game
 
                   else
                     el [ width fill ] <| none
-                , achievementButton viewState.showAchievement viewState
+                , achievementButton viewState
                 ]
             ]
 
@@ -397,8 +397,8 @@ viewCard model =
                 ]
 
 
-viewControls : Bool -> Element Msg
-viewControls showControls =
+viewControls : Element Msg
+viewControls =
     let
         keyRow text1 text2 key1 key2 =
             row []
@@ -418,7 +418,7 @@ viewControls showControls =
             , column [ centerX, width fill ]
                 [ wrapText "Controls" ]
             , Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
-                { onPress = Just (ShowControl (not showControls))
+                { onPress = Just ShowControl
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
                 }
             ]
@@ -495,7 +495,7 @@ viewAchievements gameData viewState player =
             , column [ centerX, width fill ]
                 [ wrapText "Achievements" ]
             , Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
-                { onPress = Just (ShowAchievement (not viewState.showAchievement))
+                { onPress = Just ShowAchievement
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
                 }
             ]
@@ -540,17 +540,17 @@ viewItemChanges flags items =
         flags
 
 
-controlsButton : Bool -> Element Msg
-controlsButton showControls =
+controlsButton : Element Msg
+controlsButton =
     el [ padding 5, alignBottom, width (px 170) ] <|
         Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
-            { onPress = Just (ShowControl (not showControls))
+            { onPress = Just ShowControl
             , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/controls.svg", description = "" }, wrapText "Controls" ]
             }
 
 
-achievementButton : Bool -> ViewState -> Element Msg
-achievementButton showAch viewState =
+achievementButton : ViewState -> Element Msg
+achievementButton viewState =
     el [ padding 5, alignBottom, width (px 170) ] <|
         Input.button
             ([ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5, alignRight ]
@@ -562,7 +562,7 @@ achievementButton showAch viewState =
                             []
                    )
             )
-            { onPress = Just (ShowAchievement (not showAch))
+            { onPress = Just ShowAchievement
             , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/achievements.svg", description = "" }, wrapText "Achievements" ]
             }
 
@@ -692,23 +692,23 @@ update msg model =
                 ( GameOver gameData game player viewState, ToggleItemDetails id ) ->
                     ( GameOver gameData game player (toggleItemDetails id viewState gameData), Cmd.none )
 
-                ( Running gameData game player choice viewState, ShowControl bool ) ->
-                    ( Running gameData game player choice { viewState | showControls = bool }, Cmd.none )
+                ( Running gameData game player choice viewState, ShowControl ) ->
+                    ( Running gameData game player choice (showControls viewState), Cmd.none )
 
-                ( GameOver gameData game player viewState, ShowControl bool ) ->
-                    ( GameOver gameData game player { viewState | showControls = bool }, Cmd.none )
+                ( GameOver gameData game player viewState, ShowControl ) ->
+                    ( GameOver gameData game player (showControls viewState), Cmd.none )
 
-                ( Running gameData game player choice viewState, ShowAchievement showAch ) ->
-                    ( Running gameData game player choice (showAchievement showAch viewState), Cmd.none )
+                ( Running gameData game player choice viewState, ShowAchievement ) ->
+                    ( Running gameData game player choice (showAchievement viewState), Cmd.none )
 
-                ( GameOver gameData game player viewState, ShowAchievement showAch ) ->
-                    ( GameOver gameData game player (showAchievement showAch viewState), Cmd.none )
+                ( GameOver gameData game player viewState, ShowAchievement ) ->
+                    ( GameOver gameData game player (showAchievement viewState), Cmd.none )
 
-                ( Running gameData game player _ _, DeletePlayerData ) ->
-                    deletePlayerData gameData game player
+                ( Running gameData _ player _ _, DeletePlayerData ) ->
+                    deletePlayerData gameData player
 
-                ( GameOver gameData game player _, DeletePlayerData ) ->
-                    deletePlayerData gameData game player
+                ( GameOver gameData _ player _, DeletePlayerData ) ->
+                    deletePlayerData gameData player
 
                 ( Running gameData game player choice viewState, DeactivateAchievementHighlighting id ) ->
                     ( Running gameData game player choice (deactivateAchievementHighlighting id viewState), Cmd.none )
@@ -721,7 +721,16 @@ update msg model =
 
 
 
----- update extra functions that can be used by buttons too ----
+---- update extra functions part 1: Normal functions ----
+
+
+isGameOver : Resources -> Bool
+isGameOver resources =
+    resources.hunger == 0 || resources.thirst == 0 || resources.physicalHealth == 0 || resources.mentalHealth == 0
+
+
+
+---- update extra functions part 2: Msg functions ----
 
 
 loadCard : Model -> Maybe Card -> ( Model, Cmd Msg )
@@ -756,27 +765,35 @@ toggleItemDetails id viewState gameData =
     }
 
 
-showAchievement : Bool -> ViewState -> ViewState
-showAchievement showAch viewState =
+showControls : ViewState -> ViewState
+showControls viewState =
+    { viewState | showControls = not viewState.showControls }
+
+
+showAchievement : ViewState -> ViewState
+showAchievement viewState =
     { viewState
-        | showAchievement = showAch
+        | showAchievement = not viewState.showAchievement
         , highlightedAchievements =
-            if showAch then
-                viewState.highlightedAchievements
+            if viewState.showAchievement then
+                []
 
             else
-                []
+                viewState.highlightedAchievements
     }
 
 
-deletePlayerData : GameData -> Game -> Player -> ( Model, Cmd Msg )
-deletePlayerData gameData game player =
-    --TODO: Game shouldn't be used here! game.currentCards is wrong, should be calculated new
+deletePlayerData : GameData -> Player -> ( Model, Cmd Msg )
+deletePlayerData gameData player =
+    let
+        currentCards =
+            getCurrentlyPossibleCards gameData.cards gameData.startingCardIndexes startingLocation
+    in
     ( Running gameData
         { resources = startingResources
         , unlockedCardIndexes = gameData.startingCardIndexes
         , activeItemsIndexes = []
-        , currentCards = game.currentCards
+        , currentCards = currentCards
         , location = startingLocation
         , card = Nothing
         , nextCard = Nothing
@@ -785,7 +802,7 @@ deletePlayerData gameData game player =
         player
         Nothing
         { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
-    , Cmd.batch [ savePlayerData <| Player.encoder { startingCards = gameData.startingCardIndexes, unlockedAchievements = [], highscore = 0 }, generateCard <| List.length game.currentCards ]
+    , Cmd.batch [ savePlayerData <| Player.encoder { startingCards = gameData.startingCardIndexes, unlockedAchievements = [], highscore = 0 }, generateCard <| List.length currentCards ]
     )
 
 
@@ -842,7 +859,7 @@ processKey key model =
             else
                 case game.nextCard of
                     Nothing ->
-                        ( model, generateCard <| List.length game.currentCards )
+                        generatePossibleCard model
 
                     Just _ ->
                         loadCard model game.nextCard
@@ -867,18 +884,10 @@ processKey key model =
         ( _, NumberKey pressedNumber ) ->
             let
                 numberToId indexList =
-                    Array.get (modBy 10 (pressedNumber - 1)) (Array.fromList indexList)
+                    Maybe.withDefault -1 <| Array.get (modBy 10 (pressedNumber - 1)) (Array.fromList indexList)
 
                 newViewState gameData game viewState =
-                    { viewState
-                        | item =
-                            case ( viewState.item, numberToId game.activeItemsIndexes ) of
-                                ( Nothing, Just i ) ->
-                                    ListHelper.idToObject i gameData.items
-
-                                ( _, _ ) ->
-                                    Nothing
-                    }
+                    toggleItemDetails (numberToId game.activeItemsIndexes) viewState gameData
             in
             case model of
                 GameOver gameData game player viewState ->
@@ -888,44 +897,23 @@ processKey key model =
                     ( Running gameData game player choice (newViewState gameData game viewState), Cmd.none )
 
         ( _, Controls ) ->
-            let
-                newViewState viewState =
-                    { viewState | showControls = not viewState.showControls }
-            in
             case model of
                 GameOver gameData game player viewState ->
-                    ( GameOver gameData game player (newViewState viewState), Cmd.none )
+                    ( GameOver gameData game player (showControls viewState), Cmd.none )
 
                 Running gameData game player choice viewState ->
-                    ( Running gameData game player choice (newViewState viewState), Cmd.none )
+                    ( Running gameData game player choice (showControls viewState), Cmd.none )
 
         ( _, Achievements ) ->
-            let
-                newViewState viewState =
-                    { viewState
-                        | showAchievement = not viewState.showAchievement
-                        , highlightedAchievements =
-                            if viewState.showAchievement then
-                                []
-
-                            else
-                                viewState.highlightedAchievements
-                    }
-            in
             case model of
                 GameOver gameData game player viewState ->
-                    ( GameOver gameData game player (newViewState viewState), Cmd.none )
+                    ( GameOver gameData game player (showAchievement viewState), Cmd.none )
 
                 Running gameData game player choice viewState ->
-                    ( Running gameData game player choice (newViewState viewState), Cmd.none )
+                    ( Running gameData game player choice (showAchievement viewState), Cmd.none )
 
         ( _, _ ) ->
             ( model, Cmd.none )
-
-
-isGameOver : Resources -> Bool
-isGameOver resources =
-    resources.hunger == 0 || resources.thirst == 0 || resources.physicalHealth == 0 || resources.mentalHealth == 0
 
 
 calculateResourcesOnChoice : Resources -> Choice -> Location -> Maybe Card -> Resources
