@@ -56,6 +56,7 @@ type Msg
     | ShowControl Bool
     | ShowAchievement Bool
     | DeletePlayerData
+    | DeactivateAchievementHighlighting Int
 
 
 type alias Game =
@@ -176,7 +177,7 @@ view model =
 
                 else
                     [ el [ centerX, height fill, paddingXY 0 20 ] <|
-                        viewAchievements (modelToGame model) (modelToPlayer model) viewState.showAchievement
+                        viewAchievements (modelToGame model) viewState
                     ]
             , row [ width fill ]
                 [ controlsButton viewState.showControls
@@ -414,16 +415,25 @@ viewControls showControls =
         ]
 
 
-viewAchievements : Game -> Player -> Bool -> Element Msg
-viewAchievements game player showAchievements =
+viewAchievements : Game -> ViewState -> Element Msg
+viewAchievements game viewState =
     let
         portrayAllAchievements achievementList =
             [ text "" ] ++ List.map achievementElement achievementList
 
         achievementElement achievement =
             el [ padding 5, width fill ] <|
-                Input.button [ width fill, centerX, padding 10 ]
-                    { onPress = Nothing
+                Input.button
+                    ([ Background.color Color.transWhiteHeavy, Border.rounded 7, width fill, centerX, padding 10 ]
+                        ++ (case List.member achievement.id viewState.newAchievements of
+                                True ->
+                                    [ Border.glow Color.red 2 ]
+
+                                False ->
+                                    []
+                           )
+                    )
+                    { onPress = Just (DeactivateAchievementHighlighting achievement.id)
                     , label =
                         row [ centerX, width fill ]
                             [ column [ width (maximum 100 shrink) ]
@@ -434,7 +444,7 @@ viewAchievements game player showAchievements =
                                     }
                                 ]
                             , column [ width fill ]
-                                [ el [ padding 5, width fill ] <| el [ Font.center, defaultFont, defaultFontSize, centerX, centerY ] <| wrapText achievement.name
+                                [ el [ padding 5, width fill ] <| column [ Font.center, defaultFont, defaultFontSize, centerX, centerY ] [ el [ paddingXY 20 3 ] <| wrapText achievement.name, el [ Border.width 1, Border.color Color.transBlackLight, centerX, width (maximum 600 fill) ] <| none ]
                                 , el [ padding 5, width fill, height (minimum 50 shrink) ] <| el [ centerX, centerY ] <| wrapText achievement.description
                                 ]
                             ]
@@ -446,7 +456,7 @@ viewAchievements game player showAchievements =
             , column [ centerX, width fill ]
                 [ wrapText "Achievements" ]
             , Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
-                { onPress = Just (ShowAchievement (not showAchievements))
+                { onPress = Just (ShowAchievement (not viewState.showAchievement))
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
                 }
             ]
@@ -668,6 +678,9 @@ update msg model =
                                 { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], selectedAchievement = Nothing }
                             , Cmd.batch [ savePlayerData <| Player.encoder { startingCards = game.defaultCardIndexes, unlockedAchievements = [], highscore = 0 }, generateCard <| List.length game.currentCards ]
                             )
+
+                        DeactivateAchievementHighlighting int ->
+                            ( Running choice game player highscore { viewState | newAchievements = ListHelper.removeEntriesFromList viewState.newAchievements [ int ] }, Cmd.none )
 
 
 processKey : Key -> Model -> ( Model, Cmd Msg )
@@ -1054,7 +1067,7 @@ init flags =
                         pl
 
                     Data.Failure _ ->
-                        { startingCards = game.defaultCardIndexes, unlockedAchievements = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ], highscore = 0 }
+                        { startingCards = game.defaultCardIndexes, unlockedAchievements = [], highscore = 0 }
     in
     ( Running Nothing game player 0 { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], selectedAchievement = Nothing }
     , generateCard <| List.length game.currentCards
