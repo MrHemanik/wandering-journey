@@ -333,24 +333,19 @@ viewCard model =
                                                         Right ->
                                                             c.decisionRight
 
-                                                itemElement item =
-                                                    case item of
-                                                        ( Nothing, _ ) ->
-                                                            none
+                                                itemElement ( item, bool ) =
+                                                    el [ Background.color Color.transBlackLight, Border.rounded 3, padding 7 ] <|
+                                                        el [ Background.color Color.transBlackLight, Background.uncropped (Item.itemIdToImageUrl item.id), width (px 50), height (px 50), centerX ] <|
+                                                            image
+                                                                [ Background.color Color.transWhite, Border.glow Color.transWhite 3, Border.rounded 5, width (px 20), height (px 20), alignTop ]
+                                                                { src =
+                                                                    if bool then
+                                                                        "src/img/plus.png"
 
-                                                        ( Just i, bool ) ->
-                                                            el [ Background.color Color.transBlackLight, Border.rounded 3, padding 7 ] <|
-                                                                el [ Background.color Color.transBlackLight, Background.uncropped (Item.itemIdToImageUrl i.id), width (px 50), height (px 50), centerX ] <|
-                                                                    image
-                                                                        [ Background.color Color.transWhite, Border.glow Color.transWhite 3, Border.rounded 5, width (px 20), height (px 20), alignTop ]
-                                                                        { src =
-                                                                            if bool == True then
-                                                                                "src/img/plus.png"
-
-                                                                            else
-                                                                                "src/img/minus.png"
-                                                                        , description = ""
-                                                                        }
+                                                                    else
+                                                                        "src/img/minus.png"
+                                                                , description = ""
+                                                                }
 
                                                 achievements achievementList =
                                                     List.map
@@ -505,19 +500,29 @@ viewAchievements gameData viewState player =
         ]
 
 
-viewItemChanges : List Flag -> List Item -> List ( Maybe Item, Bool )
+viewItemChanges : List Flag -> List Item -> List ( Item, Bool )
 viewItemChanges flags items =
-    List.map
+    List.filterMap
         (\flag ->
             case flag of
                 AddItem id ->
-                    ( ListHelper.idToObject id items, True )
+                    case ListHelper.idToObject id items of
+                        Nothing ->
+                            Nothing
+
+                        Just item ->
+                            Just ( item, True )
 
                 RemoveItem id ->
-                    ( ListHelper.idToObject id items, False )
+                    case ListHelper.idToObject id items of
+                        Nothing ->
+                            Nothing
+
+                        Just item ->
+                            Just ( item, False )
 
                 _ ->
-                    ( Nothing, False )
+                    Nothing
         )
         flags
 
@@ -907,11 +912,7 @@ processKey key model =
 
 isGameOver : Resources -> Bool
 isGameOver resources =
-    if resources.hunger == 0 || resources.thirst == 0 || resources.physicalHealth == 0 || resources.mentalHealth == 0 then
-        True
-
-    else
-        False
+    resources.hunger == 0 || resources.thirst == 0 || resources.physicalHealth == 0 || resources.mentalHealth == 0
 
 
 calculateResourcesOnChoice : Resources -> Choice -> Location -> Maybe Card -> Resources
@@ -983,15 +984,15 @@ processCardFlags inputModel =
             case ( flags, model ) of
                 ( x :: xs, Running gameData game player choice viewState ) ->
                     case x of
-                        ConditionalDecision condition overwriteSide decision ->
+                        ConditionalDecision condition overwriteSide newDecision ->
                             process xs <|
                                 (\g -> ( Running gameData g player choice viewState, cmd )) <|
-                                    case ( isCondition condition game, game.card, overwriteSide ) of
+                                    case ( isCondition condition game.activeItemsIndexes, game.card, overwriteSide ) of
                                         ( True, Just c, False ) ->
-                                            { game | card = Just { c | decisionLeft = decision } }
+                                            { game | card = Just { c | decisionLeft = newDecision } }
 
                                         ( True, Just c, True ) ->
-                                            { game | card = Just { c | decisionRight = decision } }
+                                            { game | card = Just { c | decisionRight = newDecision } }
 
                                         _ ->
                                             game
@@ -1010,11 +1011,11 @@ processCardFlags inputModel =
             process card.flags ( inputModel, Cmd.none )
 
 
-isCondition : Condition -> Game -> Bool
-isCondition condition game =
+isCondition : Condition -> List Int -> Bool
+isCondition condition activeItemsIndexes =
     case condition of
         OwnItem id ->
-            List.member id game.activeItemsIndexes
+            List.member id activeItemsIndexes
 
         Condition.Unknown ->
             False

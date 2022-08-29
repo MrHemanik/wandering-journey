@@ -8,16 +8,7 @@ removeEntriesFromList list removeList =
 
 addEntriesToList : List comparable -> List comparable -> List comparable
 addEntriesToList list addList =
-    case addList of
-        [] ->
-            list
-
-        x :: xs ->
-            if List.member x list then
-                addEntriesToList list xs
-
-            else
-                addEntriesToList (List.sort (x :: list)) xs
+    List.sort (list ++ removeEntriesFromList addList list)
 
 
 {-| Get an object with id 'id' from List Object
