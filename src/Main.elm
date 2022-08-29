@@ -38,10 +38,6 @@ port savePlayerData : Encode.Value -> Cmd msg
 ---- Data Types
 
 
-type alias Score =
-    Int
-
-
 type Model
     = GameOver GameData Game Player ViewState
     | Running GameData Game Player (Maybe Choice) ViewState
@@ -67,7 +63,7 @@ type alias Game =
     , location : Location
     , card : Maybe Card
     , nextCard : Maybe Card
-    , score : Score
+    , score : Int
     }
 
 
@@ -184,7 +180,7 @@ view model =
 
                 else
                     [ el [ centerX, height fill, paddingXY 0 20 ] <|
-                        viewAchievements (modelToGame model) viewState
+                        viewAchievements (modelToGameData model) viewState
                     ]
             , row [ width fill ]
                 [ controlsButton viewState.showControls
@@ -422,8 +418,8 @@ viewControls showControls =
         ]
 
 
-viewAchievements : Game -> ViewState -> Element Msg
-viewAchievements game viewState =
+viewAchievements : GameData -> ViewState -> Element Msg
+viewAchievements gameData viewState =
     let
         portrayAllAchievements achievementList =
             [ text "" ] ++ List.map achievementElement achievementList
@@ -470,7 +466,7 @@ viewAchievements game viewState =
         , row [ width fill, height fill ]
             [ el [ scrollbarY, centerX, width fill, height (maximum 600 fill) ] <|
                 column [] <|
-                    portrayAllAchievements game.allAchievements
+                    portrayAllAchievements gameData.achievements
             ]
         , row [ width fill ]
             [ Input.button [ Background.color Color.transRedHeavy, Font.color Color.white, Border.rounded 5, padding 5, width fill ]
@@ -684,7 +680,7 @@ update msg model =
                             )
 
                         DeactivateAchievementHighlighting int ->
-                            ( Running choice game player highscore { viewState | newAchievements = ListHelper.removeEntriesFromList viewState.newAchievements [ int ] }, Cmd.none )
+                            ( Running gameData game player choice { viewState | newAchievements = ListHelper.removeEntriesFromList viewState.newAchievements [ int ] }, Cmd.none )
 
 
 processKey : Key -> Model -> ( Model, Cmd Msg )
