@@ -29,14 +29,9 @@ addEntriesToList list addList =
 -}
 idToObject : Int -> List { a | id : Int } -> Maybe { a | id : Int }
 idToObject id idRecordList =
-    case List.filter (\x -> x.id == id) idRecordList of
-        [] ->
-            Nothing
-
-        x :: _ ->
-            Just x
+    List.head (List.filter (\x -> x.id == id) idRecordList)
 
 
-idListToObjectList : List Int -> List { a | id : Int } -> List (Maybe { a | id : Int })
+idListToObjectList : List Int -> List { a | id : Int } -> List { a | id : Int }
 idListToObjectList idList idRecordList =
-    List.map (\x -> idToObject x idRecordList) idList
+    List.filterMap identity <| List.map (\x -> idToObject x idRecordList) idList

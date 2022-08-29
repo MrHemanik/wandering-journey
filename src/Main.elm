@@ -333,9 +333,6 @@ viewCard model =
                                                         Right ->
                                                             c.decisionRight
 
-                                                itemsAddOrRemove itemList =
-                                                    List.map itemElement itemList
-
                                                 itemElement item =
                                                     case item of
                                                         ( Nothing, _ ) ->
@@ -357,16 +354,8 @@ viewCard model =
 
                                                 achievements achievementList =
                                                     List.map
-                                                        (\x ->
-                                                            case x of
-                                                                Nothing ->
-                                                                    el [] <| none
-
-                                                                Just aL ->
-                                                                    row [ centerX, spacing 10 ] <| [ achievementElement aL ]
-                                                        )
-                                                    <|
-                                                        ListHelper.idListToObjectList achievementList gameData.achievements
+                                                        (\x -> row [ centerX, spacing 10 ] <| [ achievementElement x ])
+                                                        (ListHelper.idListToObjectList achievementList gameData.achievements)
 
                                                 achievementElement achievement =
                                                     el [ Background.color Color.transWhite, Border.glow Color.green 2, Border.rounded 3, padding 7 ] <|
@@ -378,26 +367,10 @@ viewCard model =
                                                                 }
                                             in
                                             [ row [ width fill, padding 20 ] [ wrapText decision.pickedText ]
-                                            , row [ width fill ]
-                                                [ case viewItemChanges decision.flags gameData.items of
-                                                    [] ->
-                                                        none
-
-                                                    ( Nothing, _ ) :: _ ->
-                                                        none
-
-                                                    itemList ->
-                                                        row [ centerX, spacing 10, padding 10 ]
-                                                            (itemsAddOrRemove itemList
-                                                                ++ (case viewState.newAchievements of
-                                                                        [] ->
-                                                                            []
-
-                                                                        achievementsList ->
-                                                                            achievements achievementsList
-                                                                   )
-                                                            )
-                                                ]
+                                            , row [ centerX, spacing 10, padding 10 ]
+                                                (List.map itemElement (viewItemChanges decision.flags gameData.items)
+                                                    ++ achievements viewState.newAchievements
+                                                )
                                             , row [ width fill, alignBottom ]
                                                 [ Input.button [ width (minimum 100 fill) ]
                                                     { onPress =
@@ -534,20 +507,19 @@ viewAchievements gameData viewState player =
 
 viewItemChanges : List Flag -> List Item -> List ( Maybe Item, Bool )
 viewItemChanges flags items =
-    case flags of
-        [] ->
-            [ ( Nothing, False ) ]
-
-        x :: xs ->
-            case x of
+    List.map
+        (\flag ->
+            case flag of
                 AddItem id ->
-                    ( ListHelper.idToObject id items, True ) :: viewItemChanges xs items
+                    ( ListHelper.idToObject id items, True )
 
                 RemoveItem id ->
-                    ( ListHelper.idToObject id items, False ) :: viewItemChanges xs items
+                    ( ListHelper.idToObject id items, False )
 
                 _ ->
-                    viewItemChanges xs items
+                    ( Nothing, False )
+        )
+        flags
 
 
 controlsButton : Bool -> Element Msg
