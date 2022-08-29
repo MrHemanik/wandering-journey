@@ -753,70 +753,55 @@ update msg model =
 
 processKey : Key -> Model -> ( Model, Cmd Msg )
 processKey key model =
-    let
-        gameData =
-            modelToGameData model
+    case ( model, key ) of
+        ( Running gameData game _ oldChoice _, ChoiceKey choice ) ->
+            if oldChoice == Nothing then
+                let
+                    ( resource, flags ) =
+                        case ( choice, game.card ) of
+                            ( Left, Just c ) ->
+                                ( c.decisionLeft.resourceChange, c.decisionLeft.flags )
 
-        game =
-            modelToGame model
+                            ( Right, Just c ) ->
+                                ( c.decisionRight.resourceChange, c.decisionRight.flags )
 
-        player =
-            modelToPlayer model
-    in
-    case key of
-        ChoiceKey choice ->
-            case model of
-                GameOver _ _ _ _ ->
+                            ( _, _ ) ->
+                                ( { hunger = -100, thirst = -100, physicalHealth = -100, mentalHealth = -100, money = -100 }, [] )
+
+                    ( ( fpg, fpp ), ( fpv, flagProcessedCommand ) ) =
+                        case processFlags flags ( model, Cmd.none ) of
+                            ( GameOver _ g p v, cmd ) ->
+                                ( ( g, p ), ( v, cmd ) )
+
+                            ( Running _ g p _ v, cmd ) ->
+                                ( ( g, p ), ( v, cmd ) )
+                in
+                if isOptionAllowed game.resources resource then
+                    ( Running gameData
+                        { fpg
+                            | resources = calculateResourcesOnChoice fpg.resources choice fpg.location fpg.card
+                            , currentCards = getCurrentlyPossibleCards gameData.cards fpg.unlockedCardIndexes fpg.location
+                            , score = fpg.score + 50
+                        }
+                        fpp
+                        (Just choice)
+                        { fpv | item = Nothing, showControls = False, showAchievement = False }
+                    , flagProcessedCommand
+                    )
+
+                else
                     ( model, Cmd.none )
 
-                Running _ _ _ oldChoice _ ->
-                    if oldChoice == Nothing then
-                        let
-                            ( resource, flags ) =
-                                case ( choice, game.card ) of
-                                    ( Left, Just c ) ->
-                                        ( c.decisionLeft.resourceChange, c.decisionLeft.flags )
+            else
+                case game.nextCard of
+                    Nothing ->
+                        ( model, generateCard <| List.length game.currentCards )
 
-                                    ( Right, Just c ) ->
-                                        ( c.decisionRight.resourceChange, c.decisionRight.flags )
+                    Just _ ->
+                        -- Unsure if this is "clean" but feels unnecessary to define the same thing twice (and outsourcing in extra function makes it confusing)
+                        update LoadFollowUpCard model
 
-                                    ( _, _ ) ->
-                                        ( { hunger = -100, thirst = -100, physicalHealth = -100, mentalHealth = -100, money = -100 }, [] )
-
-                            ( ( fpg, fpp ), ( fpv, flagProcessedCommand ) ) =
-                                case processFlags flags ( model, Cmd.none ) of
-                                    ( GameOver _ g p v, cmd ) ->
-                                        ( ( g, p ), ( v, cmd ) )
-
-                                    ( Running _ g p _ v, cmd ) ->
-                                        ( ( g, p ), ( v, cmd ) )
-                        in
-                        if isOptionAllowed game.resources resource then
-                            ( Running gameData
-                                { fpg
-                                    | resources = calculateResourcesOnChoice fpg.resources choice fpg.location fpg.card
-                                    , currentCards = getCurrentlyPossibleCards gameData.cards fpg.unlockedCardIndexes fpg.location
-                                    , score = fpg.score + 50
-                                }
-                                fpp
-                                (Just choice)
-                                { fpv | item = Nothing, showControls = False, showAchievement = False }
-                            , flagProcessedCommand
-                            )
-
-                        else
-                            ( model, Cmd.none )
-
-                    else
-                        case game.nextCard of
-                            Nothing ->
-                                ( model, generateCard <| List.length game.currentCards )
-
-                            Just _ ->
-                                -- Unsure if this is "clean" but feels unnecessary to define the same thing twice (and outsourcing in extra function makes it confusing)
-                                update LoadFollowUpCard model
-
-        Restart ->
+        ( GameOver gameData game player _, Restart ) ->
             ( Running gameData
                 { resources = startingResources
                 , unlockedCardIndexes = gameData.startingCardIndexes
@@ -833,94 +818,70 @@ processKey key model =
             , generateCard <| List.length game.currentCards
             )
 
-        NumberKey int ->
+        ( _, NumberKey pressedNumber ) ->
             let
-                intToID indexList =
+                numberToId indexList =
                     Array.get
-                        (if int > 0 then
-                            int - 1
+                        (if pressedNumber > 0 && pressedNumber <= 9 then
+                            pressedNumber - 1
 
                          else
                             9
                         )
                         (Array.fromList indexList)
 
-                activeItemIndexesToItemList indexList allItems =
-                    case indexList of
-                        [] ->
-                            []
+                newViewState gameData game viewState =
+                    { viewState
+                        | item =
+                            case ( viewState.item, numberToId game.activeItemsIndexes ) of
+                                ( Nothing, Just i ) ->
+                                    ListHelper.idToObject i (ListHelper.idListToObjectList game.activeItemsIndexes gameData.items)
 
-                        x :: xs ->
-                            let
-                                item =
-                                    ListHelper.idToObject x allItems
-                            in
-                            case item of
-                                Nothing ->
-                                    activeItemIndexesToItemList xs allItems
-
-                                Just i ->
-                                    i :: activeItemIndexesToItemList xs allItems
+                                ( _, _ ) ->
+                                    Nothing
+                    }
             in
             case model of
-                GameOver _ _ _ _ ->
-                    ( model, Cmd.none )
+                GameOver gameData game player viewState ->
+                    ( GameOver gameData game player (newViewState gameData game viewState), Cmd.none )
 
-                Running _ _ _ choice viewState ->
-                    ( Running gameData
-                        game
-                        player
-                        choice
-                        { viewState
-                            | item =
-                                case ( viewState.item, intToID game.activeItemsIndexes ) of
-                                    ( Nothing, Just i ) ->
-                                        ListHelper.idToObject i (activeItemIndexesToItemList game.activeItemsIndexes gameData.items)
+                Running gameData game player choice viewState ->
+                    ( Running gameData game player choice (newViewState gameData game viewState), Cmd.none )
 
-                                    ( _, _ ) ->
-                                        Nothing
-                        }
-                    , Cmd.none
-                    )
+        ( _, Controls ) ->
+            let
+                newViewState viewState =
+                    { viewState | showControls = not viewState.showControls }
+            in
+            case model of
+                GameOver gameData game player viewState ->
+                    ( GameOver gameData game player (newViewState viewState), Cmd.none )
 
-        UnknownKey ->
+                Running gameData game player choice viewState ->
+                    ( Running gameData game player choice (newViewState viewState), Cmd.none )
+
+        ( _, Achievements ) ->
+            let
+                newViewState viewState =
+                    { viewState
+                        | showAchievement = not viewState.showAchievement
+                        , highlightedAchievements =
+                            if viewState.showAchievement then
+                                []
+
+                            else
+                                viewState.highlightedAchievements
+                    }
+            in
+            case model of
+                GameOver gameData game player viewState ->
+                    ( GameOver gameData game player (newViewState viewState), Cmd.none )
+
+                Running gameData game player choice viewState ->
+                    ( Running gameData game player choice (newViewState viewState), Cmd.none )
+
+        ( _, _ ) ->
             ( model, Cmd.none )
-
-        Controls ->
-            case model of
-                GameOver _ _ _ _ ->
-                    ( model, Cmd.none )
-
-                Running _ _ _ choice viewState ->
-                    ( Running gameData
-                        game
-                        player
-                        choice
-                        { viewState | showControls = not viewState.showControls }
-                    , Cmd.none
-                    )
-
-        Achievements ->
-            case model of
-                GameOver _ _ _ _ ->
-                    ( model, Cmd.none )
-
-                Running _ _ _ choice viewState ->
-                    ( Running gameData
-                        game
-                        player
-                        choice
-                        { viewState
-                            | showAchievement = not viewState.showAchievement
-                            , highlightedAchievements =
-                                if viewState.showAchievement then
-                                    []
-
-                                else
-                                    viewState.highlightedAchievements
-                        }
-                    , Cmd.none
-                    )
 
 
 isGameOver : Resources -> Bool
@@ -949,6 +910,8 @@ calculateResourcesOnChoice resources choice location maybeCard =
                 |> Resources.capResources
 
 
+{-| processes the flags of the new card that got loaded in which can be either the flags from the card itself or the flags of the decisions
+-}
 processFlags : List Flag -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 processFlags flags ( model, cmd ) =
     case ( flags, model ) of
@@ -990,6 +953,8 @@ processFlags flags ( model, cmd ) =
             ( model, cmd )
 
 
+{-| processes the flags of the main body from the new card that got loaded in
+-}
 processCardFlags : Model -> ( Model, Cmd Msg )
 processCardFlags inputModel =
     let
@@ -1024,6 +989,8 @@ processCardFlags inputModel =
             process card.flags ( inputModel, Cmd.none )
 
 
+{-| Checks if a condition is true
+-}
 isCondition : Condition -> List Int -> Bool
 isCondition condition activeItemsIndexes =
     case condition of
@@ -1034,6 +1001,8 @@ isCondition condition activeItemsIndexes =
             False
 
 
+{-| checks if 'id' is from a previously not owned achievement and either unlocks
+-}
 checkIfIdUnlocksAchievement : Int -> Player -> ViewState -> ( Player, ViewState, Cmd Msg )
 checkIfIdUnlocksAchievement id player vs =
     let
@@ -1050,9 +1019,10 @@ checkIfIdUnlocksAchievement id player vs =
 
 
 ---- Generator ----
-{- Generate an index of a card -}
 
 
+{-| Generate an index of a card
+-}
 generateCard : Int -> Cmd Msg
 generateCard length =
     let
@@ -1064,9 +1034,10 @@ generateCard length =
 
 
 ---- Normal functions ----
-{- Creates a new List of Cards containing every card that is unlocked and from the current location -}
 
 
+{-| Creates a new List of Cards containing every card that is unlocked and from the current location
+-}
 getCurrentlyPossibleCards : List Card -> List Int -> Location -> List Card
 getCurrentlyPossibleCards allCards unlockedCardsIndexes currentLocation =
     case allCards of
@@ -1113,15 +1084,11 @@ init flags =
         ( gameData, game ) =
             case Data.fromResult <| Decode.decodeString gameDataDecoder loadedData of
                 Data.Success value ->
-                    let
-                        currentCards =
-                            getCurrentlyPossibleCards value.cards value.startingCardIndexes startingLocation
-                    in
                     ( value
                     , { resources = startingResources
                       , unlockedCardIndexes = value.startingCardIndexes
                       , activeItemsIndexes = []
-                      , currentCards = currentCards
+                      , currentCards = getCurrentlyPossibleCards value.cards value.startingCardIndexes startingLocation
                       , location = startingLocation
                       , card = Nothing
                       , nextCard = Nothing

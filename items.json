@@ -2,7 +2,7 @@
   "items" : [{
     "id":0,
     "name": "Red crystal",
-    "description": "A mysterious crystal you bought from a strange merchant"
+    "description": "A mysterious crystal you bought from a strange merchant. There seems to be a symbol engraved on it"
   }, {
     "id":1,
     "name": "Lost Bag",
@@ -34,30 +34,22 @@
   }, {
     "id":8,
     "name": "Activated\nred crystal",
-    "description": "A mysterious crystal you bought from a strange merchant. It emits bright red light"
+    "description": "A mysterious crystal you bought from a strange merchant. It radiates bright red light"
   }, {
     "id":9,
     "name": "Green crystal",
-    "description": ""
+    "description": "A mysterious crystal found in the forest. There seems to be a symbol engraved on it"
   }, {
     "id":10,
     "name": "Activated green crystal",
-    "description": ""
-  }, {
-    "id":11,
-    "name": "Blue crystal",
-    "description": ""
-  }, {
-    "id":11,
-    "name": "Activated blue crystal",
-    "description": ""
+    "description": "A mysterious crystal found in the forest. It emits a dull green color"
   }, {
     "id":11,
     "name": "Yellow crystal",
-    "description": ""
+    "description": "A mysterious crystal found in the desert. There seems to be a symbol engraved on it"
   }, {
-    "id":11,
+    "id":12,
     "name": "Activated yellow crystal",
-    "description": ""
+    "description": "A mysterious crystal found in the desert."
   }]
 }

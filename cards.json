@@ -800,7 +800,75 @@
     "id":38,
     "possibleLocation": ["Forest"],
     "interaction":"Action",
-    "mainText":"Hunter",
+    "mainText":"As you walk through the forest a lone hunter catches your eye, looking rather concentrated",
+    "decisionLeft" : {
+      "choiceText":"Approach him",
+      "pickedText":"You approached the hunter, who noticed you a long time before. His prey on the other hand did not and ran away as soon as it heard you",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "flags":[{"followUp": 39}]
+    },
+    "decisionRight" : {
+      "choiceText":"Let him be",
+      "pickedText":"You did not want to bother the hunter so you let him be",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  }, {
+      "id":39,
+      "possibleLocation": ["Forest"],
+      "interaction":"Action",
+      "mainText":"\"I almost had him, what do you want?\". The hunter is annoyed with you",
+      "decisionLeft" : {
+        "choiceText":"Ask for the nearest city",
+        "pickedText":"\"I know my way around here. The nearest city is not that far off, I can show you if you want\"...",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+        "flags":[40]
+      },
+      "decisionRight" : {
+        "choiceText":"Apologize and go away",
+        "pickedText":"You apologized to the hunter for his lost prey and excused yourself",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+        "flags":[]
+      }
+  }, {
+    "id":40,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"The hunter offered you to guide you for the nearest city but only if you compensate him",
+    "decisionLeft" : {
+      "choiceText":"Pay him",
+      "pickedText":"You payed the hunter what he asked for and so he guided you through the forest to the nearest city",
+      "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":0, "mentalHealth":0, "money": -10},
+      "flags":[{"changeLocation": "City"}]
+    },
+    "decisionRight" : {
+      "choiceText":"Decline his offer",
+      "pickedText":"You declined his offer of an reliable way to the nearest city",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  }, {
+    "id":41,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"As you walk you notice smoke rising in the distance. In need for some company you wander towards it. Arriving there you notice a few traveller making camp",
+    "decisionLeft" : {
+      "choiceText":"Ask if you can rest with them",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"Ask if you can do some work for them",
+      "pickedText":"You asked for work in exchange for money. ",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  }, {
+    "id":42,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"",
     "decisionLeft" : {
       "choiceText":"",
       "pickedText":"",
@@ -814,21 +882,72 @@
       "flags":[]
     }
   }, {
-      "id":39,
-      "possibleLocation": ["Forest"],
-      "interaction":"Action",
-      "mainText":"",
-      "decisionLeft" : {
-        "choiceText":"",
-        "pickedText":"",
-        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-        "flags":[]
-      },
-      "decisionRight" : {
-        "choiceText":"",
-        "pickedText":"",
-        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
-        "flags":[]
+    "id":43,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"",
+    "decisionLeft" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  }, {
+    "id":44,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"",
+    "decisionLeft" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  }, {
+    "id":45,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"",
+    "decisionLeft" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
+    }
+  }, {
+    "id":46,
+    "possibleLocation": ["Forest"],
+    "interaction":"Action",
+    "mainText":"",
+    "decisionLeft" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "flags":[]
+    },
+    "decisionRight" : {
+      "choiceText":"",
+      "pickedText":"",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "flags":[]
       }}
   ]
 }
