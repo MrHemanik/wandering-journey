@@ -1,4 +1,4 @@
-module ListHelper exposing (addEntriesToList, idToObject, removeEntriesFromList)
+module ListHelper exposing (addEntriesToList, idListToObjectList, idToObject, removeEntriesFromList)
 
 
 removeEntriesFromList : List a -> List a -> List a
@@ -35,3 +35,8 @@ idToObject id idRecordList =
 
         x :: _ ->
             Just x
+
+
+idListToObjectList : List Int -> List { a | id : Int } -> List (Maybe { a | id : Int })
+idListToObjectList idList idRecordList =
+    List.map (\x -> idToObject x idRecordList) idList

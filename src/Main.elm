@@ -68,7 +68,7 @@ type alias Game =
 
 
 type alias ViewState =
-    { item : Maybe Item, showControls : Bool, showAchievement : Bool, newAchievements : List Int, selectedAchievement : Maybe Achievement }
+    { item : Maybe Item, showControls : Bool, showAchievement : Bool, newAchievements : List Int, highlightedAchievements : List Int, selectedAchievement : Maybe Achievement }
 
 
 type alias GameData =
@@ -309,7 +309,7 @@ viewCard model =
                     }
                 ]
 
-            Running gameData game _ maybeChoice _ ->
+            Running gameData game _ maybeChoice viewState ->
                 [ case game.card of
                     Just c ->
                         column [ width fill, height fill ]
@@ -354,6 +354,28 @@ viewCard model =
                                                                                 "src/img/minus.png"
                                                                         , description = ""
                                                                         }
+
+                                                achievements achievementList =
+                                                    List.map
+                                                        (\x ->
+                                                            case x of
+                                                                Nothing ->
+                                                                    el [] <| none
+
+                                                                Just aL ->
+                                                                    row [ centerX, spacing 10 ] <| [ achievementElement aL ]
+                                                        )
+                                                    <|
+                                                        ListHelper.idListToObjectList achievementList gameData.achievements
+
+                                                achievementElement achievement =
+                                                    el [ Background.color Color.transBlackLight, Border.rounded 3, padding 7 ] <|
+                                                        el [ Background.color Color.transBlackLight, Background.uncropped (Achievement.achievementIdToAchievementUrl achievement.id), width (px 50), height (px 50), centerX ] <|
+                                                            image
+                                                                [ Background.color Color.transWhite, Border.glow Color.transWhite 3, Border.rounded 5, width (px 20), height (px 20), alignTop ]
+                                                                { src = "src/img/achievementStar.png"
+                                                                , description = ""
+                                                                }
                                             in
                                             [ row [ width fill, padding 20 ] [ wrapText decision.pickedText ]
                                             , case viewItemChanges decision.flags gameData.items of
@@ -365,6 +387,12 @@ viewCard model =
 
                                                 list ->
                                                     itemsAddOrRemove list
+                                            , case viewState.newAchievements of
+                                                [] ->
+                                                    none
+
+                                                list ->
+                                                    column [] <| achievements list
                                             , row [ width fill, alignBottom ]
                                                 [ Input.button [ width (minimum 100 fill) ]
                                                     { onPress =
@@ -428,7 +456,7 @@ viewAchievements gameData viewState player =
             el [ padding 5, width fill ] <|
                 Input.button
                     ([ Background.color Color.transWhiteHeavy, Border.rounded 7, width fill, centerX, padding 10 ]
-                        ++ (case List.member achievement.id viewState.newAchievements of
+                        ++ (case List.member achievement.id viewState.highlightedAchievements of
                                 True ->
                                     [ Border.glow Color.red 2 ]
 
@@ -531,7 +559,7 @@ achievementButton showAchievement viewState =
     el [ padding 5, alignBottom, width (px 170) ] <|
         Input.button
             ([ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5, alignRight ]
-                ++ (case length viewState.newAchievements > 0 of
+                ++ (case length viewState.highlightedAchievements > 0 of
                         True ->
                             [ Border.glow Color.red 2 ]
 
@@ -657,18 +685,18 @@ update msg model =
                         updatedPlayer =
                             { player | highscore = max player.highscore game.score, unlockedAchievements = ListHelper.addEntriesToList player.unlockedAchievements newlyUnlockedAchievements }
                     in
-                    ( GameOver gameData game updatedPlayer { viewState | newAchievements = Debug.log "newnew" (ListHelper.addEntriesToList viewState.newAchievements newlyUnlockedAchievements) }, savePlayerData <| Player.encoder updatedPlayer )
+                    ( GameOver gameData game updatedPlayer { viewState | newAchievements = newlyUnlockedAchievements, highlightedAchievements = Debug.log "newnew" (ListHelper.addEntriesToList viewState.highlightedAchievements newlyUnlockedAchievements) }, savePlayerData <| Player.encoder updatedPlayer )
 
                 False ->
                     case msg of
                         NewCard newCardIndex ->
-                            processCardFlags (Running gameData { game | card = Card.getCardByIndex game.currentCards newCardIndex } player Nothing viewState)
+                            processCardFlags (Running gameData { game | card = Card.getCardByIndex game.currentCards newCardIndex } player Nothing { viewState | newAchievements = [] })
 
                         LoadFollowUpCard ->
                             processCardFlags (Running gameData { game | card = game.nextCard, nextCard = Nothing } player Nothing viewState)
 
                         Key key ->
-                            processKey key (Running gameData { game | activeItemsIndexes = Debug.log "items" game.activeItemsIndexes } player choice { viewState | newAchievements = Debug.log "new achievements: " viewState.newAchievements })
+                            processKey key model
 
                         GenerateNewCard ->
                             ( model, generateCard <| List.length game.currentCards )
@@ -690,19 +718,19 @@ update msg model =
                         ShowControl bool ->
                             ( Running gameData game player choice { viewState | showControls = bool }, Cmd.none )
 
-                        ShowAchievement bool ->
+                        ShowAchievement showAch ->
                             ( Running gameData
                                 game
                                 player
                                 choice
                                 { viewState
-                                    | showAchievement = bool
-                                    , newAchievements =
-                                        if not bool then
-                                            []
+                                    | showAchievement = showAch
+                                    , highlightedAchievements =
+                                        if showAch then
+                                            viewState.highlightedAchievements
 
                                         else
-                                            viewState.newAchievements
+                                            []
                                 }
                             , Cmd.none
                             )
@@ -720,12 +748,12 @@ update msg model =
                                 }
                                 player
                                 choice
-                                { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], selectedAchievement = Nothing }
+                                { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
                             , Cmd.batch [ savePlayerData <| Player.encoder { startingCards = gameData.startingCardIndexes, unlockedAchievements = [], highscore = 0 }, generateCard <| List.length game.currentCards ]
                             )
 
                         DeactivateAchievementHighlighting int ->
-                            ( Running gameData game player choice { viewState | newAchievements = ListHelper.removeEntriesFromList viewState.newAchievements [ int ] }, Cmd.none )
+                            ( Running gameData game player choice { viewState | highlightedAchievements = ListHelper.removeEntriesFromList viewState.highlightedAchievements [ int ] }, Cmd.none )
 
 
 processKey : Key -> Model -> ( Model, Cmd Msg )
@@ -806,7 +834,7 @@ processKey key model =
                 }
                 player
                 Nothing
-                { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], selectedAchievement = Nothing }
+                { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
             , generateCard <| List.length game.currentCards
             )
 
@@ -889,12 +917,12 @@ processKey key model =
                         choice
                         { viewState
                             | showAchievement = not viewState.showAchievement
-                            , newAchievements =
+                            , highlightedAchievements =
                                 if viewState.showAchievement then
                                     []
 
                                 else
-                                    viewState.newAchievements
+                                    viewState.highlightedAchievements
                         }
                     , Cmd.none
                     )
@@ -1026,7 +1054,7 @@ checkIfIdUnlocksAchievement id player vs =
             ( player, vs, Cmd.none )
 
         False ->
-            ( updatedPlayer, { vs | newAchievements = ListHelper.addEntriesToList [ id ] vs.newAchievements }, savePlayerData <| Player.encoder updatedPlayer )
+            ( updatedPlayer, { vs | newAchievements = [ id ], highlightedAchievements = ListHelper.addEntriesToList [ id ] vs.highlightedAchievements }, savePlayerData <| Player.encoder updatedPlayer )
 
 
 
@@ -1124,7 +1152,7 @@ init flags =
                     Data.Failure _ ->
                         { startingCards = gameData.startingCardIndexes, unlockedAchievements = [], highscore = 0 }
     in
-    ( Running gameData game player Nothing { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], selectedAchievement = Nothing }
+    ( Running gameData game player Nothing { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
     , generateCard <| List.length game.currentCards
     )
 
