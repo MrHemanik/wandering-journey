@@ -55,6 +55,7 @@ type Msg
     | ToggleItemDetails Int
     | ShowControl Bool
     | ShowAchievement Bool
+    | DeletePlayerData
 
 
 type alias Game =
@@ -173,7 +174,7 @@ view model =
 
                 else
                     [ el [ centerX, height fill, paddingXY 0 20 ] <|
-                        viewAchievements viewState.showAchievement
+                        viewAchievements (modelToPlayer model) viewState.showAchievement
                     ]
             , row [ width fill ]
                 [ controlsButton viewState.showControls
@@ -411,8 +412,26 @@ viewControls showControls =
         ]
 
 
-viewAchievements : Bool -> Element Msg
-viewAchievements showAchievements =
+viewAchievements : Player -> Bool -> Element Msg
+viewAchievements player showAchievements =
+    let
+        portrayAllItems itemList =
+            -- text "" as first element because when clicking the first element is always highlighted, with this an empty element will be highlighted, bypassing the highlight
+            [ text "" ] ++ List.map itemElement itemList
+
+        itemElement item =
+            Input.button [ width (minimum 100 fill), centerX ]
+                { onPress = Just (ToggleItemDetails item)
+                , label =
+                    wrappedRow [ centerX ]
+                        [ image
+                            [ Background.color Color.transBlackLight, Border.rounded 3, centerX ]
+                            { src = Item.itemIdToImageUrl item
+                            , description = ""
+                            }
+                        ]
+                }
+    in
     column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height fill, padding 20, Border.rounded 7 ]
         [ row [ width fill ]
             [ el [ width (px 40) ] <| none
@@ -421,6 +440,16 @@ viewAchievements showAchievements =
             , Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
                 { onPress = Just (ShowAchievement (not showAchievements))
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
+                }
+            ]
+        , row [ width fill, height fill ]
+            [ column [ centerX, height (minimum 100 shrink), width (minimum 100 shrink) ] <|
+                portrayAllItems player.unlockedAchievements
+            ]
+        , row [ width fill ]
+            [ Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5, width fill ]
+                { onPress = Just DeletePlayerData
+                , label = wrapText "Delete Player Data"
                 }
             ]
         ]
@@ -610,6 +639,9 @@ update msg model =
 
                         ShowAchievement bool ->
                             ( Running choice game player highscore { viewState | showAchievement = bool }, Cmd.none )
+
+                        DeletePlayerData ->
+                            ( model, savePlayerData <| Player.encoder { startingCards = game.defaultCardIndexes, unlockedAchievements = [], highscore = 0 } )
 
 
 processKey : Key -> Model -> ( Model, Cmd Msg )
@@ -994,7 +1026,7 @@ init flags =
                         pl
 
                     Data.Failure _ ->
-                        { startingCards = game.defaultCardIndexes, unlockedAchievements = [], highscore = 0 }
+                        { startingCards = game.defaultCardIndexes, unlockedAchievements = [ 0, 1, 2 ], highscore = 0 }
     in
     ( Running Nothing game player 0 { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], selectedAchievement = Nothing }
     , generateCard <| List.length game.currentCards
