@@ -431,6 +431,19 @@ viewCard model =
 
 viewControls : Bool -> Element Msg
 viewControls showControls =
+    let
+        keyRow text1 text2 key1 key2 =
+            row []
+                [ textControls text1
+                , column [ Background.uncropped "src/img/key.svg", width (px 50), height (px 50) ] [ el [ centerX, centerY, width fill, Font.center, defaultFont, Font.size 20 ] <| text key1 ]
+                , column [] [ wrapText text2 ]
+                , if key2 == "" then
+                    none
+
+                  else
+                    column [ Background.uncropped "src/img/key.svg", width (px 50), height (px 50) ] [ el [ centerX, centerY, width fill, Font.center, defaultFont, Font.size 20 ] <| text key2 ]
+                ]
+    in
     column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ]
         [ row [ width fill ]
             [ el [ width (px 40) ] <| none
@@ -442,11 +455,11 @@ viewControls showControls =
                 }
             ]
         , column [ width fill, paddingXY 0 25 ]
-            [ textControls "Choose an Option: Click on the option or press [left/right arrow key]"
-            , textControls "Toggle Item Details: Click on an Item or press [Number Key]"
-            , textControls "Toggle Achievements: Click on 'Achievements' or press [A]"
-            , textControls "Toggle Controls: Click on 'Controls' or press [C]"
-            , textControls "Restart Game: Press [R]"
+            [ keyRow "Choose an Option: Click on the option or press" "" "<-" "->"
+            , keyRow "Toggle Item Details: Click on an Item or press" "to" "1" "0"
+            , keyRow "Toggle Achievements: Click on 'Achievements' or press" "" "A" ""
+            , keyRow "Toggle Controls: Click on 'Controls' or press" "" "C" ""
+            , keyRow "Restart Game: Press" "" "R" ""
             ]
         ]
 
