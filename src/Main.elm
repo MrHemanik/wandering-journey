@@ -685,10 +685,10 @@ update msg model =
                 False ->
                     case msg of
                         NewCard newCardIndex ->
-                            processCardFlags (Running gameData { game | card = Card.getCardByIndex game.currentCards newCardIndex } player Nothing { viewState | newAchievements = [] })
+                            loadCard model <| Card.getCardByIndex game.currentCards newCardIndex
 
                         LoadFollowUpCard ->
-                            processCardFlags (Running gameData { game | card = game.nextCard, nextCard = Nothing } player Nothing viewState)
+                            loadCard model game.nextCard
 
                         Key key ->
                             processKey key model
@@ -751,6 +751,20 @@ update msg model =
                             ( Running gameData game player choice { viewState | highlightedAchievements = ListHelper.removeEntriesFromList viewState.highlightedAchievements [ int ] }, Cmd.none )
 
 
+loadCard : Model -> Maybe Card -> ( Model, Cmd Msg )
+loadCard model cardToLoad =
+    let
+        ( ( gameData, game ), ( player, viewState ) ) =
+            case model of
+                Running gd g p _ vs ->
+                    ( ( gd, g ), ( p, vs ) )
+
+                GameOver gd g p vs ->
+                    ( ( gd, g ), ( p, vs ) )
+    in
+    processCardFlags (Running gameData { game | card = cardToLoad, nextCard = Nothing } player Nothing { viewState | newAchievements = [] })
+
+
 processKey : Key -> Model -> ( Model, Cmd Msg )
 processKey key model =
     case ( model, key ) of
@@ -798,8 +812,7 @@ processKey key model =
                         ( model, generateCard <| List.length game.currentCards )
 
                     Just _ ->
-                        -- Unsure if this is "clean" but feels unnecessary to define the same thing twice (and outsourcing in extra function makes it confusing)
-                        update LoadFollowUpCard model
+                        loadCard model game.nextCard
 
         ( GameOver gameData game player _, Restart ) ->
             ( Running gameData
