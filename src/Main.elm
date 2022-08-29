@@ -101,7 +101,7 @@ startingResources =
 
 
 startingLocation =
-    Location.Desert
+    Location.City
 
 
 
@@ -160,42 +160,56 @@ view model =
     in
     viewBackground game.location <|
         column [ width fill, height fill ]
-            [ viewResources game.resources
-            , viewLocation game.location
-            , if viewState.showControls then
-                viewControls viewState.showControls
+            [ column [ width fill, height fill ] <|
+                if not viewState.showAchievement then
+                    [ viewResources game.resources
+                    , viewLocation game.location
+                    , if viewState.showControls then
+                        viewControls viewState.showControls
 
-              else if viewState.showAchievement then
-                viewAchievements viewState.showAchievement
+                      else
+                        viewCard model
+                    ]
 
-              else
-                viewCard model
+                else
+                    [ el [ centerX, height fill, paddingXY 0 20 ] <|
+                        viewAchievements viewState.showAchievement
+                    ]
             , row [ width fill ]
                 [ controlsButton viewState.showControls
-                , el [ centerX, paddingXY 0 20 ] <|
-                    el
-                        ([ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color Color.black, centerX, width (minimum 100 (maximum 800 fill)) ]
-                            ++ (case viewState.item of
-                                    Nothing ->
-                                        [ scrollbarX ]
+                , if not viewState.showAchievement then
+                    viewBag viewState game
 
-                                    Just _ ->
-                                        []
-                               )
-                        )
-                    <|
-                        column []
-                            -- column is important, without it the scroll bar doesn't work right (not showing every item)
-                            [ case viewState.item of
-                                Nothing ->
-                                    viewItems game.activeItemsIndexes
-
-                                Just i ->
-                                    viewItemDetail i
-                            ]
+                  else
+                    el [ width fill ] <| none
                 , achievementButton viewState.showAchievement
                 ]
             ]
+
+
+viewBag : ViewState -> Game -> Element Msg
+viewBag viewState game =
+    el [ centerX, paddingXY 0 20 ] <|
+        el
+            ([ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color Color.black, centerX, width (minimum 100 (maximum 800 fill)) ]
+                ++ (case viewState.item of
+                        Nothing ->
+                            [ scrollbarX ]
+
+                        Just _ ->
+                            []
+                   )
+            )
+        <|
+            column []
+                -- column is important, without it the scroll bar doesn't work right (not showing every item)
+                [ case viewState.item of
+                    Nothing ->
+                        viewItems game.activeItemsIndexes
+
+                    Just i ->
+                        viewItemDetail i
+                ]
 
 
 viewBackground : Location -> Element Msg -> Html Msg
@@ -399,13 +413,13 @@ viewControls showControls =
 
 viewAchievements : Bool -> Element Msg
 viewAchievements showAchievements =
-    column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ]
+    column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height fill, padding 20, Border.rounded 7 ]
         [ row [ width fill ]
             [ el [ width (px 40) ] <| none
             , column [ centerX, width fill ]
                 [ wrapText "Achievements" ]
             , Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
-                { onPress = Just (ShowControl (not showAchievements))
+                { onPress = Just (ShowAchievement (not showAchievements))
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
                 }
             ]
