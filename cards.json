@@ -1,5 +1,5 @@
 {
-  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,39],
+  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,41],
   "cards" : [{
     "id":0,
     "possibleLocation": ["City"],
@@ -822,7 +822,7 @@
         "choiceText":"Ask for the nearest city",
         "pickedText":"\"I know my way around here. The nearest city is not that far off, I can show you if you want\"...",
         "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-        "flags":[40]
+        "flags":[{"followUp":40}]
       },
       "decisionRight" : {
         "choiceText":"Apologize and go away",
@@ -860,7 +860,7 @@
     },
     "decisionRight" : {
       "choiceText":"Ask if you can do some work for them",
-      "pickedText":"You asked for work in exchange for money. ",
+      "pickedText":"You asked for work in exchange for money",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
     }

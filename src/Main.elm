@@ -821,21 +821,14 @@ processKey key model =
         ( _, NumberKey pressedNumber ) ->
             let
                 numberToId indexList =
-                    Array.get
-                        (if pressedNumber > 0 && pressedNumber <= 9 then
-                            pressedNumber - 1
-
-                         else
-                            9
-                        )
-                        (Array.fromList indexList)
+                    Array.get (modBy 10 (pressedNumber - 1)) (Array.fromList indexList)
 
                 newViewState gameData game viewState =
                     { viewState
                         | item =
                             case ( viewState.item, numberToId game.activeItemsIndexes ) of
                                 ( Nothing, Just i ) ->
-                                    ListHelper.idToObject i (ListHelper.idListToObjectList game.activeItemsIndexes gameData.items)
+                                    ListHelper.idToObject i gameData.items
 
                                 ( _, _ ) ->
                                     Nothing
