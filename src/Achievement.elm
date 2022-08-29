@@ -1,4 +1,4 @@
-module Achievement exposing (Achievement, checkDistance, unlockAchievement)
+module Achievement exposing (Achievement, achievementIdToAchievementUrl, checkDistance, unlockAchievement)
 
 import ListHelper
 import Player exposing (Player)
@@ -28,3 +28,8 @@ checkDistance score =
 unlockAchievement : Int -> Player -> Player
 unlockAchievement id player =
     { player | unlockedAchievements = ListHelper.addEntriesToList player.unlockedAchievements [ id ] }
+
+
+achievementIdToAchievementUrl : Int -> String
+achievementIdToAchievementUrl id =
+    "src/img/achievements/" ++ String.fromInt id ++ ".png"

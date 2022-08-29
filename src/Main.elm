@@ -12,7 +12,7 @@ import Condition exposing (Condition(..))
 import Data
 import Decision exposing (Decision)
 import DecodeHelper
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerX, centerY, clip, column, el, fill, height, image, layout, maximum, minimum, none, padding, paddingXY, paragraph, px, row, scrollbarX, shrink, spaceEvenly, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerX, centerY, clip, column, el, fill, height, image, layout, maximum, minimum, none, padding, paddingXY, paragraph, px, row, scrollbarX, scrollbarY, shrink, spaceEvenly, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -415,25 +415,28 @@ viewControls showControls =
 viewAchievements : Player -> Bool -> Element Msg
 viewAchievements player showAchievements =
     let
-        portrayAllItems itemList =
-            -- text "" as first element because when clicking the first element is always highlighted, with this an empty element will be highlighted, bypassing the highlight
-            [ text "" ] ++ List.map itemElement itemList
+        portrayAllAchievements achievementList =
+            [ text "" ] ++ List.map achievementElement achievementList
 
-        itemElement item =
-            Input.button [ width (minimum 100 fill), centerX ]
-                { onPress = Just (ToggleItemDetails item)
-                , label =
-                    wrappedRow [ centerX ]
-                        [ image
-                            [ Background.color Color.transBlackLight, Border.rounded 3, centerX ]
-                            { src = Item.itemIdToImageUrl item
-                            , description = ""
-                            }
-                        ]
-                }
+        achievementElement achievement =
+            el [ padding 5 ] <|
+                Input.button [ width (minimum 100 fill), centerX, padding 10 ]
+                    { onPress = Nothing
+                    , label =
+                        wrappedRow [ centerX, width fill ]
+                            [ el [ width (maximum 100 shrink) ] <|
+                                image
+                                    [ Background.color Color.transBlackLight, Border.rounded 3, centerX ]
+                                    { src = Achievement.achievementIdToAchievementUrl achievement
+                                    , description = ""
+                                    }
+                            , el [ padding 5, height (minimum 50 shrink) ] <| el [ Font.center, defaultFont, defaultFontSize, centerX, centerY ] <| wrapText "Name"
+                            , el [ padding 5, width fill, height (minimum 50 shrink) ] <| el [ centerX, centerY ] <| wrapText "Description dddddddddddddddddddddddddddddddd dddddddddddddddddddddddddddddddddddd ddddddddddddd"
+                            ]
+                    }
     in
     column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height fill, padding 20, Border.rounded 7 ]
-        [ row [ width fill ]
+        [ row [ width fill, paddingXY 0 20 ]
             [ el [ width (px 40) ] <| none
             , column [ centerX, width fill ]
                 [ wrapText "Achievements" ]
@@ -443,11 +446,12 @@ viewAchievements player showAchievements =
                 }
             ]
         , row [ width fill, height fill ]
-            [ column [ centerX, height (minimum 100 shrink), width (minimum 100 shrink) ] <|
-                portrayAllItems player.unlockedAchievements
+            [ el [ scrollbarY, centerX, width fill, height (maximum 600 fill) ] <|
+                column [] <|
+                    portrayAllAchievements player.unlockedAchievements
             ]
         , row [ width fill ]
-            [ Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5, width fill ]
+            [ Input.button [ Background.color Color.transRedHeavy, Font.color Color.white, Border.rounded 5, padding 5, width fill ]
                 { onPress = Just DeletePlayerData
                 , label = wrapText "Delete Player Data"
                 }
@@ -641,7 +645,23 @@ update msg model =
                             ( Running choice game player highscore { viewState | showAchievement = bool }, Cmd.none )
 
                         DeletePlayerData ->
-                            ( model, savePlayerData <| Player.encoder { startingCards = game.defaultCardIndexes, unlockedAchievements = [], highscore = 0 } )
+                            ( Running Nothing
+                                { resources = startingResources
+                                , allItems = game.allItems
+                                , allCards = game.allCards
+                                , defaultCardIndexes = game.defaultCardIndexes
+                                , unlockedCardIndexes = game.defaultCardIndexes
+                                , activeItemsIndexes = []
+                                , currentCards = game.currentCards
+                                , location = startingLocation
+                                , card = Nothing
+                                , nextCard = Nothing
+                                }
+                                player
+                                0
+                                { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], selectedAchievement = Nothing }
+                            , Cmd.batch [ savePlayerData <| Player.encoder { startingCards = game.defaultCardIndexes, unlockedAchievements = [], highscore = 0 }, generateCard <| List.length game.currentCards ]
+                            )
 
 
 processKey : Key -> Model -> ( Model, Cmd Msg )
@@ -1026,7 +1046,7 @@ init flags =
                         pl
 
                     Data.Failure _ ->
-                        { startingCards = game.defaultCardIndexes, unlockedAchievements = [ 0, 1, 2 ], highscore = 0 }
+                        { startingCards = game.defaultCardIndexes, unlockedAchievements = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ], highscore = 0 }
     in
     ( Running Nothing game player 0 { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], selectedAchievement = Nothing }
     , generateCard <| List.length game.currentCards
