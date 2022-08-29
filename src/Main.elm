@@ -453,9 +453,6 @@ viewControls =
 viewAchievements : GameData -> ViewState -> Player -> Element Msg
 viewAchievements gameData viewState player =
     let
-        portrayAllAchievements achievementList =
-            List.map achievementElement achievementList
-
         achievementElement achievement =
             el [ padding 5, width fill ] <|
                 Input.button
@@ -471,63 +468,49 @@ viewAchievements gameData viewState player =
                     { onPress = Just (DeactivateAchievementHighlighting achievement.id)
                     , label =
                         row [ centerX, width fill ]
-                            [ column [ width (maximum 100 shrink) ]
-                                [ el [ Background.color Color.transBlackLight, Border.rounded 3, padding 7 ] <|
-                                    el [ Background.uncropped (Achievement.achievementIdToAchievementUrl achievement.id), centerX ] <|
+                            [ el [ Background.color Color.transBlackLight, width (maximum 100 shrink), Border.rounded 3, padding 7 ] <|
+                                el [ Background.uncropped (Achievement.achievementIdToAchievementUrl achievement.id), width (px 64), height (px 64), centerX ] <|
+                                    if not (List.member achievement.id player.unlockedAchievements) then
                                         image
                                             [ Background.color Color.transWhite, width (px 64), height (px 64), Border.rounded 5, alignTop ]
-                                            { src =
-                                                if not (List.member achievement.id player.unlockedAchievements) then
-                                                    "src/img/lock.png"
+                                            { src = "src/img/lock.png", description = "" }
 
-                                                else
-                                                    Achievement.achievementIdToAchievementUrl achievement.id
-                                            , description = ""
-                                            }
-                                ]
+                                    else
+                                        none
                             , column [ width fill ]
-                                [ el [ padding 5, width fill ] <|
-                                    column [ Font.center, defaultFont, defaultFontSize, centerX, centerY, width fill ]
-                                        [ el [ paddingXY 20 3, width fill ] <|
-                                            if List.member achievement.id player.unlockedAchievements then
-                                                wrapText achievement.name
-
-                                            else
-                                                wrapText "???"
-                                        , el [ Border.width 1, Border.color Color.transBlackLight, centerX, width (maximum 600 fill) ] <| none
-                                        ]
-                                , el [ padding 5, width fill, height (minimum 50 shrink) ] <|
-                                    el [ centerX, centerY, width fill ] <|
-                                        if List.member achievement.id player.unlockedAchievements then
-                                            wrapText achievement.description
-
-                                        else
-                                            wrapText "???"
+                                [ achievementText achievement achievement.name
+                                , el [ Border.width 1, Border.color Color.transBlackLight, centerX, width (maximum 600 fill) ] <| none
+                                , achievementText achievement achievement.description
                                 ]
                             ]
                     }
+
+        achievementText achievement text =
+            el [ paddingXY 10 8, centerX, centerY ] <|
+                if List.member achievement.id player.unlockedAchievements then
+                    wrapText text
+
+                else
+                    wrapText "???"
     in
     column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height fill, padding 20, Border.rounded 7 ]
         [ row [ width fill, paddingXY 0 20 ]
             [ el [ width (px 40) ] <| none
-            , column [ centerX, width fill ]
-                [ wrapText "Achievements" ]
+            , wrapText "Achievements"
             , Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
                 { onPress = Just ShowAchievement
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
                 }
             ]
-        , row [ width fill, height fill ]
-            [ el [ scrollbarY, centerX, width fill, height (maximum 600 fill) ] <|
-                column [ width fill ] <|
-                    portrayAllAchievements gameData.achievements
-            ]
-        , row [ width fill ]
-            [ Input.button [ Background.color Color.transRedHeavy, Font.color Color.white, Border.rounded 5, padding 5, width fill ]
+        , el [ scrollbarY, centerX, width fill, height fill, Border.rounded 10 ] <|
+            column [ width fill ] <|
+                List.map achievementElement gameData.achievements
+        , el [ padding 10 ] <| none
+        , el [ width fill, alignBottom ] <|
+            Input.button [ Background.color Color.transRedHeavy, Font.color Color.white, Border.rounded 5, padding 5, width fill ]
                 { onPress = Just DeletePlayerData
                 , label = wrapText "Delete Player Data"
                 }
-            ]
         ]
 
 
