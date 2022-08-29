@@ -1,4 +1,4 @@
-module Location exposing (Location(..), decoder, fromText, toBackgroundImageUrl, toResourceDrain, toText)
+module Location exposing (Location(..), decoder, toBackgroundImageUrl, toResourceDrain, toText)
 
 import Json.Decode as Decode exposing (Decoder)
 import Resources exposing (Resources)
@@ -51,30 +51,14 @@ toText location =
             "Nonexistent Place"
 
 
-fromText : String -> Location
-fromText location =
-    case location of
-        "Desert" ->
-            Desert
-
-        "Forest" ->
-            Forest
-
-        "City" ->
-            City
-
-        _ ->
-            None
-
-
 toBackgroundImageUrl : Location -> String
 toBackgroundImageUrl location =
     "src/img/backgrounds/bg" ++ toText location ++ ".png"
 
 
-toResourceDrain :
-    Location
-    -> Resources -- Resources that get removed after a card from that location is played
+{-| Resources that get removed after a card from that location is played
+-}
+toResourceDrain : Location -> Resources
 toResourceDrain location =
     case location of
         Desert ->

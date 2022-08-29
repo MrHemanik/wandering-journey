@@ -91,7 +91,7 @@ defaultGame gameData =
     { resources = startingResources
     , unlockedCardIndexes = gameData.startingCardIndexes
     , activeItemsIndexes = []
-    , currentCards = getCurrentlyPossibleCards gameData.cards gameData.startingCardIndexes startingLocation
+    , currentCards = Card.getCurrentlyPossibleCards gameData.cards gameData.startingCardIndexes startingLocation
     , location = startingLocation
     , card = Nothing
     , nextCard = Nothing
@@ -223,31 +223,8 @@ view model =
             ]
 
 
-viewBag : ViewState -> Game -> Element Msg
-viewBag viewState game =
-    el [ centerX, paddingXY 0 20 ] <|
-        el
-            ([ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color Color.black, centerX, width (minimum 100 (maximum 800 fill)) ]
-                ++ (case viewState.item of
-                        Nothing ->
-                            [ scrollbarX ]
-
-                        Just _ ->
-                            []
-                   )
-            )
-        <|
-            column []
-                -- column is important, without it the scroll bar doesn't work right (not showing every item)
-                [ case viewState.item of
-                    Nothing ->
-                        viewItems game.activeItemsIndexes
-
-                    Just i ->
-                        viewItemDetail i
-                ]
-
-
+{-| Adds the background image to view, depending on location another background image is used
+-}
 viewBackground : Location -> Element Msg -> Html Msg
 viewBackground location content =
     layout [] <|
@@ -261,6 +238,8 @@ viewBackground location content =
             content
 
 
+{-| Shows the current resources
+-}
 viewResources : Resources -> Element Msg
 viewResources resources =
     let
@@ -305,12 +284,20 @@ viewResources resources =
             ]
 
 
+{-| Shows the current location
+<https://i.imgur.com/lZ5XZiN.png>
+-}
 viewLocation : Location -> Element Msg
 viewLocation location =
     el [ padding 5, width (minimum 400 (maximum 800 shrink)), centerX, Background.color Color.transBlack, Font.color Color.white, Border.rounded 5 ] <|
         wrapText ("You are currently in a " ++ Location.toText location)
 
 
+{-| Card Window
+Shows card info in every state + extra info about unlocked achievements and added/removed items from the item bag
+Before choice: <https://i.imgur.com/SPCTTW9.png>
+After choice: <https://i.imgur.com/4FMQxoC.png>
+-}
 viewCard : Model -> Element Msg
 viewCard model =
     let
@@ -426,6 +413,93 @@ viewCard model =
                 ]
 
 
+{-| portrays the button representing a choice
+<https://i.imgur.com/xYJF6F8.png>
+-}
+choiceButton : Resources -> Decision -> Choice -> Element Msg
+choiceButton resources decision choice =
+    column [ width fill ] <|
+        if Resources.isOptionAllowed resources decision.resourceChange then
+            [ Input.button [ width (minimum 100 fill) ]
+                { onPress = Just (Key (ChoiceKey choice))
+                , label =
+                    column [ width fill ] <|
+                        [ case choice of
+                            Left ->
+                                wrappedRow [ alignLeft, width fill ] [ arrowLeft, wrapText decision.choiceText, priceLabel decision.resourceChange.money ]
+
+                            Right ->
+                                wrappedRow [ alignRight, width fill, paddingXY 2 0 ] [ wrapText decision.choiceText, priceLabel decision.resourceChange.money, arrowRight ]
+                        ]
+                }
+            ]
+
+        else
+            [ wrapText decision.choiceText
+            , paragraph [ width (minimum 100 fill), Font.center, Font.color Color.red ] [ wrapText "Not enough money! " ]
+            ]
+
+
+{-| portrays the price of a choice that costs money
+price right: <https://i.imgur.com/jCjbDxq.png>
+price left: <https://i.imgur.com/NMhimI7.png>
+-}
+priceLabel : Int -> Element Msg
+priceLabel money =
+    if money < 0 then
+        el [ width <| minimum 40 <| maximum 100 fill ] <|
+            wrappedRow [ Background.color Color.transBlackLight, Border.width 2, Border.color Color.black, Border.rounded 3, centerX, padding 4 ]
+                [ wrapText <| String.fromInt money
+                , image [ width (px 30), height (px 30), centerX ] { src = "src/img/resources/money.svg", description = "" }
+                ]
+
+    else
+        none
+
+
+arrowLeft : Element Msg
+arrowLeft =
+    image [ width (px 40), height (px 40) ] { src = "src/img/arrowLeft.svg", description = "" }
+
+
+arrowRight : Element Msg
+arrowRight =
+    image [ width (px 40), height (px 40) ] { src = "src/img/arrowRight.svg", description = "" }
+
+
+{-| Shows the newly acquired and lost items from the bag in the card window
+an example with both an item added and removed from the bag: <https://i.imgur.com/97bJW2n.png>
+-}
+viewItemChanges : List Flag -> List Item -> List ( Item, Bool )
+viewItemChanges flags items =
+    List.filterMap
+        (\flag ->
+            case flag of
+                AddItem id ->
+                    case ListHelper.idToObject id items of
+                        Nothing ->
+                            Nothing
+
+                        Just item ->
+                            Just ( item, True )
+
+                RemoveItem id ->
+                    case ListHelper.idToObject id items of
+                        Nothing ->
+                            Nothing
+
+                        Just item ->
+                            Just ( item, False )
+
+                _ ->
+                    Nothing
+        )
+        flags
+
+
+{-| Control Window that shows how to control the game
+<https://i.imgur.com/lBsqrom.png>
+-}
 viewControls : Element Msg
 viewControls =
     let
@@ -450,6 +524,9 @@ viewControls =
         ]
 
 
+{-| Achievement Window that shows what achievements there are, which are unlocked and which are newly unlocked
+locked (??? cards), unlocked (normal) and highlighed (red glow): <https://i.imgur.com/r3tJwvV.png>
+-}
 viewAchievements : GameData -> ViewState -> Player -> Element Msg
 viewAchievements gameData viewState player =
     let
@@ -514,113 +591,39 @@ viewAchievements gameData viewState player =
         ]
 
 
-viewItemChanges : List Flag -> List Item -> List ( Item, Bool )
-viewItemChanges flags items =
-    List.filterMap
-        (\flag ->
-            case flag of
-                AddItem id ->
-                    case ListHelper.idToObject id items of
+{-| Item Bag that switches between an "all Items" and "details of item"
+-}
+viewBag : ViewState -> Game -> Element Msg
+viewBag viewState game =
+    el [ centerX, paddingXY 0 20 ] <|
+        row
+            ([ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color Color.black, width (minimum 100 (maximum 800 fill)) ]
+                ++ (case viewState.item of
                         Nothing ->
-                            Nothing
+                            [ scrollbarX ]
 
-                        Just item ->
-                            Just ( item, True )
-
-                RemoveItem id ->
-                    case ListHelper.idToObject id items of
-                        Nothing ->
-                            Nothing
-
-                        Just item ->
-                            Just ( item, False )
-
-                _ ->
-                    Nothing
-        )
-        flags
-
-
-controlsButton : Element Msg
-controlsButton =
-    el [ padding 5, alignBottom, width (px 170) ] <|
-        Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
-            { onPress = Just ShowControl
-            , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/controls.svg", description = "" }, wrapText "Controls" ]
-            }
-
-
-achievementButton : ViewState -> Element Msg
-achievementButton viewState =
-    el [ padding 5, alignBottom, width (px 170) ] <|
-        Input.button
-            ([ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5, alignRight ]
-                ++ (case length viewState.highlightedAchievements > 0 of
-                        True ->
-                            [ Border.glow Color.red 2 ]
-
-                        False ->
+                        Just _ ->
                             []
                    )
             )
-            { onPress = Just ShowAchievement
-            , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/achievements.svg", description = "" }, wrapText "Achievements" ]
-            }
+            [ case viewState.item of
+                Nothing ->
+                    viewItems game.activeItemsIndexes
 
-
-choiceButton : Resources -> Decision -> Choice -> Element Msg
-choiceButton resources decision choice =
-    column [ width fill ] <|
-        if isOptionAllowed resources decision.resourceChange then
-            [ Input.button [ width (minimum 100 fill) ]
-                { onPress = Just (Key (ChoiceKey choice))
-                , label =
-                    column [ width fill ] <|
-                        [ case choice of
-                            Left ->
-                                wrappedRow [ alignLeft, width fill ] [ arrowLeft, wrapText decision.choiceText, priceLabel decision.resourceChange.money ]
-
-                            Right ->
-                                wrappedRow [ alignRight, width fill, paddingXY 2 0 ] [ wrapText decision.choiceText, priceLabel decision.resourceChange.money, arrowRight ]
-                        ]
-                }
-            ]
-
-        else
-            [ wrapText decision.choiceText
-            , paragraph [ width (minimum 100 fill), Font.center, Font.color Color.red ] [ wrapText "Not enough money! " ]
+                Just i ->
+                    viewItemDetail i
             ]
 
 
-priceLabel : Int -> Element Msg
-priceLabel money =
-    if money < 0 then
-        el [ width <| minimum 40 <| maximum 100 fill ] <|
-            wrappedRow [ Background.color Color.transBlackLight, Border.width 2, Border.color Color.black, Border.rounded 3, centerX, padding 4 ]
-                [ wrapText <| String.fromInt money
-                , image [ width (px 30), height (px 30), centerX ] { src = "src/img/resources/money.svg", description = "" }
-                ]
-
-    else
-        none
-
-
-arrowLeft : Element Msg
-arrowLeft =
-    image [ width (px 40), height (px 40) ] { src = "src/img/arrowLeft.svg", description = "" }
-
-
-arrowRight : Element Msg
-arrowRight =
-    image [ width (px 40), height (px 40) ] { src = "src/img/arrowRight.svg", description = "" }
-
-
+{-| Shows all items owned in the current game
+2 items: <https://i.imgur.com/fcMgMB1.png>
+16 items: <https://i.imgur.com/tOfruo1.png>
+-}
 viewItems : List Int -> Element Msg
 viewItems items =
     let
         portrayAllItems itemList =
-            -- text "" as first element because when clicking the first element is always highlighted, with this an empty element will be highlighted, bypassing the highlight
-            [ text "" ] ++ List.map itemElement itemList
+            List.map itemElement itemList
 
         itemElement item =
             Input.button [ width (minimum 100 fill), centerX ]
@@ -639,6 +642,9 @@ viewItems items =
         portrayAllItems items
 
 
+{-| Shows a selected item in detail
+<https://i.imgur.com/V1zxy2D.png>
+-}
 viewItemDetail : Item -> Element Msg
 viewItemDetail item =
     row [ centerX, height (minimum 100 shrink), width (minimum 400 (maximum 800 fill)), spacing 20 ]
@@ -656,12 +662,66 @@ viewItemDetail item =
         ]
 
 
+{-| Button that opens the control window
+<https://i.imgur.com/4qbPtwG.png>
+-}
+controlsButton : Element Msg
+controlsButton =
+    el [ padding 5, alignBottom, width (px 170) ] <|
+        Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
+            { onPress = Just ShowControl
+            , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/controls.svg", description = "" }, wrapText "Controls" ]
+            }
+
+
+{-| Button that opens the achievement window
+normal: <https://i.imgur.com/D22iMCI.png>
+on new achievement: <https://i.imgur.com/SGJkog8.png>
+-}
+achievementButton : ViewState -> Element Msg
+achievementButton viewState =
+    el [ padding 5, alignBottom, width (px 170) ] <|
+        Input.button
+            ([ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5, alignRight ]
+                ++ (case length viewState.highlightedAchievements > 0 of
+                        True ->
+                            [ Border.glow Color.red 2 ]
+
+                        False ->
+                            []
+                   )
+            )
+            { onPress = Just ShowAchievement
+            , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/achievements.svg", description = "" }, wrapText "Achievements" ]
+            }
+
+
+{-| Stylized, centered text that also wraps when there is not enough space
+<https://i.imgur.com/4zdXpgl.png>
+-}
+wrapText : String -> Element Msg
+wrapText text =
+    paragraph [ Font.center, defaultFont, defaultFontSize ] [ Element.text text ]
+
+
+{-| Stylized text for when you want to incorporate other elements in text
+rows with styledText: <https://i.imgur.com/J78y1Fl.png>
+-}
+styledText : String -> Element Msg
+styledText text =
+    el [ Font.center, defaultFont, defaultFontSize ] <| Element.text text
+
+
 
 ---- Update ----
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    let
+        isGameOver resources =
+            resources.hunger <= 0 || resources.thirst <= 0 || resources.physicalHealth <= 0 || resources.mentalHealth <= 0
+    in
     case ( model, isGameOver (modelToGame model).resources ) of
         ( Running gameData game player _ viewState, True ) ->
             let
@@ -722,18 +782,11 @@ update msg model =
 
 
 
----- Update extra functions part 1: Normal functions ----
+---- Update extra functions: Msg functions ----
 
 
-isGameOver : Resources -> Bool
-isGameOver resources =
-    resources.hunger == 0 || resources.thirst == 0 || resources.physicalHealth == 0 || resources.mentalHealth == 0
-
-
-
----- Update extra functions part 2: Msg functions ----
-
-
+{-| Loads specified card and processes their card flags
+-}
 loadCard : Model -> Maybe Card -> ( Model, Cmd Msg )
 loadCard model cardToLoad =
     let
@@ -748,11 +801,15 @@ loadCard model cardToLoad =
     processCardFlags (Running gameData { game | card = cardToLoad, nextCard = Nothing } player Nothing { viewState | newAchievements = [] })
 
 
+{-| Generate a new card from the currentCards card pool
+-}
 generatePossibleCard : Model -> ( Model, Cmd Msg )
 generatePossibleCard model =
     ( model, generateCard <| List.length (modelToGame model).currentCards )
 
 
+{-| toggles between 'normal inventory' and 'item in detail' view of the item bag
+-}
 toggleItemDetails : Int -> ViewState -> GameData -> ViewState
 toggleItemDetails id viewState gameData =
     { viewState
@@ -766,11 +823,15 @@ toggleItemDetails id viewState gameData =
     }
 
 
+{-| toggles the control window
+-}
 showControls : ViewState -> ViewState
 showControls viewState =
     { viewState | showControls = not viewState.showControls }
 
 
+{-| toggles the achievement window
+-}
 showAchievement : ViewState -> ViewState
 showAchievement viewState =
     { viewState
@@ -784,17 +845,21 @@ showAchievement viewState =
     }
 
 
+{-| deletes all playerdata and starts a new run
+-}
 deletePlayerData : GameData -> ( Model, Cmd Msg )
 deletePlayerData gameData =
     let
         currentCards =
-            getCurrentlyPossibleCards gameData.cards gameData.startingCardIndexes startingLocation
+            Card.getCurrentlyPossibleCards gameData.cards gameData.startingCardIndexes startingLocation
     in
     ( Running gameData (defaultGame gameData) (defaultPlayer gameData) Nothing emptyViewState
     , Cmd.batch [ savePlayerData <| Player.encoder (defaultPlayer gameData), generateCard <| List.length currentCards ]
     )
 
 
+{-| removes id from achievements that are highlighted
+-}
 deactivateAchievementHighlighting : Int -> ViewState -> ViewState
 deactivateAchievementHighlighting id viewState =
     { viewState | highlightedAchievements = ListHelper.removeEntriesFromList viewState.highlightedAchievements [ id ] }
@@ -804,6 +869,8 @@ deactivateAchievementHighlighting id viewState =
 ---- Process Functions ----
 
 
+{-| Takes the input key and does an action according to it
+-}
 processKey : Key -> Model -> ( Model, Cmd Msg )
 processKey key model =
     case ( model, key ) of
@@ -829,11 +896,11 @@ processKey key model =
                             ( Running _ g p _ v, cmd ) ->
                                 ( ( g, p ), ( v, cmd ) )
                 in
-                if isOptionAllowed game.resources resource then
+                if Resources.isOptionAllowed game.resources resource then
                     ( Running gameData
                         { fpg
                             | resources = calculateResourcesOnChoice fpg.resources choice fpg.location fpg.card
-                            , currentCards = getCurrentlyPossibleCards gameData.cards fpg.unlockedCardIndexes fpg.location
+                            , currentCards = Card.getCurrentlyPossibleCards gameData.cards fpg.unlockedCardIndexes fpg.location
                             , score = fpg.score + 50
                         }
                         fpp
@@ -891,6 +958,10 @@ processKey key model =
             ( model, Cmd.none )
 
 
+{-| When a choice is made:
+add/remove the resources of the choice from the current resources
+remove the resources the location drains
+-}
 calculateResourcesOnChoice : Resources -> Choice -> Location -> Maybe Card -> Resources
 calculateResourcesOnChoice resources choice location maybeCard =
     case maybeCard of
@@ -912,7 +983,7 @@ calculateResourcesOnChoice resources choice location maybeCard =
                 |> Resources.capResources
 
 
-{-| processes the flags of the new card that got loaded in which can be either the flags from the card itself or the flags of the decisions
+{-| processes the flags from a card, which can be either the flags from the card itself or the flags of the decisions
 -}
 processFlags : List Flag -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 processFlags flags ( model, cmd ) =
@@ -955,7 +1026,9 @@ processFlags flags ( model, cmd ) =
             ( model, cmd )
 
 
-{-| processes the flags of the main body from the new card that got loaded in
+{-| processes the flags of the main body from a (new) card
+so on a CardFlag processCardFlags processes it,
+but on a general Flag it gets relayed to processFlags
 -}
 processCardFlags : Model -> ( Model, Cmd Msg )
 processCardFlags inputModel =
@@ -967,7 +1040,7 @@ processCardFlags inputModel =
                         ConditionalDecision condition overwriteSide newDecision ->
                             process xs <|
                                 (\g -> ( Running gameData g player choice viewState, cmd )) <|
-                                    case ( isCondition condition game.activeItemsIndexes, game.card, overwriteSide ) of
+                                    case ( Condition.isCondition condition game.activeItemsIndexes, game.card, overwriteSide ) of
                                         ( True, Just c, False ) ->
                                             { game | card = Just { c | decisionLeft = newDecision } }
 
@@ -991,18 +1064,6 @@ processCardFlags inputModel =
             process card.flags ( inputModel, Cmd.none )
 
 
-{-| Checks if a condition is true
--}
-isCondition : Condition -> List Int -> Bool
-isCondition condition activeItemsIndexes =
-    case condition of
-        OwnItem id ->
-            List.member id activeItemsIndexes
-
-        Condition.Unknown ->
-            False
-
-
 {-| checks if 'id' is from a previously not owned achievement and either unlocks
 -}
 checkIfIdUnlocksAchievement : Int -> Player -> ViewState -> ( Player, ViewState, Cmd Msg )
@@ -1023,7 +1084,8 @@ checkIfIdUnlocksAchievement id player vs =
 ---- Generator ----
 
 
-{-| Generate an index of a card
+{-| Generate an number between 0 and length-1
+used to generate the index of a card in currentCards
 -}
 generateCard : Int -> Cmd Msg
 generateCard length =
@@ -1032,45 +1094,6 @@ generateCard length =
             Random.int 0 (length - 1)
     in
     Random.generate NewCard generator
-
-
-
----- Normal Functions ----
-
-
-{-| Creates a new List of Cards containing every card that is unlocked and from the current location
--}
-getCurrentlyPossibleCards : List Card -> List Int -> Location -> List Card
-getCurrentlyPossibleCards allCards unlockedCardsIndexes currentLocation =
-    case allCards of
-        x :: xs ->
-            let
-                remainingList =
-                    getCurrentlyPossibleCards xs unlockedCardsIndexes currentLocation
-            in
-            if List.member x.id unlockedCardsIndexes && List.member currentLocation x.possibleLocation then
-                x :: remainingList
-
-            else
-                remainingList
-
-        [] ->
-            []
-
-
-isOptionAllowed : Resources -> Resources -> Bool
-isOptionAllowed gameResources choiceResources =
-    (gameResources.money + choiceResources.money) >= 0
-
-
-wrapText : String -> Element Msg
-wrapText text =
-    paragraph [ Font.center, defaultFont, defaultFontSize ] [ Element.text text ]
-
-
-styledText : String -> Element Msg
-styledText text =
-    el [ Font.center, defaultFont, defaultFontSize ] <| Element.text text
 
 
 

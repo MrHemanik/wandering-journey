@@ -1,4 +1,4 @@
-module Condition exposing (Condition(..), decoder)
+module Condition exposing (Condition(..), decoder, isCondition)
 
 import Json.Decode as Decode exposing (Decoder)
 
@@ -14,3 +14,15 @@ decoder =
         [ Decode.map OwnItem (Decode.field "ownItem" Decode.int)
         , Decode.succeed Unknown
         ]
+
+
+{-| Checks if a condition is true
+-}
+isCondition : Condition -> List Int -> Bool
+isCondition condition activeItemsIndexes =
+    case condition of
+        OwnItem id ->
+            List.member id activeItemsIndexes
+
+        Unknown ->
+            False

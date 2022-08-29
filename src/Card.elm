@@ -1,4 +1,4 @@
-module Card exposing (Card, decoder, getCardById, getCardByIndex)
+module Card exposing (Card, decoder, getCardById, getCardByIndex, getCurrentlyPossibleCards)
 
 import Array
 import CardFlag exposing (CardFlag)
@@ -49,3 +49,23 @@ getCardById allCards id =
 
             else
                 getCardById xs id
+
+
+{-| Creates a new List of Cards containing every card that is unlocked and from the specified location
+-}
+getCurrentlyPossibleCards : List Card -> List Int -> Location -> List Card
+getCurrentlyPossibleCards allCards unlockedCardsIndexes currentLocation =
+    case allCards of
+        x :: xs ->
+            let
+                remainingList =
+                    getCurrentlyPossibleCards xs unlockedCardsIndexes currentLocation
+            in
+            if List.member x.id unlockedCardsIndexes && List.member currentLocation x.possibleLocation then
+                x :: remainingList
+
+            else
+                remainingList
+
+        [] ->
+            []

@@ -1,4 +1,4 @@
-module Resources exposing (Resources, capResources, combine, deathMessage, decoder)
+module Resources exposing (Resources, capResources, combine, deathMessage, decoder, isOptionAllowed)
 
 import Json.Decode as Decode exposing (Decoder)
 
@@ -53,3 +53,10 @@ deathMessage resources =
 
     else
         "You died for an unknown reason. Nobody in this world knows what happened to you"
+
+
+{-| specifies if there is enough money for choiceResources option
+-}
+isOptionAllowed : Resources -> Resources -> Bool
+isOptionAllowed gameResources choiceResources =
+    (gameResources.money + choiceResources.money) >= 0
