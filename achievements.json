@@ -40,5 +40,13 @@
       "id": 9,
       "name": "All things must pass",
       "description": "Bless the lone soul"
+    },{
+      "id": 10,
+      "name": "Good Karma",
+      "description": "Find the house of the lost bags owner you helped out"
+    },{
+      "id": 11,
+      "name": "Thank god I brought flowers with me",
+      "description": "Place flowers a the burial"
     }]
 }

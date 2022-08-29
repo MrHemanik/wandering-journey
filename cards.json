@@ -201,17 +201,19 @@
       "pickedText":"A familiar face opens the door. The man whose bag you found invites you out of gratitude in to stay the night. You feel well rested",
       "resourceChange":  {"hunger":20, "thirst":20, "physicalHealth":30, "mentalHealth":30, "money": 0},
       "flags":[
-        {"removeCards":[9]}]
+        {"removeCards":[9]}
+      ,{"unlockAchievement": 10}]
     },
     "decisionRight" : {
       "choiceText":"Walk past the house",
       "pickedText":"As soon as you walk past the house a familiar face slams open the door. The man whose bag you found invites you out of gratitude in to stay the night. You feel well rested",
       "resourceChange":  {"hunger":20, "thirst":20, "physicalHealth":30, "mentalHealth":30, "money": 0},
-      "flags":[{"removeCards":[9]}]
+      "flags":[{"removeCards":[9]},
+        {"unlockAchievement": 10}]
     }
   }, {
     "id":10,
-    "possibleLocation": ["City, Forest"],
+    "possibleLocation": ["City", "Forest"],
     "mainText":"You see a tree with apples on it",
     "decisionLeft" : {
       "choiceText":"Pick up the apples from the ground",
@@ -927,9 +929,9 @@
         "overwriteSide": false,
         "decision": {
           "choiceText":"Lay your flowers to the cross",
-          "pickedText":"You made some space in the sand and placed your flowers to the cross. While doing so however you noticed a small box buried as well.",
-          "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":0},
-          "flags":[{"removeItem": 7}]
+          "pickedText":"You made some space in the sand and placed your flowers to the cross. While doing so however you noticed a small box buried as well. Inside of it is some money and a yellow crystal",
+          "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":10},
+          "flags":[{"removeItem": 7},{"addItem": 11}]
         }}}]
   }, {
     "id":48,
