@@ -57,7 +57,7 @@ type Msg
 
 type alias Game =
     { resources : Resources
-    , unlockedCardIndexes : List Int
+    , allowedCardIndexes : List Int
     , activeItemsIndexes : List Int
     , currentCards : List Card
     , location : Location
@@ -89,7 +89,7 @@ emptyViewState =
 
 defaultGame gameData =
     { resources = startingResources
-    , unlockedCardIndexes = gameData.startingCardIndexes
+    , allowedCardIndexes = gameData.startingCardIndexes
     , activeItemsIndexes = []
     , currentCards = Card.getCurrentlyPossibleCards gameData.cards gameData.startingCardIndexes startingLocation
     , location = startingLocation
@@ -900,7 +900,7 @@ processKey key model =
                     ( Running gameData
                         { fpg
                             | resources = calculateResourcesOnChoice fpg.resources choice fpg.location fpg.card
-                            , currentCards = Card.getCurrentlyPossibleCards gameData.cards fpg.unlockedCardIndexes fpg.location
+                            , currentCards = Card.getCurrentlyPossibleCards gameData.cards fpg.allowedCardIndexes fpg.location
                             , score = fpg.score + 50
                         }
                         fpp
@@ -1002,10 +1002,10 @@ processFlags flags ( model, cmd ) =
                         { game | activeItemsIndexes = ListHelper.removeEntriesFromList game.activeItemsIndexes [ id ] } |> (\g -> ( Running gameData g player choice viewState, cmd ))
 
                     AddCards list ->
-                        { game | unlockedCardIndexes = ListHelper.addEntriesToListAndSort game.unlockedCardIndexes list } |> (\g -> ( Running gameData g player choice viewState, cmd ))
+                        { game | allowedCardIndexes = ListHelper.addEntriesToListAndSort game.allowedCardIndexes list } |> (\g -> ( Running gameData g player choice viewState, cmd ))
 
                     RemoveCards list ->
-                        { game | unlockedCardIndexes = ListHelper.removeEntriesFromList game.unlockedCardIndexes list } |> (\g -> ( Running gameData g player choice viewState, cmd ))
+                        { game | allowedCardIndexes = ListHelper.removeEntriesFromList game.allowedCardIndexes list } |> (\g -> ( Running gameData g player choice viewState, cmd ))
 
                     ChangeLocation location ->
                         { game | location = location } |> (\g -> ( Running gameData g player choice viewState, cmd ))
