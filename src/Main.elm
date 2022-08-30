@@ -200,7 +200,7 @@ view model =
                 if not viewState.showAchievement then
                     [ viewResources game.resources
                     , viewLocation game.location
-                    , el [ paddingXY 0 5, centerX ] <| viewScore game.score
+                    , el [ paddingXY 0 5, centerX ] <| viewScore game.score "score"
                     , if viewState.showControls then
                         viewControls
 
@@ -294,10 +294,14 @@ viewLocation location =
         wrapText ("You are currently in a " ++ Location.toText location)
 
 
-viewScore : Int -> Element Msg
-viewScore score =
+viewScore : Int -> String -> Element Msg
+viewScore score string =
     el [ padding 5, width (minimum 400 (maximum 800 shrink)), centerX, Background.color Color.transBlack, Font.color Color.white, Border.rounded 5 ] <|
-        wrapText ("Meters traveled " ++ String.fromInt score)
+        if string == "score" then
+            wrapText ("Meters traveled " ++ String.fromInt score)
+
+        else
+            wrapText ("Most meters traveled " ++ String.fromInt score)
 
 
 {-| Card Window
@@ -586,6 +590,7 @@ viewAchievements gameData viewState player =
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
                 }
             ]
+        , viewScore player.highscore ""
         , el [ scrollbarY, centerX, width fill, height fill, Border.rounded 10 ] <|
             column [ width fill ] <|
                 List.map achievementElement gameData.achievements
