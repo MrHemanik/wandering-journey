@@ -1184,7 +1184,7 @@
         "choiceText":"Activate the stone",
         "pickedText":"The priest prepared a ritual in one of the chambers of this church with big runes drawn with chalk on the floor and two chickens in cages. You placed the crystal in the middle. The priest began speaking in an ancient language, making the yellow crystal glow with immense intensity. Simultaneously one of the chicken began to age while the other regressed in age until the first died and the second turned to nothingness. You take the crystal with you without looking the priest in the eye",
         "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
-        "flags":[{"removeItem": 11},{"addItem": 12},{"unlockAchievement": 14}]
+        "flags":[{"removeItem": 11},{"addItem": 12},{"unlockAchievement": 12}]
       },
       "decisionRight" : {
         "choiceText":"Decide against it",
@@ -1319,7 +1319,7 @@
       "choiceText":"Activate the stone",
       "pickedText":"The priest prepared a ritual in one of the chambers of this church with big runes drawn with chalk on the floor and two chickens in cages. You placed the crystal in the middle. The priest began speaking in an ancient language, making the yellow crystal glow with immense intensity. Simultaneously one of the chicken began to age while the other regressed in age until the first died and the second turned to nothingness. You take the crystal with you without looking the priest in the eye",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "flags":[{"removeItem": 11},{"addItem": 12},{"unlockAchievement": 14}]
+      "flags":[{"removeItem": 11},{"addItem": 12},{"unlockAchievement": 12}]
     },
     "decisionRight" : {
       "choiceText":"Decide against it",

@@ -206,15 +206,18 @@ view model =
                     [ viewResources game.resources
                     , viewLocation game.location
                     , el [ paddingXY 0 5, centerX ] <| viewScore game.score "score"
-                    , case ( viewState.showControls, viewState.showDeleteConfirmation ) of
-                        ( True, _ ) ->
+                    , case ( model, viewState.showControls, viewState.showDeleteConfirmation ) of
+                        ( _, True, _ ) ->
                             viewControls
 
-                        ( False, True ) ->
+                        ( _, False, True ) ->
                             viewDeleteConfirmation
 
-                        ( _, _ ) ->
+                        ( Running _ _ _ _ _, _, _ ) ->
                             viewCard model
+
+                        ( GameOver _ _ _ _, _, _ ) ->
+                            viewDeathScreen model
                     ]
 
                 else
@@ -303,6 +306,9 @@ viewLocation location =
         wrapText ("You are currently in a " ++ Location.toText location)
 
 
+{-| Shows how far you have travelled this run
+<https://i.imgur.com/WhHsrwJ.png>
+-}
 viewScore : Int -> String -> Element Msg
 viewScore score string =
     el [ padding 5, width (minimum 400 (maximum 800 shrink)), centerX, Background.color color.transBlack, Font.color color.white, Border.rounded 5 ] <|
@@ -313,13 +319,11 @@ viewScore score string =
             wrapText ("Most meters traveled: " ++ String.fromInt score)
 
 
-{-| Card Window
-Shows card info in every state + extra info about unlocked achievements and added/removed items from the item bag
-Before choice: <https://i.imgur.com/SPCTTW9.png>
-After choice: <https://i.imgur.com/4FMQxoC.png>
+{-| Shows the the GameOver Window
+<https://i.imgur.com/W42xSBT.png>
 -}
-viewCard : Model -> Element Msg
-viewCard model =
+viewDeathScreen : Model -> Element Msg
+viewDeathScreen model =
     let
         journeyLengthText score =
             if score <= 2500 then
@@ -330,12 +334,35 @@ viewCard model =
 
             else
                 "Your long Journey ends here."
+    in
+    case model of
+        GameOver gameData game _ _ ->
+            column [ centerX, centerY, Background.color color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ] <|
+                [ el [ width fill, padding 20 ] <|
+                    wrapText (journeyLengthText game.score)
+                , wrapText (Resources.deathMessage game.resources)
+                , el [ width fill, padding 20 ] <|
+                    wrapText ("Distance traveled:  " ++ String.fromInt game.score ++ " meters")
+                , row [ centerX, spacing 10, padding 10 ] <| achievementsInText (modelToViewState model).newAchievements gameData.achievements
+                , Input.button [ width (minimum 100 fill), alignBottom ]
+                    { onPress = Just (Key Restart)
+                    , label = row [ centerX ] [ styledText "New ", underlineFirstCharText "Run" ]
+                    }
+                ]
 
-        achievements achievementList =
-            List.map
-                (\x -> row [ centerX, spacing 10 ] <| [ achievementElement x ])
-                (ListHelper.idListToObjectList achievementList (modelToGameData model).achievements)
+        _ ->
+            none
 
+
+{-| Shows achievements from a list as an Element Msgs
+
+achievementsInText [4][{id = 0,..},..] == <https://i.imgur.com/rsOK0LM.png>
+achievementsInText [0,1][{id = 0,..},..] == <https://i.imgur.com/ux3fhhV.png>
+
+-}
+achievementsInText : List Int -> List Achievement -> List (Element Msg)
+achievementsInText achievementList allAchievements =
+    let
         achievementElement achievement =
             el [ Background.color color.transWhite, Border.glow color.green 2, Border.rounded 3, padding 7 ] <|
                 el [ Background.color color.transBlackLight, Background.uncropped (Achievement.achievementIdToAchievementUrl achievement.id), width (px 50), height (px 50), centerX ] <|
@@ -345,22 +372,20 @@ viewCard model =
                         , description = ""
                         }
     in
+    List.map
+        (\x -> row [ centerX, spacing 10 ] <| [ achievementElement x ])
+        (ListHelper.idListToObjectList achievementList allAchievements)
+
+
+{-| Card Window
+Shows card info in every state + extra info about unlocked achievements and added/removed items from the item bag
+Before choice: <https://i.imgur.com/SPCTTW9.png>
+After choice: <https://i.imgur.com/4FMQxoC.png>
+-}
+viewCard : Model -> Element Msg
+viewCard model =
     column [ centerX, centerY, Background.color color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ] <|
         case model of
-            --TODO: Put in own view and just (model, Cmd Msg) when GameOver here
-            GameOver _ game _ _ ->
-                [ el [ width fill, padding 20 ] <|
-                    wrapText (journeyLengthText game.score)
-                , wrapText (Resources.deathMessage game.resources)
-                , el [ width fill, padding 20 ] <|
-                    wrapText ("Distance traveled:  " ++ String.fromInt game.score ++ " meters")
-                , row [ centerX, spacing 10, padding 10 ] <| achievements (modelToViewState model).newAchievements
-                , Input.button [ width (minimum 100 fill), alignBottom ]
-                    { onPress = Just (Key Restart)
-                    , label = row [ centerX ] [ styledText "New ", underlineFirstCharText "Run" ]
-                    }
-                ]
-
             Running gameData game _ maybeChoice viewState ->
                 [ case game.card of
                     Just c ->
@@ -402,7 +427,7 @@ viewCard model =
                                             [ row [ width fill, paddingXY 0 20 ] [ wrapText decision.pickedText ]
                                             , row [ centerX, spacing 10, padding 10 ]
                                                 (List.map itemElement (viewItemChanges decision.flags gameData.items)
-                                                    ++ achievements viewState.newAchievements
+                                                    ++ achievementsInText viewState.newAchievements gameData.achievements
                                                 )
                                             , row [ width fill, alignBottom ]
                                                 [ Input.button [ width (minimum 100 fill) ]
@@ -433,6 +458,9 @@ viewCard model =
                     Nothing ->
                         none
                 ]
+
+            GameOver _ _ _ _ ->
+                [ none ]
 
 
 {-| portrays the button representing a choice
