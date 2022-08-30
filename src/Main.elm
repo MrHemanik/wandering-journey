@@ -683,7 +683,7 @@ controlsButton =
     el [ padding 5, alignBottom, width (px 170) ] <|
         Input.button [ Background.color color.transBlack, Font.color color.white, Border.rounded 5, padding 5 ]
             { onPress = Just ShowControl
-            , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/controls.svg", description = "" }, wrapText "Controls" ]
+            , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/controls.svg", description = "" }, underlineFirstCharText "Controls" ]
             }
 
 
@@ -705,7 +705,7 @@ achievementButton viewState =
                    )
             )
             { onPress = Just ShowAchievement
-            , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/achievements.svg", description = "" }, wrapText "Achievements" ]
+            , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/achievements.svg", description = "" }, underlineFirstCharText "Achievements" ]
             }
 
 
@@ -723,6 +723,18 @@ rows with styledText: <https://i.imgur.com/J78y1Fl.png>
 styledText : String -> Element Msg
 styledText text =
     el [ Font.center, defaultFont, defaultFontSize ] <| Element.text text
+
+
+underlineFirstCharText : String -> Element Msg
+underlineFirstCharText text =
+    let
+        ( firstChar, rest ) =
+            ( String.left 1 text, String.dropLeft 1 text )
+    in
+    row []
+        [ el [ Font.center, defaultFont, defaultFontSize, Font.underline ] <| Element.text firstChar
+        , styledText rest
+        ]
 
 
 
@@ -840,7 +852,7 @@ toggleItemDetails id viewState gameData =
 -}
 showControls : ViewState -> ViewState
 showControls viewState =
-    { viewState | showControls = not viewState.showControls }
+    { viewState | showControls = not viewState.showControls, showAchievement = False }
 
 
 {-| toggles the achievement window
@@ -849,6 +861,7 @@ showAchievement : ViewState -> ViewState
 showAchievement viewState =
     { viewState
         | showAchievement = not viewState.showAchievement
+        , showControls = False
         , highlightedAchievements =
             if viewState.showAchievement then
                 []
