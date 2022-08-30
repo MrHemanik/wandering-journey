@@ -51,6 +51,7 @@ type Msg
     | ToggleItemDetails Int
     | ShowControl
     | ShowAchievement
+    | ShowDeleteConfirmation
     | DeletePlayerData
     | DeactivateAchievementHighlighting Int
 
@@ -68,7 +69,7 @@ type alias Game =
 
 
 type alias ViewState =
-    { item : Maybe Item, showControls : Bool, showAchievements : Bool, newAchievements : List Int, highlightedAchievements : List Int, selectedAchievement : Maybe Achievement }
+    { item : Maybe Item, showControls : Bool, showAchievements : Bool, showDeleteConfirmation : Bool, newAchievements : List Int, highlightedAchievements : List Int, selectedAchievement : Maybe Achievement }
 
 
 type alias GameData =
@@ -84,7 +85,7 @@ emptyGameData =
 
 
 emptyViewState =
-    { item = Nothing, showControls = False, showAchievements = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
+    { item = Nothing, showControls = False, showAchievements = False, showDeleteConfirmation = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
 
 
 defaultGame gameData =
@@ -201,11 +202,15 @@ view model =
                     [ viewResources game.resources
                     , viewLocation game.location
                     , el [ paddingXY 0 5, centerX ] <| viewScore game.score "score"
-                    , if viewState.showControls then
-                        viewControls
+                    , case ( viewState.showControls, viewState.showDeleteConfirmation ) of
+                        ( True, _ ) ->
+                            viewControls
 
-                      else
-                        viewCard model
+                        ( False, True ) ->
+                            viewDeleteConfirmation
+
+                        ( _, _ ) ->
+                            viewCard model
                     ]
 
                 else
@@ -347,7 +352,7 @@ viewCard model =
                 , row [ centerX, spacing 10, padding 10 ] <| achievements (modelToViewState model).newAchievements
                 , Input.button [ width (minimum 100 fill), alignBottom ]
                     { onPress = Just (Key Restart)
-                    , label = wrapText "New Run"
+                    , label = row [ centerX ] [ styledText "New ", underlineFirstCharText "Run" ]
                     }
                 ]
 
@@ -514,10 +519,6 @@ viewItemChanges flags items =
 -}
 viewControls : Element Msg
 viewControls =
-    let
-        keyIcon keyText =
-            el [ Background.uncropped "src/img/key.svg", width (px 50), height (px 50) ] <| el [ centerX, centerY, width fill, Font.center, defaultFont, Font.size 20 ] <| text keyText
-    in
     column [ centerX, centerY, Background.color color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ]
         [ row [ width fill ]
             [ el [ width (px 40) ] <| none
@@ -533,12 +534,18 @@ viewControls =
         , wrappedRow [] [ styledText "Toggle Achievements: Click on 'Achievements' or press", keyIcon "A" ]
         , wrappedRow [] [ styledText "Toggle Controls: Click on 'Controls' or press", keyIcon "C" ]
         , wrappedRow [] [ styledText "Restart Game: Press", keyIcon "R" ]
+        , wrappedRow [] [ styledText "Delete Data: Click on the button in 'Achievements' or press", keyIcon "D", styledText "to open the menu" ]
         ]
 
 
 {-| Achievement Window that shows what achievements there are, which are unlocked and which are newly unlocked
 locked (??? cards), unlocked (normal) and highlighed (red glow): <https://i.imgur.com/r3tJwvV.png>
 -}
+keyIcon : String -> Element Msg
+keyIcon keyText =
+    el [ Background.uncropped "src/img/key.svg", width (px 50), height (px 50) ] <| el [ centerX, centerY, width fill, Font.center, defaultFont, Font.size 20 ] <| text keyText
+
+
 viewAchievements : GameData -> ViewState -> Player -> Element Msg
 viewAchievements gameData viewState player =
     let
@@ -598,8 +605,33 @@ viewAchievements gameData viewState player =
         , el [ padding 10 ] <| none
         , el [ width fill, alignBottom ] <|
             Input.button [ Background.color color.transRedHeavy, Font.color color.white, Border.rounded 5, padding 5, width fill ]
+                { onPress = Just ShowDeleteConfirmation
+                , label = el [ centerX ] <| underlineFirstCharText "Delete Player Data"
+                }
+        ]
+
+
+{-| -}
+viewDeleteConfirmation : Element Msg
+viewDeleteConfirmation =
+    column [ centerX, centerY, Background.color color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ]
+        [ row [ width fill ]
+            [ el [ width (px 40) ] <| none
+            , column [ centerX, width fill ]
+                [ paragraph [ Font.center, defaultFont, Font.size 35 ] [ text "Delete" ] ]
+            , Input.button [ Background.color color.transBlack, Font.color color.white, Border.rounded 5, padding 5 ]
+                { onPress = Just ShowDeleteConfirmation
+                , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
+                }
+            ]
+        , el [ padding 10 ] <| none
+        , wrapText "Are you sure you want to delete your player data? If you decide to delete your data, you will lose your highscore and unlocked achievements."
+        , wrappedRow [ centerX ] [ styledText "To continue, click on the button or press", keyIcon "D" ]
+        , wrapText "To go back, click on the X or open the controls or achievement window"
+        , el [ width fill, alignBottom ] <|
+            Input.button [ Background.color color.transRedHeavy, Font.color color.white, Border.rounded 5, padding 5, width fill ]
                 { onPress = Just DeletePlayerData
-                , label = wrapText "Delete Player Data"
+                , label = el [ centerX ] <| underlineFirstCharText "Delete Player Data"
                 }
         ]
 
@@ -790,11 +822,14 @@ update msg model =
                 ( GameOver gameData game player viewState, ShowAchievement ) ->
                     ( GameOver gameData game player (showAchievement viewState), Cmd.none )
 
-                ( Running gameData _ _ _ _, DeletePlayerData ) ->
-                    deletePlayerData gameData
+                ( Running gameData game player choice viewState, ShowDeleteConfirmation ) ->
+                    ( Running gameData game player choice (showDeletionConfirmation viewState), Cmd.none )
 
-                ( GameOver gameData _ _ _, DeletePlayerData ) ->
-                    deletePlayerData gameData
+                ( GameOver gameData game player viewState, ShowDeleteConfirmation ) ->
+                    ( GameOver gameData game player (showDeletionConfirmation viewState), Cmd.none )
+
+                ( _, DeletePlayerData ) ->
+                    deletePlayerData model
 
                 ( Running gameData game player choice viewState, DeactivateAchievementHighlighting id ) ->
                     ( Running gameData game player choice (deactivateAchievementHighlighting id viewState), Cmd.none )
@@ -852,7 +887,7 @@ toggleItemDetails id viewState gameData =
 -}
 showControls : ViewState -> ViewState
 showControls viewState =
-    { viewState | showControls = not viewState.showControls, showAchievements = False }
+    { viewState | showControls = not viewState.showControls, showAchievements = False, showDeleteConfirmation = False }
 
 
 {-| toggles the achievement window
@@ -862,6 +897,7 @@ showAchievement viewState =
     { viewState
         | showAchievements = not viewState.showAchievements
         , showControls = False
+        , showDeleteConfirmation = False
         , highlightedAchievements =
             if viewState.showAchievements then
                 []
@@ -871,17 +907,39 @@ showAchievement viewState =
     }
 
 
+{-| toggles the achievement window
+-}
+showDeletionConfirmation : ViewState -> ViewState
+showDeletionConfirmation viewState =
+    { viewState | showDeleteConfirmation = not viewState.showDeleteConfirmation, showAchievements = False, showControls = False }
+
+
 {-| deletes all playerdata and starts a new run
 -}
-deletePlayerData : GameData -> ( Model, Cmd Msg )
-deletePlayerData gameData =
+deletePlayerData : Model -> ( Model, Cmd Msg )
+deletePlayerData model =
     let
+        gameData =
+            modelToGameData model
+
+        viewState =
+            modelToViewState model
+
         currentCards =
             Card.getCurrentlyPossibleCards gameData.cards gameData.startingCardIndexes startingLocation
     in
-    ( Running gameData (defaultGame gameData) (defaultPlayer gameData) Nothing emptyViewState
-    , Cmd.batch [ savePlayerData <| Player.encoder (defaultPlayer gameData), generateCard <| List.length currentCards ]
-    )
+    if viewState.showDeleteConfirmation then
+        ( Running gameData (defaultGame gameData) (defaultPlayer gameData) Nothing emptyViewState
+        , Cmd.batch [ savePlayerData <| Player.encoder (defaultPlayer gameData), generateCard <| List.length currentCards ]
+        )
+
+    else
+        case model of
+            Running gd g p c vs ->
+                ( Running gd g p c (showDeletionConfirmation vs), Cmd.none )
+
+            GameOver gd g p vs ->
+                ( GameOver gd g p (showDeletionConfirmation vs), Cmd.none )
 
 
 {-| removes id from achievements that are highlighted
@@ -903,7 +961,7 @@ processKey key model =
         vs =
             modelToViewState model
     in
-    case ( model, key, vs.showAchievements || vs.showControls ) of
+    case ( model, key, vs.showAchievements || vs.showControls || vs.showDeleteConfirmation ) of
         ( Running gameData game _ oldChoice _, ChoiceKey choice, False ) ->
             if oldChoice == Nothing then
                 let
@@ -955,6 +1013,9 @@ processKey key model =
 
         ( GameOver gameData _ player _, Restart, False ) ->
             Running gameData (defaultGame gameData) player Nothing emptyViewState |> generatePossibleCard
+
+        ( _, Delete, True ) ->
+            deletePlayerData model
 
         ( _, NumberKey pressedNumber, _ ) ->
             let

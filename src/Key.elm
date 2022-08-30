@@ -10,6 +10,7 @@ type Key
     | NumberKey Int
     | Controls
     | Achievements
+    | Delete
     | UnknownKey
 
 
@@ -26,6 +27,9 @@ decoder =
 
                 "r" ->
                     Restart
+
+                "d" ->
+                    Delete
 
                 "1" ->
                     NumberKey 1
