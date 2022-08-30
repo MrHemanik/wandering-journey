@@ -1,5 +1,5 @@
 {
-  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,41,42,43,44,45,46,47, 48, 49, 50, 51],
+  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,41,42,43,44,45,46,47, 48, 49, 50, 51, 52],
   "cards" : [{
     "id":0,
     "possibleLocation": ["City"],
@@ -1001,19 +1001,19 @@
     }
   , {
       "id":52,
-      "possibleLocation": ["Forest"],
-      "mainText":"",
+      "possibleLocation": ["City"],
+      "mainText":"You see two paths in different directions in front of the city gates",
       "decisionLeft" : {
-        "choiceText":"",
-        "pickedText":"",
+        "choiceText":"Walk down the left one",
+        "pickedText":"As you walked down the left one you eventually arrived in a forest",
         "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-        "flags":[]
+        "flags":[{"changeLocation": "Forest"}]
       },
       "decisionRight" : {
-        "choiceText":"",
-        "pickedText":"",
+        "choiceText":"Walk down the right one",
+        "pickedText":"As you walked down the right one you eventually arrived in a desert",
         "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
-        "flags":[]
+        "flags":[{"changeLocation": "Desert"}]
       }
     }
   , {
