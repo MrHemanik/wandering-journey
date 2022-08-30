@@ -321,6 +321,20 @@ viewCard model =
 
             else
                 "Your long Journey ends here."
+
+        achievements achievementList =
+            List.map
+                (\x -> row [ centerX, spacing 10 ] <| [ achievementElement x ])
+                (ListHelper.idListToObjectList achievementList (modelToGameData model).achievements)
+
+        achievementElement achievement =
+            el [ Background.color Color.transWhite, Border.glow Color.green 2, Border.rounded 3, padding 7 ] <|
+                el [ Background.color Color.transBlackLight, Background.uncropped (Achievement.achievementIdToAchievementUrl achievement.id), width (px 50), height (px 50), centerX ] <|
+                    image
+                        [ Background.color Color.transWhite, Border.glow Color.transWhite 3, Border.rounded 5, width (px 20), height (px 20), alignTop ]
+                        { src = "src/img/achievementStar.png"
+                        , description = ""
+                        }
     in
     column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ] <|
         case model of
@@ -330,6 +344,7 @@ viewCard model =
                 , wrapText (Resources.deathMessage game.resources)
                 , el [ width fill, padding 20 ] <|
                     wrapText ("Distance traveled:  " ++ String.fromInt game.score ++ " meters")
+                , row [ centerX, spacing 10, padding 10 ] <| achievements (modelToViewState model).newAchievements
                 , Input.button [ width (minimum 100 fill), alignBottom ]
                     { onPress = Just (Key Restart)
                     , label = wrapText "New Run"
@@ -371,20 +386,6 @@ viewCard model =
 
                                                                     else
                                                                         "src/img/minus.png"
-                                                                , description = ""
-                                                                }
-
-                                                achievements achievementList =
-                                                    List.map
-                                                        (\x -> row [ centerX, spacing 10 ] <| [ achievementElement x ])
-                                                        (ListHelper.idListToObjectList achievementList gameData.achievements)
-
-                                                achievementElement achievement =
-                                                    el [ Background.color Color.transWhite, Border.glow Color.green 2, Border.rounded 3, padding 7 ] <|
-                                                        el [ Background.color Color.transBlackLight, Background.uncropped (Achievement.achievementIdToAchievementUrl achievement.id), width (px 50), height (px 50), centerX ] <|
-                                                            image
-                                                                [ Background.color Color.transWhite, Border.glow Color.transWhite 3, Border.rounded 5, width (px 20), height (px 20), alignTop ]
-                                                                { src = "src/img/achievementStar.png"
                                                                 , description = ""
                                                                 }
                                             in
