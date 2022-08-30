@@ -47,6 +47,18 @@
     },{
       "id": 11,
       "name": "Thank god I brought flowers with me",
-      "description": "Place flowers a the burial"
+      "description": "Place flowers on the burial, to get the yellow crystal"
+    },{
+      "id": 12,
+      "name": "As bright as the sun",
+      "description": "Activate the yellow crystal"
+    },{
+      "id": 13,
+      "name": "You should not put you hand in everything",
+      "description": "Get the green crystal out of the hole"
+    },{
+      "id": 14,
+      "name": "It feels like pure life",
+      "description": "Activate the green crystal"
     }]
 }
