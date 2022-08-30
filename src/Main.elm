@@ -933,6 +933,9 @@ processKey key model =
                     Just _ ->
                         loadCard model game.nextCard
 
+        ( Running gameData _ player _ _, Restart ) ->
+            Running gameData (defaultGame gameData) player Nothing emptyViewState |> generatePossibleCard
+
         ( GameOver gameData _ player _, Restart ) ->
             Running gameData (defaultGame gameData) player Nothing emptyViewState |> generatePossibleCard
 
