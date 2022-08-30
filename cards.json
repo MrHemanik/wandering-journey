@@ -1,5 +1,5 @@
 {
-  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,41,42,43,44,45,46,47, 48, 49, 50, 51, 52, 53, 56],
+  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,41,42,43,44,45,46,47,48,49,50,51,52,53,56,66],
   "cards" : [{
     "id":0,
     "possibleLocation": ["City"],
@@ -84,7 +84,7 @@
     },
     "decisionRight" : {
       "choiceText":"Move on",
-      "pickedText":"You felt like you did not need a rest just yet and left the inn as quickly as you entered.",
+      "pickedText":"You felt like you did not need a rest just yet and left the inn as quickly as you entered",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
       "flags":[]
     }
@@ -113,7 +113,7 @@
     "mainText":"Three Children are playing games with each other. As they notice you one of them runs towards you. \"Hey! Do a trick!\"",
     "decisionLeft" : {
       "choiceText":"Do a trick",
-      "pickedText":"They give you some apples to juggle with and you try your best. They walked away unimpressed.",
+      "pickedText":"They give you some apples to juggle with and you try your best. They walked away unimpressed",
       "resourceChange":  {"hunger":5, "thirst":5, "physicalHealth":0, "mentalHealth":-10, "money":0},
       "flags":[]
     },
@@ -303,7 +303,7 @@
     "mainText":"On your right you see a church of the Mutan Order",
     "decisionLeft" : {
       "choiceText":"Go inside the church",
-      "pickedText":"You went inside the church",
+      "pickedText":"You went inside the church...",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "flags":[{"followUp": 62}]
     },
@@ -341,7 +341,7 @@
     "mainText":"On your left you see a church of the Fortuna Order",
     "decisionLeft" : {
       "choiceText":"Go inside the church",
-      "pickedText":"You went inside the church",
+      "pickedText":"You went inside the church...",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "flags":[{"followUp": 59}]
     },
@@ -515,7 +515,7 @@
     "mainText":"You hear a river near you",
     "decisionLeft" : {
       "choiceText":"Walk towards the river",
-      "pickedText":"You walked towards the river",
+      "pickedText":"You walked towards the river...",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "flags":[{"followUp": 28}]
     },
@@ -547,7 +547,7 @@
     "mainText":"You see a stone ruin on your way",
     "decisionLeft" : {
       "choiceText":"Walk towards the ruin",
-      "pickedText":"You walked towards the ruin",
+      "pickedText":"You walked towards the ruin...",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "flags":[{"followUp": 30}]
     },
@@ -582,7 +582,7 @@
           "overwriteSide": false,
           "decision": {
             "choiceText":"Put your red crystal in the socket",
-            "pickedText":"You put the red crystal in the socket, making the door open. You picked the crystal up again and went inside the ruin",
+            "pickedText":"You put the red crystal in the socket, making the door open. You picked the crystal up again and went inside the ruin...",
             "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
             "flags":[{"followUp": 31}]
           }}}]
@@ -595,6 +595,7 @@
       "pickedText":"As soon as you placed the crystal red rays of light spew out of it, illuminating the whole room. Suddenly you felt the ground shaking and walls crumbling. You picked up the red crystal and dashed outside while the ruin collapsed",
       "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":-5, "mentalHealth":0, "money": 0},
       "flags":[
+        {"addCards": 67},
         {"removeItem": 0},
         {"addItem": 8},
         {"removeCards": [29]},
@@ -749,7 +750,7 @@
     "mainText":"As you walk through the forest a lone hunter catches your eye, looking rather concentrated",
     "decisionLeft" : {
       "choiceText":"Approach him",
-      "pickedText":"You approached the hunter, who noticed you a long time before. His prey on the other hand did not and ran away as soon as it heard you",
+      "pickedText":"You approached the hunter, who noticed you a long time before. His prey on the other hand did not and ran away as soon as it heard you...",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "flags":[{"followUp": 39}]
     },
@@ -861,7 +862,7 @@
     "mainText":"Walking through the blistering heat you notice an oasis in the horizon",
     "decisionLeft" : {
       "choiceText":"Run towards it",
-      "pickedText":"You ran towards the oasis jumping into its cool waters. You felt refreshed and more than ready to continue.",
+      "pickedText":"You ran towards the oasis jumping into its cool waters. You felt refreshed and more than ready to continue",
       "resourceChange":  {"hunger":0, "thirst":15, "physicalHealth":10, "mentalHealth":10, "money": 0},
       "flags":[]
     },
@@ -1001,7 +1002,7 @@
       "mainText":"In the midst of the forest you notice a big tree raging over all the overs",
       "decisionLeft" : {
         "choiceText":"Go towards the tree",
-        "pickedText":"You walked towards the tree, enjoying the aesthetic it gives of",
+        "pickedText":"You walked towards the tree, enjoying the aesthetic it gives of...",
         "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money": 0},
         "flags":[{"followUp": 54}]
       },
@@ -1017,7 +1018,7 @@
       "mainText":"You arrived at the tree, enjoying the presence the tree radiates and the shade it gives off",
       "decisionLeft" : {
         "choiceText":"Investigate the tree",
-        "pickedText":"You decided that such a grand tree must have something to it, so you took a closer look at the tree. You notice a tree hollow further up the tree",
+        "pickedText":"You decided that such a grand tree must have something to it, so you go and take a closer look at the tree...",
         "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
         "flags":[{"followUp": 55}]
       },
@@ -1030,9 +1031,9 @@
   }, {
     "id":55,
     "possibleLocation": ["City"],
-    "mainText":"",
+    "mainText":"As you take a closer look you notice a tree hollow further up the tree, which seems hard to get to. You ponder if it is worth to waste your energy and if think about how this place seems like a good place to rest in piece",
     "decisionLeft" : {
-      "choiceText":"Try to reach inside",
+      "choiceText":"Climb up and try to reach inside",
       "pickedText":"You tried to climb up the tree over and over again. After a while you finally did get a hold of the hollow, so you reached your arm inside. You felt something inside the hole and grabbed it, losing your grip in the process and falling from the tree. You quickly stood up and ran as you noticed the group of monkeys wanting to defend their territory",
       "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth": -10, "mentalHealth":5, "money": 0},
       "flags":[{"addItem": 9}, {"removeCards": [53]}, {"addCards": [56]},{"unlockAchievement": 13}]
@@ -1049,7 +1050,7 @@
       "mainText":"Walking along the sandy ways you barely notice the yellowish structure in the distance",
       "decisionLeft" : {
         "choiceText":"Walk towards it",
-        "pickedText":"You walk towards the structure",
+        "pickedText":"You walk towards the structure...",
         "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
         "flags":[{"followUp": 57}]
       },
@@ -1083,7 +1084,7 @@
           "overwriteSide": false,
           "decision": {
             "choiceText":"Try to open it",
-            "pickedText":"As you approached the door it mysteriously opened like it awaited your arrival. Hesitantly, you walked in",
+            "pickedText":"As you approached the door it mysteriously opened like it awaited your arrival. Hesitantly, you walked in...",
             "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
             "flags":[{"followUp": 58}]
           }}}]
@@ -1095,7 +1096,7 @@
         "choiceText":"Place your green crystal on the altar",
         "pickedText":"You placed the green crystal on the altar. The stone started to to emit a radiant green hue and with it vegetation grew from every corner of the room. After the initial glow lessened you take the crystal back left pyramid, seeing that the stone has affected the surrounding area as well",
         "resourceChange":  {"hunger":0, "thirst":10, "physicalHealth":0, "mentalHealth":0, "money": 0},
-        "flags":[{"removeCards": [56]},{"removeItem": 9},{"addItem": 10},{"unlockAchievement": 14}]
+        "flags":[{"addCards": 67},{"removeCards": [56]},{"removeItem": 9},{"addItem": 10},{"unlockAchievement": 14}]
       },
       "decisionRight" : {
         "choiceText":"Leave the pyramid",
@@ -1143,7 +1144,7 @@
           "overwriteSide": true,
           "decision": {
             "choiceText":"Talk to the priest",
-            "pickedText":"You decided to indulge in conversation with the priest",
+            "pickedText":"You decided to indulge in conversation with the priest...",
             "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
             "flags":[{"followUp": 60}]
           }}}
@@ -1172,7 +1173,7 @@
         "overwriteSide": false,
         "decision": {
           "choiceText":"Ask about the yellow stone",
-          "pickedText":"\"It cannot be ... no it must! This is the stone of time itself. It inhabits the ability to manipulate the flow of time itself. An ancient legends foretells of a time before civilisation where gods have used stones like this one to shape our world\"",
+          "pickedText":"\"It cannot be ... no it must! This is the stone of time itself. It inhabits the ability to manipulate the flow of time itself. An ancient legends foretells of a time before civilisation where gods have used stones like this one to shape our world\"...",
           "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
           "flags":[{"followUp": 61}]
         }}}]
@@ -1184,7 +1185,7 @@
         "choiceText":"Activate the stone",
         "pickedText":"The priest prepared a ritual in one of the chambers of this church with big runes drawn with chalk on the floor and two chickens in cages. You placed the crystal in the middle. The priest began speaking in an ancient language, making the yellow crystal glow with immense intensity. Simultaneously one of the chicken began to age while the other regressed in age until the first died and the second turned to nothingness. You take the crystal with you without looking the priest in the eye",
         "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
-        "flags":[{"removeItem": 11},{"addItem": 12},{"unlockAchievement": 12}]
+        "flags":[{"addCards": 67},{"removeItem": 11},{"addItem": 12},{"unlockAchievement": 12}]
       },
       "decisionRight" : {
         "choiceText":"Decide against it",
@@ -1242,7 +1243,7 @@
         "overwriteSide": true,
         "decision": {
           "choiceText":"Talk to the priest",
-          "pickedText":"You decided to indulge in conversation with the priest",
+          "pickedText":"You decided to indulge in conversation with the priest...",
           "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
           "flags":[{"followUp": 63}]
 
@@ -1254,7 +1255,7 @@
           "overwriteSide": true,
           "decision": {
             "choiceText":"Talk to the priest",
-            "pickedText":"You decided to indulge in conversation with the priest",
+            "pickedText":"You decided to indulge in conversation with the priest...",
             "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
             "flags":[{"followUp": 63}]
 
@@ -1295,7 +1296,7 @@
         "overwriteSide": false,
         "decision": {
           "choiceText":"Ask about the yellow stone",
-          "pickedText":"\"It cannot be ... no it must! This is the stone of time itself. It inhabits the ability to manipulate the flow of time itself. An ancient legends foretells of a time before civilisation where gods have used stones like this one to shape our world\"",
+          "pickedText":"\"It cannot be ... no it must! This is the stone of time itself. It inhabits the ability to manipulate the flow of time itself. An ancient legends foretells of a time before civilisation where gods have used stones like this one to shape our world\"...",
           "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
           "flags":[{"followUp": 61}]
         }}},{
@@ -1319,7 +1320,7 @@
       "choiceText":"Activate the stone",
       "pickedText":"The priest prepared a ritual in one of the chambers of this church with big runes drawn with chalk on the floor and two chickens in cages. You placed the crystal in the middle. The priest began speaking in an ancient language, making the yellow crystal glow with immense intensity. Simultaneously one of the chicken began to age while the other regressed in age until the first died and the second turned to nothingness. You take the crystal with you without looking the priest in the eye",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "flags":[{"removeItem": 11},{"addItem": 12},{"unlockAchievement": 12}]
+      "flags":[{"addCards": 67},{"removeItem": 11},{"addItem": 12},{"unlockAchievement": 12}]
     },
     "decisionRight" : {
       "choiceText":"Decide against it",
@@ -1361,11 +1362,11 @@
     }
   }, {
     "id":67,
-    "possibleLocation": ["City"],
-    "mainText":"",
+    "possibleLocation": ["City", "Forest", "Desert"],
+    "mainText":"In the corner of your eye an ancient stone door is calling to you. As you walk towards it you see three sockets in the center of the door, each with a distinct symbol on it",
     "decisionLeft" : {
-      "choiceText":"",
-      "pickedText":"",
+      "choiceText":"Inspect the sockets",
+      "pickedText":"You inspect the doors sockets and their engraved symbols. All of them incorporating what looks like a shield in the center",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth": 0, "mentalHealth":0, "money": 0},
       "flags":[]
     },

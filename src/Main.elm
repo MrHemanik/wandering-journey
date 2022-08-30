@@ -95,7 +95,7 @@ emptyViewState =
 defaultGame gameData =
     { resources = startingResources
     , allowedCardIndexes = gameData.startingCardIndexes
-    , activeItemsIndexes = [ 11 ]
+    , activeItemsIndexes = []
     , currentCards = Card.getCurrentlyPossibleCards gameData.cards gameData.startingCardIndexes startingLocation
     , location = startingLocation
     , card = Nothing
@@ -1062,11 +1062,11 @@ processKey key model =
                     Just _ ->
                         loadCard model game.nextCard
 
-        ( Running gameData _ player _ _, Restart, False ) ->
-            Running gameData (defaultGame gameData) player Nothing emptyViewState |> generatePossibleCard
+        ( Running gameData _ player _ viewState, Restart, False ) ->
+            Running gameData (defaultGame gameData) player Nothing { emptyViewState | highlightedAchievements = viewState.highlightedAchievements } |> generatePossibleCard
 
-        ( GameOver gameData _ player _, Restart, False ) ->
-            Running gameData (defaultGame gameData) player Nothing emptyViewState |> generatePossibleCard
+        ( GameOver gameData _ player viewState, Restart, False ) ->
+            Running gameData (defaultGame gameData) player Nothing { emptyViewState | highlightedAchievements = viewState.highlightedAchievements } |> generatePossibleCard
 
         ( _, Delete, True ) ->
             deletePlayerData model
