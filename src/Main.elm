@@ -627,10 +627,11 @@ viewDeleteConfirmation =
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
                 }
             ]
-        , el [ padding 10 ] <| none
+        , el [ padding 10, centerX ] <| none
         , wrapText "Are you sure you want to delete your player data? If you decide to delete your data, you will lose your highscore and unlocked achievements."
         , wrappedRow [ centerX ] [ styledText "To continue, click on the button or press", keyIcon "D" ]
-        , wrapText "To go back, click on the X or open the controls or achievement window"
+        , wrappedRow [ centerX ] [ styledText "To go back, click on the X, press", keyIcon "Esc" ]
+        , wrapText "or open either Achievements or Controls"
         , el [ width fill, alignBottom ] <|
             Input.button [ Background.color color.transRedHeavy, Font.color color.white, Border.rounded 5, padding 5, width fill ]
                 { onPress = Just DeletePlayerData
