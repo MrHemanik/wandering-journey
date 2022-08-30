@@ -200,6 +200,7 @@ view model =
                 if not viewState.showAchievement then
                     [ viewResources game.resources
                     , viewLocation game.location
+                    , el [ paddingXY 0 5, centerX ] <| viewScore game.score
                     , if viewState.showControls then
                         viewControls
 
@@ -291,6 +292,12 @@ viewLocation : Location -> Element Msg
 viewLocation location =
     el [ padding 5, width (minimum 400 (maximum 800 shrink)), centerX, Background.color Color.transBlack, Font.color Color.white, Border.rounded 5 ] <|
         wrapText ("You are currently in a " ++ Location.toText location)
+
+
+viewScore : Int -> Element Msg
+viewScore score =
+    el [ padding 5, width (minimum 400 (maximum 800 shrink)), centerX, Background.color Color.transBlack, Font.color Color.white, Border.rounded 5 ] <|
+        wrapText ("Meters traveled " ++ String.fromInt score)
 
 
 {-| Card Window
