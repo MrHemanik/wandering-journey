@@ -100,8 +100,8 @@ defaultGame gameData =
     }
 
 
-defaultPlayer gameData =
-    { startingCards = gameData.startingCardIndexes, unlockedAchievements = [], highscore = 0 }
+defaultPlayer =
+    { unlockedAchievements = [], highscore = 0 }
 
 
 defaultFont =
@@ -940,8 +940,8 @@ deletePlayerData model =
             Card.getCurrentlyPossibleCards gameData.cards gameData.startingCardIndexes startingLocation
     in
     if viewState.showDeleteConfirmation then
-        ( Running gameData (defaultGame gameData) (defaultPlayer gameData) Nothing emptyViewState
-        , Cmd.batch [ savePlayerData <| Player.encoder (defaultPlayer gameData), generateCard <| List.length currentCards ]
+        ( Running gameData (defaultGame gameData) defaultPlayer Nothing emptyViewState
+        , Cmd.batch [ savePlayerData <| Player.encoder defaultPlayer, generateCard <| List.length currentCards ]
         )
 
     else
@@ -1234,7 +1234,7 @@ init flags =
                         pl
 
                     Data.Failure _ ->
-                        defaultPlayer gameData
+                        defaultPlayer
     in
     Running gameData (defaultGame gameData) player Nothing emptyViewState
         |> generatePossibleCard
