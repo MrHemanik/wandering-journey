@@ -1,5 +1,5 @@
 {
-  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,41,42,43,44,45,46,47, 48, 49, 50, 51, 52],
+  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,41,42,43,44,45,46,47, 48, 49, 50, 51, 52, 53, 55],
   "cards" : [{
     "id":0,
     "possibleLocation": ["City"],
@@ -1019,6 +1019,118 @@
   , {
       "id":53,
       "possibleLocation": ["Forest"],
+      "mainText":"You see a suspicious looking tree",
+      "decisionLeft" : {
+        "choiceText":"Investigate the tree",
+        "pickedText":"You walk towards the tree to investigate it",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+        "flags":[{"followUp": 54}]
+      },
+      "decisionRight" : {
+        "choiceText":"Ignore the tree",
+        "pickedText":"You choose to ignore the tree and continued your journey",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+        "flags":[]
+      }
+    }
+  , {
+      "id":54,
+      "possibleLocation": ["Forest"],
+      "mainText":"While investigating the tree, you notice a hole in the tree",
+      "decisionLeft" : {
+        "choiceText":"Stick your hand in the hole",
+        "pickedText":"You can feel something inside the hole and take it out. It turns out to be some-kind of crystal",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+        "flags":[{"addItem": 9}, {"removeCard": 53}, {"addCard": 55}]
+      },
+      "decisionRight" : {
+        "choiceText":"Ignore the hole",
+        "pickedText":"You leave the tree and continue your journey",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+        "flags":[]
+      }
+    }  , {
+      "id":55,
+      "possibleLocation": ["Desert"],
+      "mainText":"You see a Structure in the distance",
+      "decisionLeft" : {
+        "choiceText":"Walk towards it",
+        "pickedText":"You walk towards the structure, which turns out to be a pyramid",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+        "flags":[{"followUp": 56}]
+      },
+      "decisionRight" : {
+        "choiceText":"Stay on your path",
+        "pickedText":"You decided to stay on your path and continued walking through the desert",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+        "flags":[]
+      }
+    }  , {
+      "id":56,
+      "possibleLocation": ["Desert"],
+      "mainText":"As you look around the pyramid you see some-kind of door, which is locked",
+      "decisionLeft" : {
+        "choiceText":"Try to open it",
+        "pickedText":"While you tried to open the door you hurt your back and it still does not open, so you decide to leave",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-5, "mentalHealth":0, "money": 0},
+        "flags":[]
+      },
+      "decisionRight" : {
+        "choiceText":"Continue your journey",
+        "pickedText":"You decided to leave and keep on walking through the desert",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+        "flags":[]
+      },
+      "flags": [{
+        "conditionalDecision": {
+          "condition": {
+            "ownItem": 9
+          },
+          "overwriteSide": false,
+          "decision": {
+            "choiceText":"Try to open it",
+            "pickedText":"As you approached the door it mysteriously opens and you walk in",
+            "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
+            "flags":[{"followUp": 57}]
+          }}}]
+    }
+  , {
+      "id":57,
+      "possibleLocation": ["Desert"],
+      "mainText":"Inside you see an altar that contains a mold, which is shaped like a crystal",
+      "decisionLeft" : {
+        "choiceText":"Place it on the altar",
+        "pickedText":"You placed the crystal on the altar and it starts to emit light",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+        "flags":[{"removeCard": 55},{"removeItem": 9},{"addItem": 10}]
+      },
+      "decisionRight" : {
+        "choiceText":"Stay on your path",
+        "pickedText":"You decided to stay on your path and continued walking through the desert",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+        "flags":[]
+      }
+    }
+  , {
+      "id":58,
+      "possibleLocation": ["Desert"],
+      "mainText":"",
+      "decisionLeft" : {
+        "choiceText":"",
+        "pickedText":"",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+        "flags":[]
+      },
+      "decisionRight" : {
+        "choiceText":"",
+        "pickedText":"",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+        "flags":[]
+      }
+    }
+  , {
+      "id":59,
+      "possibleLocation": ["Desert"],
       "mainText":"",
       "decisionLeft" : {
         "choiceText":"",
