@@ -308,7 +308,7 @@
       "flags":[
         {"removeItem": 2},
         {"addItem": 4},
-        {"addCards":[16]},
+        {"addCards":[16,61]},
         {"removeCards":[15]},
         {"unlockAchievement": 4}
       ]
@@ -355,7 +355,7 @@
       "flags":[
         {"removeItem": 3},
         {"addItem": 5},
-        {"addCards":[7,19,20]},
+        {"addCards":[7,19,20,58]},
         {"removeCards":[17,1]},
         {"unlockAchievement": 3}
       ]
