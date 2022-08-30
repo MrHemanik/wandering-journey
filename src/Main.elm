@@ -7,7 +7,7 @@ import Browser.Events
 import Card exposing (Card)
 import CardFlag exposing (CardFlag(..))
 import Choice exposing (Choice(..))
-import Color
+import Color exposing (color)
 import Condition exposing (Condition(..))
 import Data
 import Decision exposing (Decision)
@@ -247,25 +247,25 @@ viewResources resources =
         resourceElement src resource isMoney =
             column
                 [ width fill, paddingXY 5 20, spacing 20 ]
-                [ image [ Background.color Color.white, Border.rounded 3, Border.glow Color.white 3, centerX, centerY ]
+                [ image [ Background.color color.white, Border.rounded 3, Border.glow color.white 3, centerX, centerY ]
                     { src = src, description = "" }
-                , row [ Background.color Color.transBlackLight, Border.rounded 5, padding 8, width fill, defaultFont, defaultFontSize, fontColor resource isMoney ]
+                , row [ Background.color color.transBlackLight, Border.rounded 5, padding 8, width fill, defaultFont, defaultFontSize, fontColor resource isMoney ]
                     [ wrapText <| String.fromInt resource ++ extraSign isMoney ]
                 ]
 
         fontColor resource isMoney =
             case ( resource >= 70, resource > 20, isMoney ) of
                 ( True, _, False ) ->
-                    Font.color Color.green
+                    Font.color color.green
 
                 ( False, True, False ) ->
-                    Font.color Color.yellow
+                    Font.color color.yellow
 
                 ( False, False, False ) ->
-                    Font.color Color.red
+                    Font.color color.red
 
                 ( _, _, True ) ->
-                    Font.color Color.white
+                    Font.color color.white
 
         extraSign isMoney =
             case isMoney of
@@ -276,7 +276,7 @@ viewResources resources =
                     "%"
     in
     el [ paddingXY 0 20, width fill ] <|
-        row [ Border.rounded 7, Border.width 3, Border.color Color.black, Background.tiled "src/img/leather.jpg", spaceEvenly, width (minimum 400 <| maximum 800 fill), centerX ]
+        row [ Border.rounded 7, Border.width 3, Border.color color.black, Background.tiled "src/img/leather.jpg", spaceEvenly, width (minimum 400 <| maximum 800 fill), centerX ]
             [ resourceElement "src/img/resources/hunger.svg" resources.hunger False
             , resourceElement "src/img/resources/thirst.svg" resources.thirst False
             , resourceElement "src/img/resources/physicalHealth.svg" resources.physicalHealth False
@@ -290,13 +290,13 @@ viewResources resources =
 -}
 viewLocation : Location -> Element Msg
 viewLocation location =
-    el [ padding 5, width (minimum 400 (maximum 800 shrink)), centerX, Background.color Color.transBlack, Font.color Color.white, Border.rounded 5 ] <|
+    el [ padding 5, width (minimum 400 (maximum 800 shrink)), centerX, Background.color color.transBlack, Font.color color.white, Border.rounded 5 ] <|
         wrapText ("You are currently in a " ++ Location.toText location)
 
 
 viewScore : Int -> String -> Element Msg
 viewScore score string =
-    el [ padding 5, width (minimum 400 (maximum 800 shrink)), centerX, Background.color Color.transBlack, Font.color Color.white, Border.rounded 5 ] <|
+    el [ padding 5, width (minimum 400 (maximum 800 shrink)), centerX, Background.color color.transBlack, Font.color color.white, Border.rounded 5 ] <|
         if string == "score" then
             wrapText ("Meters traveled " ++ String.fromInt score)
 
@@ -328,15 +328,15 @@ viewCard model =
                 (ListHelper.idListToObjectList achievementList (modelToGameData model).achievements)
 
         achievementElement achievement =
-            el [ Background.color Color.transWhite, Border.glow Color.green 2, Border.rounded 3, padding 7 ] <|
-                el [ Background.color Color.transBlackLight, Background.uncropped (Achievement.achievementIdToAchievementUrl achievement.id), width (px 50), height (px 50), centerX ] <|
+            el [ Background.color color.transWhite, Border.glow color.green 2, Border.rounded 3, padding 7 ] <|
+                el [ Background.color color.transBlackLight, Background.uncropped (Achievement.achievementIdToAchievementUrl achievement.id), width (px 50), height (px 50), centerX ] <|
                     image
-                        [ Background.color Color.transWhite, Border.glow Color.transWhite 3, Border.rounded 5, width (px 20), height (px 20), alignTop ]
+                        [ Background.color color.transWhite, Border.glow color.transWhite 3, Border.rounded 5, width (px 20), height (px 20), alignTop ]
                         { src = "src/img/achievementStar.png"
                         , description = ""
                         }
     in
-    column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ] <|
+    column [ centerX, centerY, Background.color color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ] <|
         case model of
             GameOver _ game _ _ ->
                 [ el [ width fill, padding 20 ] <|
@@ -376,10 +376,10 @@ viewCard model =
                                                             c.decisionRight
 
                                                 itemElement ( item, bool ) =
-                                                    el [ Background.color Color.transBlackLight, Border.rounded 3, padding 7 ] <|
-                                                        el [ Background.color Color.transBlackLight, Background.uncropped (Item.itemIdToImageUrl item.id), width (px 50), height (px 50), centerX ] <|
+                                                    el [ Background.color color.transBlackLight, Border.rounded 3, padding 7 ] <|
+                                                        el [ Background.color color.transBlackLight, Background.uncropped (Item.itemIdToImageUrl item.id), width (px 50), height (px 50), centerX ] <|
                                                             image
-                                                                [ Background.color Color.transWhite, Border.glow Color.transWhite 3, Border.rounded 5, width (px 20), height (px 20), alignTop ]
+                                                                [ Background.color color.transWhite, Border.glow color.transWhite 3, Border.rounded 5, width (px 20), height (px 20), alignTop ]
                                                                 { src =
                                                                     if bool then
                                                                         "src/img/plus.png"
@@ -448,7 +448,7 @@ choiceButton resources decision choice =
 
         else
             [ wrapText decision.choiceText
-            , paragraph [ width (minimum 100 fill), Font.center, Font.color Color.red ] [ wrapText "Not enough money! " ]
+            , paragraph [ width (minimum 100 fill), Font.center, Font.color color.red ] [ wrapText "Not enough money! " ]
             ]
 
 
@@ -460,7 +460,7 @@ priceLabel : Int -> Element Msg
 priceLabel money =
     if money < 0 then
         el [ width <| minimum 40 <| maximum 100 fill ] <|
-            wrappedRow [ Background.color Color.transBlackLight, Border.width 2, Border.color Color.black, Border.rounded 3, centerX, padding 4 ]
+            wrappedRow [ Background.color color.transBlackLight, Border.width 2, Border.color color.black, Border.rounded 3, centerX, padding 4 ]
                 [ wrapText <| String.fromInt money
                 , image [ width (px 30), height (px 30), centerX ] { src = "src/img/resources/money.svg", description = "" }
                 ]
@@ -518,12 +518,12 @@ viewControls =
         keyIcon keyText =
             el [ Background.uncropped "src/img/key.svg", width (px 50), height (px 50) ] <| el [ centerX, centerY, width fill, Font.center, defaultFont, Font.size 20 ] <| text keyText
     in
-    column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ]
+    column [ centerX, centerY, Background.color color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ]
         [ row [ width fill ]
             [ el [ width (px 40) ] <| none
             , column [ centerX, width fill ]
                 [ paragraph [ Font.center, defaultFont, Font.size 35 ] [ text "Controls" ] ]
-            , Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
+            , Input.button [ Background.color color.transBlack, Font.color color.white, Border.rounded 5, padding 5 ]
                 { onPress = Just ShowControl
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
                 }
@@ -545,10 +545,10 @@ viewAchievements gameData viewState player =
         achievementElement achievement =
             el [ padding 5, width fill ] <|
                 Input.button
-                    ([ Background.color Color.transWhiteHeavy, Border.rounded 7, width fill, centerX, padding 10 ]
+                    ([ Background.color color.transWhiteHeavy, Border.rounded 7, width fill, centerX, padding 10 ]
                         ++ (case List.member achievement.id viewState.highlightedAchievements of
                                 True ->
-                                    [ Border.glow Color.red 2 ]
+                                    [ Border.glow color.red 2 ]
 
                                 False ->
                                     []
@@ -557,18 +557,18 @@ viewAchievements gameData viewState player =
                     { onPress = Just (DeactivateAchievementHighlighting achievement.id)
                     , label =
                         row [ centerX, width fill ]
-                            [ el [ Background.color Color.transBlackLight, width (maximum 100 shrink), Border.rounded 3, padding 7 ] <|
+                            [ el [ Background.color color.transBlackLight, width (maximum 100 shrink), Border.rounded 3, padding 7 ] <|
                                 el [ Background.uncropped (Achievement.achievementIdToAchievementUrl achievement.id), width (px 64), height (px 64), centerX ] <|
                                     if not (List.member achievement.id player.unlockedAchievements) then
                                         image
-                                            [ Background.color Color.transWhite, width (px 64), height (px 64), Border.rounded 5, alignTop ]
+                                            [ Background.color color.transWhite, width (px 64), height (px 64), Border.rounded 5, alignTop ]
                                             { src = "src/img/lock.png", description = "" }
 
                                     else
                                         none
                             , column [ width fill ]
                                 [ achievementText achievement achievement.name
-                                , el [ Border.width 1, Border.color Color.transBlackLight, centerX, width (maximum 600 fill) ] <| none
+                                , el [ Border.width 1, Border.color color.transBlackLight, centerX, width (maximum 600 fill) ] <| none
                                 , achievementText achievement achievement.description
                                 ]
                             ]
@@ -582,11 +582,11 @@ viewAchievements gameData viewState player =
                 else
                     wrapText "???"
     in
-    column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height fill, padding 20, Border.rounded 7 ]
+    column [ centerX, centerY, Background.color color.transWhiteHeavy, width (px 800), height fill, padding 20, Border.rounded 7 ]
         [ row [ width fill, paddingXY 0 20 ]
             [ el [ width (px 40) ] <| none
             , paragraph [ Font.center, defaultFont, Font.size 35 ] [ text "Achievements" ]
-            , Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
+            , Input.button [ Background.color color.transBlack, Font.color color.white, Border.rounded 5, padding 5 ]
                 { onPress = Just ShowAchievement
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
                 }
@@ -597,7 +597,7 @@ viewAchievements gameData viewState player =
                 List.map achievementElement gameData.achievements
         , el [ padding 10 ] <| none
         , el [ width fill, alignBottom ] <|
-            Input.button [ Background.color Color.transRedHeavy, Font.color Color.white, Border.rounded 5, padding 5, width fill ]
+            Input.button [ Background.color color.transRedHeavy, Font.color color.white, Border.rounded 5, padding 5, width fill ]
                 { onPress = Just DeletePlayerData
                 , label = wrapText "Delete Player Data"
                 }
@@ -610,7 +610,7 @@ viewBag : ViewState -> Game -> Element Msg
 viewBag viewState game =
     el [ centerX, paddingXY 0 20 ] <|
         row
-            ([ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color Color.black, width (minimum 100 (maximum 800 fill)) ]
+            ([ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color color.black, width (minimum 100 (maximum 800 fill)) ]
                 ++ (case viewState.item of
                         Nothing ->
                             [ scrollbarX ]
@@ -644,7 +644,7 @@ viewItems items =
                 , label =
                     wrappedRow [ centerX ]
                         [ image
-                            [ Background.color Color.transBlackLight, Border.rounded 3, centerX ]
+                            [ Background.color color.transBlackLight, Border.rounded 3, centerX ]
                             { src = Item.itemIdToImageUrl item
                             , description = ""
                             }
@@ -666,10 +666,10 @@ viewItemDetail item =
             , label =
                 wrappedRow [ centerX, spacing 20, padding 5, width fill ]
                     [ el [ width (maximum 100 shrink) ] <|
-                        image [ Background.color Color.transBlackLight, Border.rounded 3, centerX ]
+                        image [ Background.color color.transBlackLight, Border.rounded 3, centerX ]
                             { src = Item.itemIdToImageUrl item.id, description = "" }
-                    , el [ Background.color Color.transWhite, Border.rounded 7, padding 5, height (minimum 50 shrink) ] <| el [ Font.center, defaultFont, defaultFontSize, centerX, centerY ] <| text item.name
-                    , el [ Background.color Color.transWhite, Border.rounded 7, padding 5, width fill, height (minimum 50 shrink) ] <| el [ centerX, centerY ] <| wrapText item.description
+                    , el [ Background.color color.transWhite, Border.rounded 7, padding 5, height (minimum 50 shrink) ] <| el [ Font.center, defaultFont, defaultFontSize, centerX, centerY ] <| text item.name
+                    , el [ Background.color color.transWhite, Border.rounded 7, padding 5, width fill, height (minimum 50 shrink) ] <| el [ centerX, centerY ] <| wrapText item.description
                     ]
             }
         ]
@@ -681,7 +681,7 @@ viewItemDetail item =
 controlsButton : Element Msg
 controlsButton =
     el [ padding 5, alignBottom, width (px 170) ] <|
-        Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
+        Input.button [ Background.color color.transBlack, Font.color color.white, Border.rounded 5, padding 5 ]
             { onPress = Just ShowControl
             , label = column [] [ image [ width (px 50), height (px 50), centerX ] { src = "src/img/controls.svg", description = "" }, wrapText "Controls" ]
             }
@@ -695,10 +695,10 @@ achievementButton : ViewState -> Element Msg
 achievementButton viewState =
     el [ padding 5, alignBottom, width (px 170) ] <|
         Input.button
-            ([ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5, alignRight ]
+            ([ Background.color color.transBlack, Font.color color.white, Border.rounded 5, padding 5, alignRight ]
                 ++ (case length viewState.highlightedAchievements > 0 of
                         True ->
-                            [ Border.glow Color.red 2 ]
+                            [ Border.glow color.red 2 ]
 
                         False ->
                             []

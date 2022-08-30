@@ -7,10 +7,10 @@ import Json.Decode as Decode exposing (Decoder)
 type Key
     = ChoiceKey Choice
     | Restart
-    | UnknownKey
     | NumberKey Int
     | Controls
     | Achievements
+    | UnknownKey
 
 
 decoder : Decoder Key
