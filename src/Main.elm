@@ -522,7 +522,7 @@ viewControls =
         [ row [ width fill ]
             [ el [ width (px 40) ] <| none
             , column [ centerX, width fill ]
-                [ wrapText "Controls" ]
+                [ paragraph [ Font.center, defaultFont, Font.size 35 ] [ text "Controls" ] ]
             , Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
                 { onPress = Just ShowControl
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
@@ -585,7 +585,7 @@ viewAchievements gameData viewState player =
     column [ centerX, centerY, Background.color Color.transWhiteHeavy, width (px 800), height fill, padding 20, Border.rounded 7 ]
         [ row [ width fill, paddingXY 0 20 ]
             [ el [ width (px 40) ] <| none
-            , wrapText "Achievements"
+            , paragraph [ Font.center, defaultFont, Font.size 35 ] [ text "Achievements" ]
             , Input.button [ Background.color Color.transBlack, Font.color Color.white, Border.rounded 5, padding 5 ]
                 { onPress = Just ShowAchievement
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
