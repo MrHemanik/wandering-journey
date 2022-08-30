@@ -736,9 +736,9 @@ update msg model =
                     ListHelper.removeEntriesFromList (Achievement.checkDistance game.score) player.unlockedAchievements
 
                 updatedPlayer =
-                    { player | highscore = max player.highscore game.score, unlockedAchievements = ListHelper.addEntriesToList player.unlockedAchievements newlyUnlockedAchievements }
+                    { player | highscore = max player.highscore game.score, unlockedAchievements = ListHelper.addEntriesToListAndSort player.unlockedAchievements newlyUnlockedAchievements }
             in
-            ( GameOver gameData game updatedPlayer { viewState | newAchievements = newlyUnlockedAchievements, highlightedAchievements = Debug.log "newnew" (ListHelper.addEntriesToList viewState.highlightedAchievements newlyUnlockedAchievements) }, savePlayerData <| Player.encoder updatedPlayer )
+            ( GameOver gameData game updatedPlayer { viewState | newAchievements = newlyUnlockedAchievements, highlightedAchievements = ListHelper.addEntriesToListAndSort viewState.highlightedAchievements newlyUnlockedAchievements }, savePlayerData <| Player.encoder updatedPlayer )
 
         ( _, _ ) ->
             case ( model, msg ) of
@@ -1009,7 +1009,7 @@ processFlags flags ( model, cmd ) =
                         { game | activeItemsIndexes = ListHelper.removeEntriesFromList game.activeItemsIndexes [ id ] } |> (\g -> ( Running gameData g player choice viewState, cmd ))
 
                     AddCards list ->
-                        { game | unlockedCardIndexes = ListHelper.addEntriesToList game.unlockedCardIndexes list } |> (\g -> ( Running gameData g player choice viewState, cmd ))
+                        { game | unlockedCardIndexes = ListHelper.addEntriesToListAndSort game.unlockedCardIndexes list } |> (\g -> ( Running gameData g player choice viewState, cmd ))
 
                     RemoveCards list ->
                         { game | unlockedCardIndexes = ListHelper.removeEntriesFromList game.unlockedCardIndexes list } |> (\g -> ( Running gameData g player choice viewState, cmd ))
@@ -1084,7 +1084,7 @@ checkIfIdUnlocksAchievement id player vs =
             ( player, vs, Cmd.none )
 
         False ->
-            ( updatedPlayer, { vs | newAchievements = [ id ], highlightedAchievements = ListHelper.addEntriesToList [ id ] vs.highlightedAchievements }, savePlayerData <| Player.encoder updatedPlayer )
+            ( updatedPlayer, { vs | newAchievements = [ id ], highlightedAchievements = ListHelper.addEntriesToListAndSort [ id ] vs.highlightedAchievements }, savePlayerData <| Player.encoder updatedPlayer )
 
 
 

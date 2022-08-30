@@ -931,7 +931,7 @@
           "choiceText":"Lay your flowers to the cross",
           "pickedText":"You made some space in the sand and placed your flowers to the cross. While doing so however you noticed a small box buried as well. Inside of it is some money and a yellow crystal",
           "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":10},
-          "flags":[{"removeItem": 7},{"addItem": 11}]
+          "flags":[{"removeCard": 47},{"removeItem": 7},{"addItem": 11}]
         }}}]
   }, {
     "id":48,

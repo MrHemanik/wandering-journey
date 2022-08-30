@@ -1,4 +1,4 @@
-module ListHelper exposing (addEntriesToList, idListToObjectList, idToObject, removeEntriesFromList)
+module ListHelper exposing (addEntriesToList, addEntriesToListAndSort, idListToObjectList, idToObject, removeEntriesFromList)
 
 
 removeEntriesFromList : List a -> List a -> List a
@@ -6,9 +6,14 @@ removeEntriesFromList list removeList =
     List.filter (\a -> not (List.member a removeList)) list
 
 
+addEntriesToListAndSort : List comparable -> List comparable -> List comparable
+addEntriesToListAndSort list addList =
+    List.sort (addEntriesToList list addList)
+
+
 addEntriesToList : List comparable -> List comparable -> List comparable
 addEntriesToList list addList =
-    List.sort (list ++ removeEntriesFromList addList list)
+    list ++ removeEntriesFromList addList list
 
 
 {-| Get an object with id 'id' from List Object
