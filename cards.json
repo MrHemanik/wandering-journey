@@ -595,7 +595,7 @@
       "pickedText":"As soon as you placed the crystal red rays of light spew out of it, illuminating the whole room. Suddenly you felt the ground shaking and walls crumbling. You picked up the red crystal and dashed outside while the ruin collapsed",
       "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":-5, "mentalHealth":0, "money": 0},
       "flags":[
-        {"addCards": 67},
+        {"addCards": [67]},
         {"removeItem": 0},
         {"addItem": 8},
         {"removeCards": [29]},
@@ -1185,7 +1185,7 @@
         "choiceText":"Activate the stone",
         "pickedText":"The priest prepared a ritual in one of the chambers of this church with big runes drawn with chalk on the floor and two chickens in cages. You placed the crystal in the middle. The priest began speaking in an ancient language, making the yellow crystal glow with immense intensity. Simultaneously one of the chicken began to age while the other regressed in age until the first died and the second turned to nothingness. You take the crystal with you without looking the priest in the eye",
         "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
-        "flags":[{"addCards": 67},{"removeItem": 11},{"addItem": 12},{"unlockAchievement": 12}]
+        "flags":[{"addCards": [67]},{"removeItem": 11},{"addItem": 12},{"unlockAchievement": 12}]
       },
       "decisionRight" : {
         "choiceText":"Decide against it",
@@ -1320,7 +1320,7 @@
       "choiceText":"Activate the stone",
       "pickedText":"The priest prepared a ritual in one of the chambers of this church with big runes drawn with chalk on the floor and two chickens in cages. You placed the crystal in the middle. The priest began speaking in an ancient language, making the yellow crystal glow with immense intensity. Simultaneously one of the chicken began to age while the other regressed in age until the first died and the second turned to nothingness. You take the crystal with you without looking the priest in the eye",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "flags":[{"addCards": 67},{"removeItem": 11},{"addItem": 12},{"unlockAchievement": 12}]
+      "flags":[{"addCards": [67]},{"removeItem": 11},{"addItem": 12},{"unlockAchievement": 12}]
     },
     "decisionRight" : {
       "choiceText":"Decide against it",
@@ -1363,17 +1363,29 @@
   }, {
     "id":67,
     "possibleLocation": ["City", "Forest", "Desert"],
-    "mainText":"In the corner of your eye an ancient stone door is calling to you. As you walk towards it you see three sockets in the center of the door, each with a distinct symbol on it",
+    "mainText":"In the corner of your eye an ancient door is calling to you. As you walk towards it you see three sockets in the center of the door, each with a distinct symbol on it. There is no building connected to it, only a stone arch with a door inside",
     "decisionLeft" : {
       "choiceText":"Inspect the sockets",
-      "pickedText":"You inspect the doors sockets and their engraved symbols. All of them incorporating what looks like a shield in the center",
+      "pickedText":"You inspect the doors sockets and their engraved symbols. All of them incorporating what looks like a shield in the center. Yet you do not seem to find a way to open it",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth": 0, "mentalHealth":0, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
-      "choiceText":"",
-      "pickedText":"",
+      "choiceText":"Walk away",
+      "pickedText":"You did not want to indulge into this doors mystery, so after a quick look you went on your way",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
-    }}]
+    },
+    "flags": [{"conditionalDecision": {
+      "condition": {
+        "ownItems": [8,10,12]
+      },
+      "overwriteSide": false,
+      "decision": {
+        "choiceText":"Put your crystals in the sockets",
+        "pickedText":"You put the crystals in their corresponding sockets, making the door open from itself. As you look through the door, you only see white light shining though. You walk inside...",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
+        "flags":[{"removeItem": 8},{"removeItem": 10},{"removeItem": 12},{"endGame" : "You went through the door and your physical form dissolved into nothingness. You became one with the universe itself. You felt the beginning and end of all. You are everything and none"}, {"unlockAchievement": 15}]
+      }}}]
+  }]
 }

@@ -73,7 +73,7 @@ type alias Game =
 
 
 type alias ViewState =
-    { item : Maybe Item, showControls : Bool, showAchievements : Bool, showDeleteConfirmation : Bool, newAchievements : List Int, highlightedAchievements : List Int, selectedAchievement : Maybe Achievement }
+    { item : Maybe Item, showControls : Bool, showAchievements : Bool, showDeleteConfirmation : Bool, newAchievements : List Int, highlightedAchievements : List Int, selectedAchievement : Maybe Achievement, endGameText : String }
 
 
 type alias GameData =
@@ -89,7 +89,7 @@ emptyGameData =
 
 
 emptyViewState =
-    { item = Nothing, showControls = False, showAchievements = False, showDeleteConfirmation = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
+    { item = Nothing, showControls = False, showAchievements = False, showDeleteConfirmation = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing, endGameText = "" }
 
 
 defaultGame gameData =
@@ -258,7 +258,7 @@ viewResources resources =
     let
         resourceElement src resource isMoney =
             column
-                [ width fill, paddingXY 5 20, spacing 20 ]
+                [ width fill, paddingXY 5 10, spacing 20 ]
                 [ image [ Background.color color.white, Border.rounded 3, Border.glow color.white 3, centerX, centerY ]
                     { src = src, description = "" }
                 , row [ Background.color color.transBlackLight, Border.rounded 5, padding 8, width fill, defaultFont, defaultFontSize, fontColor resource isMoney ]
@@ -336,19 +336,24 @@ viewDeathScreen model =
                 "Your long Journey ends here."
     in
     case model of
-        GameOver gameData game _ _ ->
+        GameOver gameData game _ viewState ->
             column [ centerX, centerY, Background.color color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ] <|
-                [ el [ width fill, padding 20 ] <|
-                    wrapText (journeyLengthText game.score)
-                , wrapText (Resources.deathMessage game.resources)
-                , el [ width fill, padding 20 ] <|
-                    wrapText ("Distance traveled:  " ++ String.fromInt game.score ++ " meters")
-                , row [ centerX, spacing 10, padding 10 ] <| achievementsInText (modelToViewState model).newAchievements gameData.achievements
-                , Input.button [ width (minimum 100 fill), alignBottom ]
-                    { onPress = Just (Key Restart)
-                    , label = row [ centerX ] [ styledText "New ", underlineFirstCharText "Run" ]
-                    }
-                ]
+                (if viewState.endGameText == "" then
+                    [ el [ width fill, padding 20 ] <| wrapText (journeyLengthText game.score)
+                    , wrapText (Resources.deathMessage game.resources)
+                    ]
+
+                 else
+                    [ el [ width fill, padding 20 ] <| wrapText viewState.endGameText ]
+                )
+                    ++ [ el [ width fill, padding 20 ] <|
+                            wrapText ("Distance traveled:  " ++ String.fromInt game.score ++ " meters")
+                       , row [ centerX, spacing 10, padding 10 ] <| achievementsInText (modelToViewState model).newAchievements gameData.achievements
+                       , Input.button [ width (minimum 100 fill), alignBottom ]
+                            { onPress = Just (Key Restart)
+                            , label = row [ centerX ] [ styledText "New ", underlineFirstCharText "Run" ]
+                            }
+                       ]
 
         _ ->
             none
@@ -1007,7 +1012,7 @@ deactivateAchievementHighlighting id viewState =
 ---- Process Functions ----
 
 
-{-| Takes the input key and does an action according to it
+{-| Takes the input key and does an action according to it, also gets 'Msg = ChoiceKey Key' from choiceButtons
 -}
 processKey : Key -> Model -> ( Model, Cmd Msg )
 processKey key model =
@@ -1016,10 +1021,10 @@ processKey key model =
             modelToViewState model
     in
     case ( model, key, vs.showAchievements || vs.showControls || vs.showDeleteConfirmation ) of
-        ( Running gameData game _ oldChoice _, ChoiceKey choice, False ) ->
+        ( Running gameData game player oldChoice viewState, ChoiceKey choice, False ) ->
             if oldChoice == Nothing then
                 let
-                    ( resource, flags ) =
+                    ( resources, flags ) =
                         case ( choice, game.card ) of
                             ( Left, Just c ) ->
                                 ( c.decisionLeft.resourceChange, c.decisionLeft.flags )
@@ -1038,7 +1043,7 @@ processKey key model =
                             ( Running _ g p _ v, cmd ) ->
                                 ( ( g, p ), ( v, cmd ) )
                 in
-                if Resources.isOptionAllowed game.resources resource then
+                if Resources.isOptionAllowed game.resources resources then
                     ( Running gameData
                         { fpg
                             | resources = calculateResourcesOnChoice fpg.resources choice fpg.location fpg.card
@@ -1055,12 +1060,15 @@ processKey key model =
                     ( model, Cmd.none )
 
             else
-                case game.nextCard of
-                    Nothing ->
+                case ( game.nextCard, String.isEmpty viewState.endGameText ) of
+                    ( Nothing, True ) ->
                         generatePossibleCard model
 
-                    Just _ ->
+                    ( Just _, True ) ->
                         loadCard model game.nextCard
+
+                    ( _, False ) ->
+                        ( GameOver gameData game player viewState, Cmd.none )
 
         ( Running gameData _ player _ viewState, Restart, False ) ->
             Running gameData (defaultGame gameData) player Nothing { emptyViewState | highlightedAchievements = viewState.highlightedAchievements } |> generatePossibleCard
@@ -1174,6 +1182,9 @@ processFlags flags ( model, cmd ) =
 
                     TakeMoney sum ->
                         { game | resources = { resources | money = max 0 (resources.money - sum) } } |> (\g -> ( Running gameData g player choice viewState, cmd ))
+
+                    EndGame msg ->
+                        ( Running gameData game player choice { viewState | endGameText = msg }, Cmd.none )
 
                     _ ->
                         ( model, cmd )

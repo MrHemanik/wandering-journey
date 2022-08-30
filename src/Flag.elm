@@ -20,6 +20,7 @@ type Flag
     | FollowUp Int
     | UnlockAchievement Int
     | TakeMoney Int
+    | EndGame String
     | Unknown
 
 
@@ -34,5 +35,6 @@ decoder =
         , Decode.map FollowUp (Decode.field "followUp" Decode.int)
         , Decode.map UnlockAchievement (Decode.field "unlockAchievement" Decode.int)
         , Decode.map TakeMoney (Decode.field "takeMoney" Decode.int)
+        , Decode.map EndGame (Decode.field "endGame" Decode.string)
         , Decode.succeed Unknown
         ]
