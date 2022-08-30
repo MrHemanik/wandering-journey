@@ -298,10 +298,10 @@ viewScore : Int -> String -> Element Msg
 viewScore score string =
     el [ padding 5, width (minimum 400 (maximum 800 shrink)), centerX, Background.color color.transBlack, Font.color color.white, Border.rounded 5 ] <|
         if string == "score" then
-            wrapText ("Meters traveled " ++ String.fromInt score)
+            wrapText ("Meters traveled: " ++ String.fromInt score)
 
         else
-            wrapText ("Most meters traveled " ++ String.fromInt score)
+            wrapText ("Most meters traveled: " ++ String.fromInt score)
 
 
 {-| Card Window
