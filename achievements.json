@@ -60,5 +60,9 @@
       "id": 14,
       "name": "It feels like pure life",
       "description": "Activate the green crystal"
+    },{
+      "id": 15,
+      "name": "Who am I?",
+      "description": "Win the game"
     }]
 }
