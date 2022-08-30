@@ -11,6 +11,7 @@ type Key
     | Controls
     | Achievements
     | Delete
+    | Escape
     | UnknownKey
 
 
@@ -30,6 +31,9 @@ decoder =
 
                 "d" ->
                     Delete
+
+                "Escape" ->
+                    Escape
 
                 "1" ->
                     NumberKey 1

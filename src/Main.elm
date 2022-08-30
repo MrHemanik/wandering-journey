@@ -529,12 +529,15 @@ viewControls =
                 , label = image [ width (px 30), height (px 30), centerX ] { src = "src/img/close.svg", description = "" }
                 }
             ]
+        , el [ Border.width 1, Border.color color.transBlackLight, centerX, width fill ] <| none
         , wrappedRow [] [ styledText "Choose an Option: Click on the option or press", keyIcon "<-", keyIcon "->" ]
         , wrappedRow [] [ styledText "Toggle Item Details: Click on an Item or press", keyIcon "1", styledText "to", keyIcon "0" ]
+        , wrappedRow [] [ styledText "Restart Game: Press", keyIcon "R" ]
+        , el [ Border.width 1, Border.color color.transBlackLight, centerX, width fill ] <| none
         , wrappedRow [] [ styledText "Toggle Achievements: Click on 'Achievements' or press", keyIcon "A" ]
         , wrappedRow [] [ styledText "Toggle Controls: Click on 'Controls' or press", keyIcon "C" ]
-        , wrappedRow [] [ styledText "Restart Game: Press", keyIcon "R" ]
-        , wrappedRow [] [ styledText "Delete Data: Click on the button in 'Achievements' or press", keyIcon "D", styledText "to open the menu" ]
+        , wrappedRow [] [ styledText "Open Data Deletion: Click on the button in Achievements or press", keyIcon "D" ]
+        , wrappedRow [] [ styledText "Close Window: Click on the X, press their button or press", keyIcon "Esc" ]
         ]
 
 
@@ -543,7 +546,7 @@ locked (??? cards), unlocked (normal) and highlighed (red glow): <https://i.imgu
 -}
 keyIcon : String -> Element Msg
 keyIcon keyText =
-    el [ Background.uncropped "src/img/key.svg", width (px 50), height (px 50) ] <| el [ centerX, centerY, width fill, Font.center, defaultFont, Font.size 20 ] <| text keyText
+    el [ Background.uncropped "src/img/key.svg", width (px 50), height (px 50) ] <| el [ centerX, centerY, width fill, Font.center, defaultFont, Font.size 15 ] <| text keyText
 
 
 viewAchievements : GameData -> ViewState -> Player -> Element Msg
@@ -907,11 +910,18 @@ showAchievement viewState =
     }
 
 
-{-| toggles the achievement window
+{-| toggles the deletion confirmation window
 -}
 showDeletionConfirmation : ViewState -> ViewState
 showDeletionConfirmation viewState =
     { viewState | showDeleteConfirmation = not viewState.showDeleteConfirmation, showAchievements = False, showControls = False }
+
+
+{-| toggles the deletion confirmation window
+-}
+closeWindows : ViewState -> ViewState
+closeWindows viewState =
+    { viewState | showDeleteConfirmation = False, showAchievements = False, showControls = False }
 
 
 {-| deletes all playerdata and starts a new run
@@ -1047,6 +1057,14 @@ processKey key model =
 
                 Running gameData game player choice viewState ->
                     ( Running gameData game player choice (showAchievement viewState), Cmd.none )
+
+        ( _, Escape, True ) ->
+            case model of
+                GameOver gameData game player viewState ->
+                    ( GameOver gameData game player (closeWindows viewState), Cmd.none )
+
+                Running gameData game player choice viewState ->
+                    ( Running gameData game player choice (closeWindows viewState), Cmd.none )
 
         ( _, _, _ ) ->
             ( model, Cmd.none )
