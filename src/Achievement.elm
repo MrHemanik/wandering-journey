@@ -1,4 +1,4 @@
-module Achievement exposing (Achievement, achievementIdToAchievementUrl, checkDistance, decoder, unlockAchievement)
+module Achievement exposing (Achievement, achievementIdToAchievementUrl, checkUnlock, decoder, unlockAchievement)
 
 import Json.Decode as Decode exposing (Decoder)
 import ListHelper
@@ -6,10 +6,7 @@ import Player exposing (Player)
 
 
 type alias Achievement =
-    { id : Int
-    , name : String
-    , description : String
-    }
+    { id : Int, name : String, description : String }
 
 
 decoder : Decoder Achievement
@@ -20,8 +17,11 @@ decoder =
         (Decode.field "description" Decode.string)
 
 
-checkDistance : Int -> List Int
-checkDistance score =
+{-| Unlocks achievements that aren't unlocked via "unlockAchievement" flag in decisions when the condition is met
+Unlocks the first one automatically (die for the first time), then checks if the score is high enough for the "distance travelled" ones
+-}
+checkUnlock : Int -> List Int
+checkUnlock score =
     [ 0 ]
         ++ (if score >= 100000 then
                 [ 1, 2 ]

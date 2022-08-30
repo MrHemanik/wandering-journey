@@ -5,10 +5,7 @@ import Json.Decode as Decode exposing (Decoder)
 
 
 type alias Item =
-    { id : Int
-    , name : String
-    , description : String
-    }
+    { id : Int, name : String, description : String }
 
 
 decoder : Decoder Item

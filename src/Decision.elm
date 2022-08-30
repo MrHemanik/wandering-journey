@@ -7,11 +7,7 @@ import Resources exposing (Resources)
 
 
 type alias Decision =
-    { choiceText : String
-    , pickedText : String
-    , resourceChange : Resources
-    , flags : List Flag
-    }
+    { choiceText : String, pickedText : String, resourceChange : Resources, flags : List Flag }
 
 
 decoder : Decoder Decision

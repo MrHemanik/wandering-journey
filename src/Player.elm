@@ -5,9 +5,7 @@ import Json.Encode as Encode
 
 
 type alias Player =
-    { unlockedAchievements : List Int
-    , highscore : Int
-    }
+    { unlockedAchievements : List Int, highscore : Int }
 
 
 decoder : Decoder Player

@@ -28,6 +28,13 @@ idToObject id idRecordList =
     List.head (List.filter (\x -> x.id == id) idRecordList)
 
 
+{-| Get object corresponding to 'id' of idList from List Object.
+
+    idListToObjectList [ 0, 2, 3 ] [ { id = 0 }, { id = 1 }, { id = 2 } ] == [ { id = 0 }, { id = 2 } ]
+
+    idListToObjectList [ 3 ] [ { id = 0 }, { id = 1 }, { id = 2 } ] == []
+
+-}
 idListToObjectList : List Int -> List { a | id : Int } -> List { a | id : Int }
 idListToObjectList idList idRecordList =
     List.filterMap identity <| List.map (\x -> idToObject x idRecordList) idList

@@ -3,6 +3,8 @@ module Color exposing (color)
 import Element exposing (rgb255, rgba)
 
 
+{-| predefined Colors to make colors consistent and unified
+-}
 color =
     { black =
         rgb255 0x00 0x00 0x00

@@ -1,4 +1,4 @@
-module Data exposing (Data(..), fromResult, handleError)
+module Data exposing (Data(..), fromResult)
 
 import Json.Decode exposing (Error(..))
 
@@ -16,19 +16,3 @@ fromResult result =
 
         Err e ->
             Failure e
-
-
-handleError : Error -> String
-handleError err =
-    case err of
-        Field string error ->
-            "Field Error:" ++ string
-
-        Index int error ->
-            "Index error:" ++ String.fromInt int
-
-        OneOf errors ->
-            "OneOf Error"
-
-        _ ->
-            "Failure Error:"

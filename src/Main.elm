@@ -31,6 +31,10 @@ import Random
 import Resources exposing (Resources)
 
 
+
+---- Ports to communicate with index.html ----
+
+
 port savePlayerData : Encode.Value -> Cmd msg
 
 
@@ -343,6 +347,7 @@ viewCard model =
     in
     column [ centerX, centerY, Background.color color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ] <|
         case model of
+            --TODO: Put in own view and just (model, Cmd Msg) when GameOver here
             GameOver _ game _ _ ->
                 [ el [ width fill, padding 20 ] <|
                     wrapText (journeyLengthText game.score)
@@ -541,14 +546,20 @@ viewControls =
         ]
 
 
-{-| Achievement Window that shows what achievements there are, which are unlocked and which are newly unlocked
-locked (??? cards), unlocked (normal) and highlighed (red glow): <https://i.imgur.com/r3tJwvV.png>
+{-| Key Icon with custom string
+
+    keyIcon "<-" == <https://i.imgur.com/zB9AkiC.png>
+    keyIcon "Esc" == <https://i.imgur.com/agEe2Vi.png>
+
 -}
 keyIcon : String -> Element Msg
 keyIcon keyText =
     el [ Background.uncropped "src/img/key.svg", width (px 50), height (px 50) ] <| el [ centerX, centerY, width fill, Font.center, defaultFont, Font.size 15 ] <| text keyText
 
 
+{-| Achievement Window that shows what achievements there are, which are unlocked and which are newly unlocked
+locked (??? cards), unlocked (normal) and highlighted (red glow): <https://i.imgur.com/r3tJwvV.png>
+-}
 viewAchievements : GameData -> ViewState -> Player -> Element Msg
 viewAchievements gameData viewState player =
     let
@@ -614,7 +625,9 @@ viewAchievements gameData viewState player =
         ]
 
 
-{-| -}
+{-| Delete Window from where you can delete your player data
+<https://i.imgur.com/vfIANrn.png>
+-}
 viewDeleteConfirmation : Element Msg
 viewDeleteConfirmation =
     column [ centerX, centerY, Background.color color.transWhiteHeavy, width (px 800), height (shrink |> minimum 400), padding 20, Border.rounded 7 ]
@@ -761,6 +774,8 @@ styledText text =
     el [ Font.center, defaultFont, defaultFontSize ] <| Element.text text
 
 
+{-| Returns a stylized text where the first character is underlined
+-}
 underlineFirstCharText : String -> Element Msg
 underlineFirstCharText text =
     let
@@ -787,7 +802,7 @@ update msg model =
         ( Running gameData game player _ viewState, True ) ->
             let
                 newlyUnlockedAchievements =
-                    ListHelper.removeEntriesFromList (Achievement.checkDistance game.score) player.unlockedAchievements
+                    ListHelper.removeEntriesFromList (Achievement.checkUnlock game.score) player.unlockedAchievements
 
                 updatedPlayer =
                     { player | highscore = max player.highscore game.score, unlockedAchievements = ListHelper.addEntriesToListAndSort player.unlockedAchievements newlyUnlockedAchievements }
@@ -925,7 +940,7 @@ closeWindows viewState =
     { viewState | showDeleteConfirmation = False, showAchievements = False, showControls = False }
 
 
-{-| deletes all playerdata and starts a new run
+{-| deletes all playerData and starts a new run
 -}
 deletePlayerData : Model -> ( Model, Cmd Msg )
 deletePlayerData model =
@@ -1177,19 +1192,19 @@ processCardFlags inputModel =
             process card.flags ( inputModel, Cmd.none )
 
 
-{-| checks if 'id' is from a previously not owned achievement and either unlocks
+{-| checks if 'id' is from a previously not owned achievement and unlocks if that's the case
 -}
 checkIfIdUnlocksAchievement : Int -> Player -> ViewState -> ( Player, ViewState, Cmd Msg )
 checkIfIdUnlocksAchievement id player vs =
-    let
-        updatedPlayer =
-            Achievement.unlockAchievement id player
-    in
     case List.member id player.unlockedAchievements of
         True ->
             ( player, vs, Cmd.none )
 
         False ->
+            let
+                updatedPlayer =
+                    Achievement.unlockAchievement id player
+            in
             ( updatedPlayer, { vs | newAchievements = [ id ], highlightedAchievements = ListHelper.addEntriesToListAndSort [ id ] vs.highlightedAchievements }, savePlayerData <| Player.encoder updatedPlayer )
 
 
@@ -1213,6 +1228,8 @@ generateCard length =
 ---- Default functions ----
 
 
+{-| loads data from index.html and initializes Model accordingly
+-}
 init : ( String, String ) -> ( Model, Cmd Msg )
 init flags =
     let
