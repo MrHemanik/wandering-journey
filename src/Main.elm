@@ -91,7 +91,7 @@ emptyViewState =
 defaultGame gameData =
     { resources = startingResources
     , allowedCardIndexes = gameData.startingCardIndexes
-    , activeItemsIndexes = []
+    , activeItemsIndexes = [ 11 ]
     , currentCards = Card.getCurrentlyPossibleCards gameData.cards gameData.startingCardIndexes startingLocation
     , location = startingLocation
     , card = Nothing
@@ -394,7 +394,7 @@ viewCard model =
                                                                 , description = ""
                                                                 }
                                             in
-                                            [ row [ width fill, padding 20 ] [ wrapText decision.pickedText ]
+                                            [ row [ width fill, paddingXY 0 20 ] [ wrapText decision.pickedText ]
                                             , row [ centerX, spacing 10, padding 10 ]
                                                 (List.map itemElement (viewItemChanges decision.flags gameData.items)
                                                     ++ achievements viewState.newAchievements
@@ -644,7 +644,7 @@ viewDeleteConfirmation =
 -}
 viewBag : ViewState -> Game -> Element Msg
 viewBag viewState game =
-    el [ centerX, paddingXY 0 20 ] <|
+    el [ centerX, paddingXY 0 5 ] <|
         row
             ([ Background.tiled "src/img/leather.jpg", Border.rounded 7, Border.width 3, Border.color color.black, width (minimum 100 (maximum 800 fill)) ]
                 ++ (case viewState.item of

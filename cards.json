@@ -913,7 +913,7 @@
           "choiceText":"Lay your flowers to the cross",
           "pickedText":"You made some space in the sand and placed your flowers to the cross. While doing so however you noticed a small box buried as well. Inside of it is some money and a yellow crystal",
           "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":10},
-          "flags":[{"removeCard": 47},{"removeItem": 7},{"addItem": 11},{"unlockAchievement": 11}]
+          "flags":[{"removeCards": [47]},{"removeItem": 7},{"addItem": 11},{"unlockAchievement": 11}]
         }}}]
   }, {
     "id":48,
@@ -1035,7 +1035,7 @@
       "choiceText":"Try to reach inside",
       "pickedText":"You tried to climb up the tree over and over again. After a while you finally did get a hold of the hollow, so you reached your arm inside. You felt something inside the hole and grabbed it, losing your grip in the process and falling from the tree. You quickly stood up and ran as you noticed the group of monkeys wanting to defend their territory",
       "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth": -10, "mentalHealth":5, "money": 0},
-      "flags":[{"addItem": 9}, {"removeCard": 53}, {"addCard": 56},{"unlockAchievement": 13}]
+      "flags":[{"addItem": 9}, {"removeCards": [53]}, {"addCards": [56]},{"unlockAchievement": 13}]
     },
     "decisionRight" : {
       "choiceText":"Rest at the tree",
@@ -1095,7 +1095,7 @@
         "choiceText":"Place your green crystal on the altar",
         "pickedText":"You placed the green crystal on the altar. The stone started to to emit a radiant green hue and with it vegetation grew from every corner of the room. After the initial glow lessened you take the crystal back left pyramid, seeing that the stone has affected the surrounding area as well",
         "resourceChange":  {"hunger":0, "thirst":10, "physicalHealth":0, "mentalHealth":0, "money": 0},
-        "flags":[{"removeCard": 56},{"removeItem": 9},{"addItem": 10},{"unlockAchievement": 14}]
+        "flags":[{"removeCards": [56]},{"removeItem": 9},{"addItem": 10},{"unlockAchievement": 14}]
       },
       "decisionRight" : {
         "choiceText":"Leave the pyramid",
