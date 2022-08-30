@@ -68,7 +68,7 @@ type alias Game =
 
 
 type alias ViewState =
-    { item : Maybe Item, showControls : Bool, showAchievement : Bool, newAchievements : List Int, highlightedAchievements : List Int, selectedAchievement : Maybe Achievement }
+    { item : Maybe Item, showControls : Bool, showAchievements : Bool, newAchievements : List Int, highlightedAchievements : List Int, selectedAchievement : Maybe Achievement }
 
 
 type alias GameData =
@@ -84,7 +84,7 @@ emptyGameData =
 
 
 emptyViewState =
-    { item = Nothing, showControls = False, showAchievement = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
+    { item = Nothing, showControls = False, showAchievements = False, newAchievements = [], highlightedAchievements = [], selectedAchievement = Nothing }
 
 
 defaultGame gameData =
@@ -197,7 +197,7 @@ view model =
     viewBackground game.location <|
         column [ width fill, height fill ]
             [ column [ width fill, height fill ] <|
-                if not viewState.showAchievement then
+                if not viewState.showAchievements then
                     [ viewResources game.resources
                     , viewLocation game.location
                     , el [ paddingXY 0 5, centerX ] <| viewScore game.score "score"
@@ -214,7 +214,7 @@ view model =
                     ]
             , row [ width fill ]
                 [ controlsButton
-                , if not viewState.showAchievement then
+                , if not viewState.showAchievements then
                     viewBag viewState game
 
                   else
@@ -852,7 +852,7 @@ toggleItemDetails id viewState gameData =
 -}
 showControls : ViewState -> ViewState
 showControls viewState =
-    { viewState | showControls = not viewState.showControls, showAchievement = False }
+    { viewState | showControls = not viewState.showControls, showAchievements = False }
 
 
 {-| toggles the achievement window
@@ -860,10 +860,10 @@ showControls viewState =
 showAchievement : ViewState -> ViewState
 showAchievement viewState =
     { viewState
-        | showAchievement = not viewState.showAchievement
+        | showAchievements = not viewState.showAchievements
         , showControls = False
         , highlightedAchievements =
-            if viewState.showAchievement then
+            if viewState.showAchievements then
                 []
 
             else
@@ -899,8 +899,12 @@ deactivateAchievementHighlighting id viewState =
 -}
 processKey : Key -> Model -> ( Model, Cmd Msg )
 processKey key model =
-    case ( model, key ) of
-        ( Running gameData game _ oldChoice _, ChoiceKey choice ) ->
+    let
+        vs =
+            modelToViewState model
+    in
+    case ( model, key, vs.showAchievements || vs.showControls ) of
+        ( Running gameData game _ oldChoice _, ChoiceKey choice, False ) ->
             if oldChoice == Nothing then
                 let
                     ( resource, flags ) =
@@ -931,7 +935,7 @@ processKey key model =
                         }
                         fpp
                         (Just choice)
-                        { fpv | item = Nothing, showControls = False, showAchievement = False }
+                        { fpv | item = Nothing, showControls = False, showAchievements = False }
                     , flagProcessedCommand
                     )
 
@@ -946,13 +950,13 @@ processKey key model =
                     Just _ ->
                         loadCard model game.nextCard
 
-        ( Running gameData _ player _ _, Restart ) ->
+        ( Running gameData _ player _ _, Restart, False ) ->
             Running gameData (defaultGame gameData) player Nothing emptyViewState |> generatePossibleCard
 
-        ( GameOver gameData _ player _, Restart ) ->
+        ( GameOver gameData _ player _, Restart, False ) ->
             Running gameData (defaultGame gameData) player Nothing emptyViewState |> generatePossibleCard
 
-        ( _, NumberKey pressedNumber ) ->
+        ( _, NumberKey pressedNumber, _ ) ->
             let
                 numberToId indexList =
                     Maybe.withDefault -1 <| Array.get (modBy 10 (pressedNumber - 1)) (Array.fromList indexList)
@@ -967,7 +971,7 @@ processKey key model =
                 Running gameData game player choice viewState ->
                     ( Running gameData game player choice (newViewState gameData game viewState), Cmd.none )
 
-        ( _, Controls ) ->
+        ( _, Controls, _ ) ->
             case model of
                 GameOver gameData game player viewState ->
                     ( GameOver gameData game player (showControls viewState), Cmd.none )
@@ -975,7 +979,7 @@ processKey key model =
                 Running gameData game player choice viewState ->
                     ( Running gameData game player choice (showControls viewState), Cmd.none )
 
-        ( _, Achievements ) ->
+        ( _, Achievements, _ ) ->
             case model of
                 GameOver gameData game player viewState ->
                     ( GameOver gameData game player (showAchievement viewState), Cmd.none )
@@ -983,7 +987,7 @@ processKey key model =
                 Running gameData game player choice viewState ->
                     ( Running gameData game player choice (showAchievement viewState), Cmd.none )
 
-        ( _, _ ) ->
+        ( _, _, _ ) ->
             ( model, Cmd.none )
 
 
