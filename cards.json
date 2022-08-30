@@ -1,5 +1,5 @@
 {
-  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,41,42,43,44,45,46,47],
+  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,41,42,43,44,45,46,47, 48, 49, 50, 51],
   "cards" : [{
     "id":0,
     "possibleLocation": ["City"],
@@ -936,51 +936,102 @@
   }, {
     "id":48,
     "possibleLocation": ["Forest"],
-    "mainText":"",
+    "mainText":"You see some herbs in a clearing",
     "decisionLeft" : {
-      "choiceText":"",
-      "pickedText":"",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "choiceText":"Eat some herbs",
+      "pickedText":"The herbs heal your wounds",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":10, "mentalHealth":0, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
-      "choiceText":"",
-      "pickedText":"",
+      "choiceText":"Ignore them",
+      "pickedText":"You ignored the herbs",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
     }
   }, {
     "id":49,
     "possibleLocation": ["Forest"],
-    "mainText":"",
+    "mainText":"There are two paths ahead of you",
     "decisionLeft" : {
-      "choiceText":"",
-      "pickedText":"",
+      "choiceText":"Take the left one",
+      "pickedText":"You decide to take the left path, which takes you into a desert",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
-      "flags":[]
+      "flags":[{"changeLocation": "Desert"}]
     },
     "decisionRight" : {
-      "choiceText":"",
-      "pickedText":"",
+      "choiceText":"Take the right one",
+      "pickedText":"You choose the right path, which takes you into a desert",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
-      "flags":[]
+      "flags":[{"changeLocation": "City"}]
     }
   }, {
     "id":50,
-    "possibleLocation": ["Forest"],
-    "mainText":"",
+    "possibleLocation": ["Desert"],
+    "mainText":"As you walk through the desert you see a cactus with fruit on it",
     "decisionLeft" : {
-      "choiceText":"",
-      "pickedText":"",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "choiceText":"Eat some of the fruits",
+      "pickedText":"You decided to eat some of the fruits",
+      "resourceChange":  {"hunger":10, "thirst":5, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
-      "choiceText":"",
-      "pickedText":"",
+      "choiceText":"Walk past",
+      "pickedText":"Since you do not know if the fruits are edible, you keep on walking",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
     }
   }
+  , {
+      "id":51,
+      "possibleLocation": ["Desert"],
+      "mainText":"In the distance you see a Forest",
+      "decisionLeft" : {
+        "choiceText":"Walk towards the Forest",
+        "pickedText":"You walked towards it, eventually arriving in a shady Forest",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+        "flags":[{"changeLocation": "Forest"}]
+      },
+      "decisionRight" : {
+        "choiceText":"Ignore the Forest",
+        "pickedText":"As you decided to ignore the Forest, you continue your walk through the Desert",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+        "flags":[]
+      }
+    }
+  , {
+      "id":52,
+      "possibleLocation": ["Forest"],
+      "mainText":"",
+      "decisionLeft" : {
+        "choiceText":"",
+        "pickedText":"",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+        "flags":[]
+      },
+      "decisionRight" : {
+        "choiceText":"",
+        "pickedText":"",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+        "flags":[]
+      }
+    }
+  , {
+      "id":53,
+      "possibleLocation": ["Forest"],
+      "mainText":"",
+      "decisionLeft" : {
+        "choiceText":"",
+        "pickedText":"",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
+        "flags":[]
+      },
+      "decisionRight" : {
+        "choiceText":"",
+        "pickedText":"",
+        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+        "flags":[]
+      }
+    }
   ]
 }
