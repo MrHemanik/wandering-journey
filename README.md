@@ -5,7 +5,7 @@
 
 ### How to play
 A playable version can be accessed at https://mrhemanik.github.io/wandering-journey/
-[I'm an inline-style link](https://www.google.com)
+
 ### Brief Gameplay Description
 Concept is inspired by the mobile game  "Lapse: A Forgotten Future", though it plays completely differently than Lapse.
 
@@ -42,7 +42,11 @@ Shows Resources, Location, Score, Information about the Card, Inventory, Buttons
 ## Code-Specific Information
 ### Custom Libraries
 We use mdgriffith’s Elm-Ui for our browser UI, as it makes layouting and designing easier: https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/
-
+### Useful links
+- Elm Guide: https://guide.elm-lang.org/
+- Elm Package Doc: https://package.elm-lang.org/
+- Elm-Ui Doc: https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/
+- Examples for Elm-Ui: https://korban.net/elm/elm-ui-patterns/
 ### How to compile
 Run the command:
 ```elm make src/Main.elm --optimize --output wanderingJourney.js``` 
