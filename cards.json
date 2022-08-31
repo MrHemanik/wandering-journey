@@ -63,7 +63,7 @@
     "decisionLeft" : {
       "choiceText":"Help her carry the bags",
       "pickedText":"You helped the old lady carrying the apples home. As a thanks she gave you a bag to keep",
-      "resourceChange":  {"hunger":30, "thirst":20, "physicalHealth":-5, "mentalHealth":5, "money":0},
+      "resourceChange":  {"hunger":10, "thirst":5, "physicalHealth":-5, "mentalHealth":5, "money":0},
       "flags":[]
     },
     "decisionRight" : {
@@ -79,7 +79,7 @@
     "decisionLeft" : {
       "choiceText":"Rent a room for the night",
       "pickedText":"You bought yourself a room and got some rest",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":15, "money":-5},
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":15, "mentalHealth":15, "money":-5},
       "flags":[]
     },
     "decisionRight" : {
@@ -133,7 +133,7 @@
           "decision": {
             "choiceText":"D̴̪̑ò̴̼ ̴͉͒å̸̻ ̴̯͒t̷̹̽r̶̺̔i̶̦̿c̵̙͋ḵ̸̓",
             "pickedText":"On its own you body started to twist and turn into something far from human, losing consciousness in the process. You regained your consciousness looking human, yet different than before",
-            "resourceChange":  {"hunger":15, "thirst":10, "physicalHealth":-10, "mentalHealth":-15, "money":0},
+            "resourceChange":  {"hunger":5, "thirst":5, "physicalHealth":10, "mentalHealth":-15, "money":0},
             "flags":[]
     }}}]
   }, {
@@ -143,7 +143,7 @@
     "decisionLeft" : {
       "choiceText":"Drink from it",
       "pickedText":"You drank from the fountain and felt your stomach hurting shortly after",
-      "resourceChange":  {"hunger":0, "thirst":5, "physicalHealth":-5, "mentalHealth":0, "money":0},
+      "resourceChange":  {"hunger":0, "thirst":10, "physicalHealth":-5, "mentalHealth":0, "money":0},
       "flags":[]
     },
     "decisionRight" : {
@@ -178,7 +178,7 @@
     "decisionLeft" : {
       "choiceText":"Give him the bag you have found",
       "pickedText":"\"You found my stuff? I cannot thank you enough! Here, take some of it for yourself\"",
-      "resourceChange":  {"hunger":10, "thirst":10, "physicalHealth":10, "mentalHealth":20, "money": 10},
+      "resourceChange":  {"hunger":10, "thirst":5, "physicalHealth":10, "mentalHealth":15, "money": 10},
       "flags":[
         {"removeItem": 1},
         {"addCards":[9]},
@@ -187,7 +187,7 @@
     "decisionRight" : {
       "choiceText":"Walk past him",
       "pickedText":"You walk past the man who is probably the owner of the bag you found earlier. Thinking that you may never find the owner you decided to take the contents for yourself",
-      "resourceChange":  {"hunger":20, "thirst":15, "physicalHealth":15, "mentalHealth":-5, "money":20},
+      "resourceChange":  {"hunger":15, "thirst":10, "physicalHealth":15, "mentalHealth":-5, "money":15},
       "flags":[
         {"removeItem": 1},
         {"removeCards":[8]}]
@@ -199,7 +199,7 @@
     "decisionLeft" : {
       "choiceText":"Knock on the door",
       "pickedText":"A familiar face opens the door. The man whose bag you found invites you out of gratitude in to stay the night. You feel well rested",
-      "resourceChange":  {"hunger":20, "thirst":20, "physicalHealth":30, "mentalHealth":30, "money": 0},
+      "resourceChange":  {"hunger":20, "thirst":20, "physicalHealth":20, "mentalHealth":25, "money": 0},
       "flags":[
         {"removeCards":[9]}
       ,{"unlockAchievement": 10}]
@@ -207,7 +207,7 @@
     "decisionRight" : {
       "choiceText":"Walk past the house",
       "pickedText":"As soon as you walk past the house a familiar face slams open the door. The man whose bag you found invites you out of gratitude in to stay the night. You feel well rested",
-      "resourceChange":  {"hunger":20, "thirst":20, "physicalHealth":30, "mentalHealth":30, "money": 0},
+      "resourceChange":  {"hunger":20, "thirst":20, "physicalHealth":20, "mentalHealth":25, "money": 0},
       "flags":[{"removeCards":[9]},
         {"unlockAchievement": 10}]
     }
@@ -234,7 +234,7 @@
     "decisionLeft" : {
       "choiceText":"See a doctor",
       "pickedText":"You went inside the clinic and got a checkup. You feel better",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":20, "mentalHealth":0, "money": -5},
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":15, "mentalHealth":0, "money": -5},
       "flags":[]
     },
     "decisionRight" : {
@@ -417,7 +417,7 @@
     "decisionLeft" : {
       "choiceText":"Buy some Inutilis",
       "pickedText":"You bought and took some Inutilis, you feel like nothing has changed",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": -10},
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": -15},
       "flags":[
         {"addCards":[22]},
         {"removeCards":[21]}]
@@ -451,46 +451,46 @@
     "mainText":"There is a camp in the distance",
     "decisionLeft" : {
       "choiceText":"Walk towards the camp",
-      "pickedText":"At the camp you see a men sitting at a campfire all by himself. He invites you over to eat. You both take turns sleeping",
+      "pickedText":"At the camp you see a men sitting at a campfire all by himself. He invites you over to eat. You both take turns resting while the over holds watch. On the next day your say goodbye to your brief companion as he walks in a different direction as yours",
       "resourceChange":  {"hunger":5, "thirst":5, "physicalHealth":10, "mentalHealth":5, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Walk past the camp",
-      "pickedText":"You walk past the camp",
+      "pickedText":"You walk past the camp, not taking the option of meeting new people",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "flags":[]
     }
   }, {
     "id":24,
     "possibleLocation": ["Forest"],
-    "mainText":"While walking through the forest you feel watched. Suddenly a Tiger cub jumps out of a bush and attacks you",
+    "mainText":"While walking through the forest you feel watched. Suddenly an adolescent tiger jumps out of a bush to attack you",
     "decisionLeft" : {
       "choiceText":"Defend yourself",
-      "pickedText":"You screamed at the top of your lungs and put yourself in a defending position. It pounced on you, damaging your arms. You use the chance to kick the tiger cub in the stomach and run away",
+      "pickedText":"You screamed at the top of your lungs and put yourself in a defending position. It pounced on you, damaging your arms. You use the chance to kick the not yet adult tiger in the stomach and run away",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-15, "mentalHealth":-5, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Run away and hide",
-      "pickedText":"You ran with all of your might, looking for a place to hide. You hid and waited for some time",
+      "pickedText":"You ran with all of your might, looking for a place to hide. You hid and waited until he went on the lookout for a different prey",
       "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":-5, "mentalHealth": -5, "money": 0},
       "flags":[]
     }
   }, {
     "id":25,
     "possibleLocation": ["Forest"],
-    "mainText":"You see a bunny, not noticing your presence",
+    "mainText":"You see a bunny, not noticing your presence, presenting themself to be caught",
     "decisionLeft" : {
       "choiceText":"Hunt the bunny",
-      "pickedText":"You hunted the bunny",
+      "pickedText":"You hunted the bunny with your bare hands and cooked it at a makeshift campfire",
       "resourceChange":  {"hunger":10, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Spare the bunny",
-      "pickedText":"You spared the bunny",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "pickedText":"You spared the bunny. not wanting to take its life you walked further",
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 5, "money": 0},
       "flags":[]
     }
   },{
@@ -499,14 +499,14 @@
     "mainText":"A flock of birds sit on trees and chirp in harmony",
     "decisionLeft" : {
       "choiceText":"Listen to the birdsong",
-      "pickedText":"You listened to their birdsong, you cannot seem to get it out of your head",
+      "pickedText":"You listened to their birdsong, you cannot seem to get it out of your head so you start to hum it from time to time",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Throw a rock at them",
       "pickedText":"You picked up a rock, aimed at a bird and threw it. You missed",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
+      "resourceChange":  {"hunger":-1, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
     }
   },{
@@ -532,13 +532,13 @@
     "decisionLeft" : {
       "choiceText":"Drink out of the river",
       "pickedText":"You drank out of the river, clenching your thirst",
-      "resourceChange":  {"hunger":0, "thirst":15, "physicalHealth":0, "mentalHealth":0, "money": 0},
+      "resourceChange":  {"hunger":0, "thirst":10, "physicalHealth":0, "mentalHealth":0, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
       "choiceText":"Try to cross it",
       "pickedText":"You tried to cross the river but the current was too fast. After a lot of struggling you made it out",
-      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-20, "mentalHealth": -5, "money": 0},
+      "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":-15, "mentalHealth": -5, "money": 0},
       "flags":[]
     }
   },{
@@ -618,7 +618,7 @@
     "decisionLeft" : {
       "choiceText":"Eat the Mushrooms",
       "pickedText":"The moment you swallowed the first mushroom you immediately felt sick and vomited it back up",
-      "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":-10, "mentalHealth":-10, "money": 0},
+      "resourceChange":  {"hunger":-5, "thirst":-5, "physicalHealth":-5, "mentalHealth":-5, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
@@ -635,7 +635,7 @@
       "decisionLeft" : {
         "choiceText":"Eat the mushrooms",
         "pickedText":"The mushrooms were a bit dry but otherwise tasted quite decent. You feel refreshed and continue through the forest",
-        "resourceChange":  {"hunger":10, "thirst":0, "physicalHealth":5, "mentalHealth":0, "money": 0},
+        "resourceChange":  {"hunger":5, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money": 0},
         "flags":[]
       },
       "decisionRight" : {
@@ -683,8 +683,8 @@
       "flags":[]
     },
     "decisionRight" : {
-      "choiceText":"Leave the bear cup alone",
-      "pickedText":"Realizing the danger of the situation you carefully backed away from the cup. This proves to be the right decision as you saw the cups mother quickly approaching you. You turned around quickly and made it out unscathed",
+      "choiceText":"Leave the bear cub alone",
+      "pickedText":"Realizing the danger of the situation you carefully backed away from the cub. This proves to be the right decision as you saw the cubs mother quickly approaching you. You turned around quickly and made it out unscathed",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
     },
@@ -696,8 +696,8 @@
         "overwriteSide": false,
         "decision": {
           "choiceText":"P̵̛̣͖̀e̵̻̕ť̴̮͘ ̷̭̑ẗ̸͎͔h̴͈̓͜ẽ̵̺̱̂ ̷̩̆͌b̷̠̎e̴̬̎̈́ă̸͚̠r̷̤̩͂̌ ̶̛̦̟̿c̸͓̞̐̽ũ̸̫̘b̴̜̮̒̒",
-          "pickedText":"As you got closer to the \"juicy\" little bear cup, its very angry mother came charging at you from a nearby bush. But before she can reached you felt an intense headache and fell unconscious. As you came back to your senses, you only saw the huge bear running away in fear. You wonder what scared her away",
-          "resourceChange":  {"hunger":10, "thirst":5, "physicalHealth":0, "mentalHealth":-10, "money":0},
+          "pickedText":"As you got closer to the \"juicy\" little bear cub, its very angry mother came charging at you from a nearby bush. But before she can reached you felt an intense headache and fell unconscious. As you came back to your senses, you only saw the huge bear running away in fear. You wonder what scared her away",
+          "resourceChange":  {"hunger":5, "thirst":5, "physicalHealth":10, "mentalHealth":-15, "money":0},
           "flags":[{"unlockAchievement": 8}]
         }}}]
   }, {
@@ -712,7 +712,7 @@
     },
     "decisionRight" : {
       "choiceText":"Let the caravan pass",
-      "pickedText":"You let the caravan pass",
+      "pickedText":"You decided let the caravan pass",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
     }
@@ -863,7 +863,7 @@
     "decisionLeft" : {
       "choiceText":"Run towards it",
       "pickedText":"You ran towards the oasis jumping into its cool waters. You felt refreshed and more than ready to continue",
-      "resourceChange":  {"hunger":0, "thirst":15, "physicalHealth":10, "mentalHealth":10, "money": 0},
+      "resourceChange":  {"hunger":0, "thirst":15, "physicalHealth":0, "mentalHealth":10, "money": 0},
       "flags":[]
     },
     "decisionRight" : {
@@ -913,7 +913,7 @@
         "decision": {
           "choiceText":"Lay your flowers to the cross",
           "pickedText":"You made some space in the sand and placed your flowers to the cross. While doing so however you noticed a small box buried as well. Inside of it is some money and a yellow crystal",
-          "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":10, "money":10},
+          "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":5, "money":10},
           "flags":[{"removeCards": [47]},{"removeItem": 7},{"addItem": 11},{"unlockAchievement": 11}]
         }}}]
   }, {
@@ -1334,7 +1334,7 @@
       "mainText":"On your journey you find a merchant selling healing herbs",
       "decisionLeft" : {
         "choiceText":"Buy some healing herbs",
-        "pickedText":"You bought some healing herbs",
+        "pickedText":"You bought some healing herbs and used them",
         "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":15, "mentalHealth":0, "money": -5},
         "flags":[]
       },
