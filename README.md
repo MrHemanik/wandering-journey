@@ -30,7 +30,7 @@ Shows Resources, Location, Score, Information about the Card, Inventory, Buttons
 #### Controls Window
 ![Controls](https://i.imgur.com/qUzCahr.png)
 #### Achievements Window
-![Achievements](https://i.imgur.com/49Iy5B2.png)
+![Achievements](https://i.imgur.com/wvnTxpL.png)
 #### Delete Confirmation Window
 ![Delete Confirmation Window](https://i.imgur.com/HCePQ3a.png)
 ####Card Window
