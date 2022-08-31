@@ -1,5 +1,5 @@
 {
-  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,41,42,43,44,45,46,47,48,49,50,51,52,53,56,66],
+  "startingCards" :[67],
   "cards" : [{
     "id":0,
     "possibleLocation": ["City"],
@@ -1365,8 +1365,8 @@
     "possibleLocation": ["City", "Forest", "Desert"],
     "mainText":"In the corner of your eye an ancient door is calling to you. As you walk towards it you see three sockets in the center of the door, each with a distinct symbol on it. There is no building connected to it, only a stone arch with a door inside",
     "decisionLeft" : {
-      "choiceText":"Inspect the sockets",
-      "pickedText":"You inspect the doors sockets and their engraved symbols. All of them incorporating what looks like a shield in the center. Yet you do not seem to find a way to open it",
+      "choiceText":"Put your crystal into a socket",
+      "pickedText":"You inspect the doors sockets and their engraved symbols. All of them incorporating what looks like a shield in the center. Yet putting your crystal in the respective socket does not seem to open it, so you take your crystal out again",
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth": 0, "mentalHealth":0, "money": 0},
       "flags":[]
     },
@@ -1376,16 +1376,28 @@
       "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth": 0, "money": 0},
       "flags":[]
     },
-    "flags": [{"conditionalDecision": {
-      "condition": {
-        "ownItems": [8,10,12]
-      },
-      "overwriteSide": false,
-      "decision": {
-        "choiceText":"Put your crystals in the sockets",
-        "pickedText":"You put the crystals in their corresponding sockets, making the door open from itself. As you look through the door, you only see white light shining though. You walk inside...",
-        "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
-        "flags":[{"removeItem": 8},{"removeItem": 10},{"removeItem": 12},{"endGame" : "You went through the door and your physical form dissolved into nothingness. You became one with the universe itself. You felt the beginning and end of all. You are everything and none"}]
+    "flags": [
+      {"conditionalDecision": {
+        "condition": {
+          "ownTwoOfItems": [8,10,12]
+        },
+        "overwriteSide": false,
+        "decision": {
+          "choiceText":"Put you two crystals into the sockets",
+          "pickedText":"You put your two crystals in their corresponding sockets but it still does not open, it seems like you are still missing one",
+          "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
+          "flags":[]
+      }}},
+      {"conditionalDecision": {
+        "condition": {
+          "ownAllItems": [8,10,12]
+        },
+        "overwriteSide": false,
+        "decision": {
+          "choiceText":"Put your crystals in the sockets",
+          "pickedText":"You put the crystals in their corresponding sockets, making the door open from itself. As you look through the door, you only see white light shining though. You walk inside...",
+          "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
+          "flags":[{"removeItem": 8},{"removeItem": 10},{"removeItem": 12},{"endGame" : "You went through the door and your physical form dissolved into nothingness. You became one with the universe itself. You felt the beginning and end of all. You are everything and none"}]
       }}}]
   }]
 }

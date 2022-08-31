@@ -5,7 +5,8 @@ import Json.Decode as Decode exposing (Decoder)
 
 type Condition
     = OwnItem Int
-    | OwnItems (List Int)
+    | OwnAllItems (List Int)
+    | OwnTwoOfItems (List Int)
     | Unknown
 
 
@@ -13,7 +14,8 @@ decoder : Decoder Condition
 decoder =
     Decode.oneOf
         [ Decode.map OwnItem (Decode.field "ownItem" Decode.int)
-        , Decode.map OwnItems (Decode.field "ownItems" (Decode.list Decode.int))
+        , Decode.map OwnAllItems (Decode.field "ownAllItems" (Decode.list Decode.int))
+        , Decode.map OwnTwoOfItems (Decode.field "ownTwoOfItems" (Decode.list Decode.int))
         , Decode.succeed Unknown
         ]
 
@@ -26,8 +28,11 @@ isCondition condition activeItemsIndexes =
         OwnItem id ->
             List.member id activeItemsIndexes
 
-        OwnItems idList ->
+        OwnAllItems idList ->
             List.all (\id -> List.member id activeItemsIndexes) idList
+
+        OwnTwoOfItems idList ->
+            List.length (List.filter (\isOwned -> isOwned == True) (List.map (\id -> List.member id activeItemsIndexes) idList)) >= 2
 
         Unknown ->
             False

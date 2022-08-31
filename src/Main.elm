@@ -95,7 +95,7 @@ emptyViewState =
 defaultGame gameData =
     { resources = startingResources
     , allowedCardIndexes = gameData.startingCardIndexes
-    , activeItemsIndexes = []
+    , activeItemsIndexes = [ 8, 10 ]
     , currentCards = Card.getCurrentlyPossibleCards gameData.cards gameData.startingCardIndexes startingLocation
     , location = startingLocation
     , card = Nothing
@@ -400,7 +400,7 @@ viewCard model =
                                         Nothing ->
                                             [ row [ width fill, alignBottom ]
                                                 [ choiceButton game.resources c.decisionLeft Left
-                                                , el [ Border.width 1, height fill ] <| none
+                                                , el [ paddingXY 5 0, height fill ] <| el [ Border.width 1, height fill ] <| none
                                                 , choiceButton game.resources c.decisionRight Right
                                                 ]
                                             ]
