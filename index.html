@@ -13,7 +13,7 @@
 <script>
     //Local Storage info: https://stackoverflow.com/questions/33697444/local-storage-or-other-data-persistence-in-elm
     let storageKey = "wanderingJourneyPlayerData"
-    var storageData = localStorage.getItem(storageKey)
+    let storageData = localStorage.getItem(storageKey)
     if(storageData == null) storageData = "" //If there is null data, turn it to an empty string
     let data = [null, null, null]
 
@@ -32,15 +32,11 @@
     })
     function checkIfReceivedAll(){
         if (data.filter(e => e != null).length >= 3){
-            console.log(data[0])
-            console.log(data[1])
-            console.log(data[2])
-            var app = Elm.Main.init({
+            const app = Elm.Main.init({
                 flags: [JSON.stringify(data[0]).slice(0,-1)+","+JSON.stringify(data[1]).substr(1).slice(0,-1)+","+JSON.stringify(data[2]).substr(1),storageData],  //guide.elm-lang.org/interop/flags.html, also added both jsons into one
                 node: document.getElementById('elm-app-is-loaded-here')
             });
             app.ports.savePlayerData.subscribe(function(value) {
-                console.log("Thing to save:" +JSON.stringify(value))
                 localStorage.setItem(storageKey, JSON.stringify(value));
             });
         }
