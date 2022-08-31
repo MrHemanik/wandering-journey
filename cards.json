@@ -1,5 +1,5 @@
 {
-  "startingCards" :[67],
+  "startingCards" :[0,1,2,3,4,5,6,10,11,12,13,14,18,21,23,24,25,26,27,29,32,33,34,35,36,37,38,41,42,43,44,45,46,47,48,49,50,51,52,53,56,66],
   "cards" : [{
     "id":0,
     "possibleLocation": ["City"],
@@ -1379,12 +1379,12 @@
     "flags": [
       {"conditionalDecision": {
         "condition": {
-          "ownTwoOfItems": [8,10,12]
+          "ownXItems": {"amountOwned": 2, "list":[8,10,12]}
         },
         "overwriteSide": false,
         "decision": {
           "choiceText":"Put you two crystals into the sockets",
-          "pickedText":"You put your two crystals in their corresponding sockets but it still does not open, it seems like you are still missing one",
+          "pickedText":"You put your two activated crystals in their corresponding sockets but it still does not open, it seems like you are still missing one",
           "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
           "flags":[]
       }}},
@@ -1395,7 +1395,7 @@
         "overwriteSide": false,
         "decision": {
           "choiceText":"Put your crystals in the sockets",
-          "pickedText":"You put the crystals in their corresponding sockets, making the door open from itself. As you look through the door, you only see white light shining though. You walk inside...",
+          "pickedText":"You put the all three activated crystals you have collected in their corresponding sockets, making the door open from itself. As you look through the door, you only see white light shining though. You walk inside...",
           "resourceChange":  {"hunger":0, "thirst":0, "physicalHealth":0, "mentalHealth":0, "money":0},
           "flags":[{"removeItem": 8},{"removeItem": 10},{"removeItem": 12},{"endGame" : "You went through the door and your physical form dissolved into nothingness. You became one with the universe itself. You felt the beginning and end of all. You are everything and none"}]
       }}}]

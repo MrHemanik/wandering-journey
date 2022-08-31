@@ -47,6 +47,8 @@ type Model
     | Running GameData Game Player (Maybe Choice) ViewState
 
 
+{-| Event that can happen to update when the user interacts with the browser interface, uses the same functions as the key equivalents.
+-}
 type Msg
     = Key Key
     | NewCard Int
@@ -60,6 +62,8 @@ type Msg
     | DeactivateAchievementHighlighting Int
 
 
+{-| Everything that is game related and can change except choice and if a run is active.
+-}
 type alias Game =
     { resources : Resources
     , allowedCardIndexes : List Int
@@ -72,6 +76,8 @@ type alias Game =
     }
 
 
+{-| Saves everything variable for visualisation purposes only like which extra window is open, what achievements are new or what item/achievement is selected.
+-}
 type alias ViewState =
     { item : Maybe Item, showControls : Bool, showAchievements : Bool, showDeleteConfirmation : Bool, newAchievements : List Int, highlightedAchievements : List Int, selectedAchievement : Maybe Achievement, endGameText : String }
 
@@ -95,7 +101,7 @@ emptyViewState =
 defaultGame gameData =
     { resources = startingResources
     , allowedCardIndexes = gameData.startingCardIndexes
-    , activeItemsIndexes = [ 8, 10 ]
+    , activeItemsIndexes = []
     , currentCards = Card.getCurrentlyPossibleCards gameData.cards gameData.startingCardIndexes startingLocation
     , location = startingLocation
     , card = Nothing
@@ -1281,13 +1287,12 @@ init flags =
                     emptyGameData
 
         player =
-            Debug.log "player" <|
-                case Data.fromResult <| Decode.decodeString Player.decoder playerData of
-                    Data.Success pl ->
-                        pl
+            case Data.fromResult <| Decode.decodeString Player.decoder playerData of
+                Data.Success pl ->
+                    pl
 
-                    Data.Failure _ ->
-                        defaultPlayer
+                Data.Failure _ ->
+                    defaultPlayer
     in
     Running gameData (defaultGame gameData) player Nothing emptyViewState
         |> generatePossibleCard
