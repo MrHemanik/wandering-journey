@@ -20,9 +20,14 @@ decoder =
 {-| Unlocks achievements that aren't unlocked via "unlockAchievement" flag in decisions when the condition is met
 Unlocks the first one automatically (die for the first time), then checks if the score is high enough for the "distance travelled" ones
 -}
-checkUnlock : Int -> List Int
-checkUnlock score =
-    [ 0 ]
+checkUnlock : Int -> String -> List Int
+checkUnlock score endGameText =
+    (if endGameText /= "" then
+        [ 15 ]
+
+     else
+        [ 0 ]
+    )
         ++ (if score >= 100000 then
                 [ 1, 2 ]
 

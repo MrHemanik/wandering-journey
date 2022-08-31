@@ -828,14 +828,14 @@ underlineFirstCharText text =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
-        isGameOver resources =
-            resources.hunger <= 0 || resources.thirst <= 0 || resources.physicalHealth <= 0 || resources.mentalHealth <= 0
+        isGameOver resources viewState =
+            resources.hunger <= 0 || resources.thirst <= 0 || resources.physicalHealth <= 0 || resources.mentalHealth <= 0 || viewState.endGameText /= ""
     in
-    case ( model, isGameOver (modelToGame model).resources ) of
+    case ( model, isGameOver (modelToGame model).resources (modelToViewState model) ) of
         ( Running gameData game player _ viewState, True ) ->
             let
                 newlyUnlockedAchievements =
-                    ListHelper.removeEntriesFromList (Achievement.checkUnlock game.score) player.unlockedAchievements
+                    ListHelper.removeEntriesFromList (Achievement.checkUnlock game.score viewState.endGameText) player.unlockedAchievements
 
                 updatedPlayer =
                     { player | highscore = max player.highscore game.score, unlockedAchievements = ListHelper.addEntriesToListAndSort player.unlockedAchievements newlyUnlockedAchievements }
@@ -1021,7 +1021,7 @@ processKey key model =
             modelToViewState model
     in
     case ( model, key, vs.showAchievements || vs.showControls || vs.showDeleteConfirmation ) of
-        ( Running gameData game player oldChoice viewState, ChoiceKey choice, False ) ->
+        ( Running gameData game _ oldChoice _, ChoiceKey choice, False ) ->
             if oldChoice == Nothing then
                 let
                     ( resources, flags ) =
@@ -1060,15 +1060,12 @@ processKey key model =
                     ( model, Cmd.none )
 
             else
-                case ( game.nextCard, String.isEmpty viewState.endGameText ) of
-                    ( Nothing, True ) ->
+                case game.nextCard of
+                    Nothing ->
                         generatePossibleCard model
 
-                    ( Just _, True ) ->
+                    Just _ ->
                         loadCard model game.nextCard
-
-                    ( _, False ) ->
-                        ( GameOver gameData game player viewState, Cmd.none )
 
         ( Running gameData _ player _ viewState, Restart, False ) ->
             Running gameData (defaultGame gameData) player Nothing { emptyViewState | highlightedAchievements = viewState.highlightedAchievements } |> generatePossibleCard
