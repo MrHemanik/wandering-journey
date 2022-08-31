@@ -17,7 +17,7 @@ The game has a defined ending, though it can be played endless to reach a high s
 
 ### Setting / World Building
 Wandering Journey plays in a medieval low-fantasy setting, so while magic does exist, the world is not based around it.
-The world has to mayor churches. The church of Mutan, standing for power and the church of fortuna, standing for luck. Being a member of the church of Mutan can lead to an unwanted symbioses with a shape shifting.
+The world has two mayor churches/orders. The church of Mutan, standing for power and the church of fortuna, standing for luck. Being a member of the church of Mutan can lead to an unwanted symbioses with an unknown shape shifting organism for as long as you're part of the Mutan Order.
 The world holds three different crystals, each colored differently
 
 ### Assets
@@ -60,7 +60,8 @@ There is a compiled version [here](https://mrhemanik.github.io/wandering-journey
 ```haskell
 { items : List Item, cards : List Card, startingCardIndexes : List Int, achievements : List Achievement }
 ```
-Every preset data that gets loaded at init and does not change. Is saved per .json and gets loaded from html via [Elm Flag](https://guide.elm-lang.org/interop/flags.html)
+Every preset data that gets loaded at init and does not change. 
+- Is saved per .json and gets loaded from html via [Elm Flag](https://guide.elm-lang.org/interop/flags.html)
 #### Game
 ```haskell
 { resources : Resources, allowedCardIndexes : List Int, activeItemsIndexes : List Int, currentCards : List Card, location : Location, card : Maybe Card, nextCard : Maybe Card, score : Int}
@@ -71,45 +72,53 @@ Everything that is game related and can change except choice and if a run is act
 ```haskell
 { item : Maybe Item, showControls : Bool, showAchievements : Bool, showDeleteConfirmation : Bool, newAchievements : List Int, highlightedAchievements : List Int, selectedAchievement : Maybe Achievement, endGameText : String }
 ```
-Saves everything variable for visualisation purposes only like which extra window is open, what achievements are new or what item/achievement is selected.
+Saves everything variable for visualisation purposes only.
+- Usage cases are for example which extra window is open, what achievements are new or what item/achievement is selected.
 
 #### Resources
 ```haskell
 { hunger : Int, thirst : Int, physicalHealth : Int,mentalHealth: Int, money : Int }
 ```
-value from 0-100, except money which can go infinitely high. Used as “health”.
+Value from 0-100, except money which can go infinitely high. 
+- Used as “health”.
 
 #### Card
 ```haskell
 { id : Int, possibleLocation : List Location, mainText : String, decisionLeft : Decision, decisionRight : Decision, flags : List CardFlag }
 ```
-Card that is fundamental for gameplay. Holds information about what decisions you must take and what happens when you do. Gets loaded from JSON.
+Card that is fundamental for gameplay. 
+- Holds information about what decisions you must take and what happens when you do. 
+- Gets loaded from JSON.
 
 #### Decision
 ```haskell
 { choiceText : String, pickedText : String, resourceChange : Resources, flags : List Flag }
 ```
 Choice you can make, that has a text before and after you decide to take this option.
-Resources gets added/removed and Flags are getting processed when a decision is made.
-Flags can alter variables in game, like changing what cards can be generated or what items you own
+- Resources get added/removed and Flags are getting processed when a decision is made.
+- Flags can alter variables in game, like changing what cards can be generated or what items you own
 
 #### Item
 ```haskell
 { id : Int, name : String, description : String }
 ```
-Item that a player can own inside of a run. Decisions can change according to what item(s) you own. Gets loaded from JSON.
+Item that a player can own inside off a run. 
+- Decisions can change according to what item(s) you own. 
+- Gets loaded from JSON.
 
 #### Achievement
 ```haskell
 { id : Int, name : String, description : String }
 ```
-A way to show progress. Get either unlocked per flag on cards or at the end of the game via “Achievements.checkUnlock”.
+A way to show progress. 
+- Get either unlocked per flag on cards or at the end of the game via “Achievements.checkUnlock”.
 
 #### Player
 ```haskell
 { unlockedAchievements : List Int, highscore : Int }
 ```
-Progress data that gets saved in and loaded from the local storage as JSON via [Elm Port](https://guide.elm-lang.org/interop/ports.html).
+Progress data.
+- Gets saved in and loaded from the local storage as JSON via [Elm Port](https://guide.elm-lang.org/interop/ports.html).
 
 ###Custom Types
 #### Model
@@ -117,7 +126,8 @@ Progress data that gets saved in and loaded from the local storage as JSON via [
 = GameOver GameData Game Player ViewState
 | Running GameData Game Player (Maybe Choice) ViewState
 ```
-Holds everything currently loaded (State). In retrospect should’ve been a Record with ‘screen’ custom type as an attribute to make some code parts cleaner.
+Holds everything currently loaded (State). 
+- In retrospect should’ve been a Record with ‘screen’ custom type as an attribute to make some code parts cleaner.
 
 #### Msg
 ```haskell
@@ -132,7 +142,8 @@ Holds everything currently loaded (State). In retrospect should’ve been a Reco
 | DeletePlayerData
 | DeactivateAchievementHighlighting Int
 ```
-Event that can happen to update when the user interacts with the browser interface, uses the same functions as the key equivalents.
+Event that can happen to update when the user interacts with the browser interface.
+- uses the same functions as the key equivalents.
 
 #### Location
 ```haskell
@@ -141,7 +152,8 @@ Event that can happen to update when the user interacts with the browser interfa
 | City
 | None
 ```
-To decide from which cards you draw. Every location has a “switch to x location” card.
+To decide from which cards you draw. 
+- Every location has a “switch to x location” card.
 
 #### Flag
 ```haskell
@@ -161,7 +173,7 @@ Flags can be part of a decision and will be processed after a decision is made o
 - ChangeLocation: Changes the location to the one specified
 - FollowUp: Instead of generating a new card, the card with the specified id will be loaded
 - UnlockAchievement: unlocks an achievement
-- TakeMoney: Takes money without showing the moneyLabel and without checking if you have enough. Used for thiefs that steal as much as they can
+- TakeMoney: Takes money without showing the moneyLabel and without checking if you have enough. Used for thieves that steal as much as they can
 - EndGame : Ends the game with a custom message. Happens when going to next card to let them read the followUp before.
 
 #### CardFlag
@@ -170,7 +182,7 @@ Flags can be part of a decision and will be processed after a decision is made o
 | DefaultFlag Flag
 ```
 CardFlags are an extension of flags that can only be used on cards, not decisions
-ConditionalDecision: Replaces a decision if a condition is true. If there are multiple conditionalDecisions that can replace one decision, the last one will be taken
+- ConditionalDecision: Replaces a decision if a condition is true. If there are multiple conditionalDecisions that can replace one decision, the last one will be taken
 
 #### Condition
 ```haskell
